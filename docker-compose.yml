@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  dtcomb-api:
+    build: .
+    container_name: dtcomb_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - ./data:/app/data  # SQLite veritabanı burada saklanacak
+    environment:
+      - R_HOME=/usr/lib/R
+      - LD_LIBRARY_PATH=/usr/lib/R/lib:/usr/lib/x86_64-linux-gnu
+    restart: always

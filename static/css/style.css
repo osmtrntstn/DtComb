@@ -1,0 +1,54 @@
+/* Arama kutusunun olduğu div'i en sağa iter */
+.dataTables_filter {
+    float: right !important;
+    text-align: right !important;
+}
+
+/* Arama kutusunun içindeki inputu hizalar */
+.dataTables_filter label {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* Butonlar ve Length Menu arasındaki boşluğu ayarlar */
+.dt-buttons {
+    margin-right: 15px !important;
+}
+
+/* Yeni renk koduna özel buton sınıfı */
+.btn-custom-color {
+    background-color: #175f76 !important;
+    border-color: #175f76 !important;
+    color: #ffffff !important;
+    font-weight: 500;
+}
+
+/* Hover (Üzerine gelme) durumu */
+.btn-custom-color:hover {
+    background-color: #124a5c !important; /* Biraz daha koyu tonu */
+    border-color: #124a5c !important;
+    color: #ffffff !important;
+}
+
+.navbar {
+    background: -moz-linear-gradient(270deg, #081829, #218ba6) !important; /* FF3.6+ */
+    background: -webkit-linear-gradient(270deg, #081829, #218ba6) !important; /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(270deg, #081829, #218ba6) !important; /* Opera11.10+ */
+    background: -ms-linear-gradient(270deg, #081829, #218ba6) !important; /* IE10+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#081829', endColorstr='#218ba6', GradientType=0) !important; /* IE6-9 */
+    background: linear-gradient(270deg, #081829, #218ba6) !important;
+}
+
+/* Navbar içindeki tüm linkler ve metinler için */
+.main-header.navbar .nav-link,
+.main-header.navbar .navbar-brand {
+    font-size: 1.1rem !important; /* Mevcut boyutu %10-20 artırır */
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-weight: 500 !important; /* Yazıları biraz daha belirgin yapar */
+}
+
+/* Eğer sadece dropdown menülerin içini de büyütmek isterseniz */
+.main-header.navbar .dropdown-item {
+    font-size: 1rem !important;
+}

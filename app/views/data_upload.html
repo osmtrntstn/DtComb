@@ -1,0 +1,889 @@
+{% extends "layout.html" %}
+
+{% block title %}Data upload Sayfası - {{ title }}{% endblock %}
+{% block pageTitle %}Dataupload{{ pageTitle }}{% endblock %}
+
+{% block content %}
+
+<div class="col-md-3">
+
+    <!-- Profile Image -->
+    <div class="card card-primary card-outline">
+        <div class="card-body box-profile">
+
+
+            <div class="card-body" style="padding: 0.25rem !important;">
+
+                <div class="form-group">
+                    <label>Input data</label>
+
+                    <div class="custom-control custom-radio">
+                        <input class="custom-control-input" type="radio" id="dataInputRadio1" name="dataInputRadio"
+                               value="upload">
+                        <label for="dataInputRadio1" class="custom-control-label"
+                               style="font-weight: 400 !important;">Upload
+                            a file</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input class="custom-control-input" type="radio" id="dataInputRadio2" name="dataInputRadio"
+                               value="example"
+                               checked>
+                        <label for="dataInputRadio2" class="custom-control-label"
+                               style="font-weight: 400 !important;">Load
+                            example data</label>
+                    </div>
+                </div>
+
+
+                <div class="form-group" id="delimiterOptions" style="display: none;">
+                    <div class="input-group mb-2">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="exampleInputFile">
+                            <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                        </div>
+                    </div>
+                    <label>Delimiter</label>
+                    <div class="custom-control custom-radio">
+                        <input class="custom-control-input" type="radio" id="delimiterRadio1" name="delimiterRadio"
+                               value="comma" checked>
+                        <label for="delimiterRadio1" class="custom-control-label"
+                               style="font-weight: 400 !important;">Comma</label>
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                        <input class="custom-control-input" type="radio" id="delimiterRadio2" name="delimiterRadio"
+                               value="tab">
+                        <label for="delimiterRadio2" class="custom-control-label"
+                               style="font-weight: 400 !important;">Tab</label>
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                        <input class="custom-control-input" type="radio" id="delimiterRadio3" name="delimiterRadio"
+                               value="semicolon">
+                        <label for="delimiterRadio3" class="custom-control-label"
+                               style="font-weight: 400 !important;">Semicolon</label>
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                        <input class="custom-control-input" type="radio" id="delimiterRadio4" name="delimiterRadio"
+                               value="space">
+                        <label for="delimiterRadio4" class="custom-control-label"
+                               style="font-weight: 400 !important;">Space</label>
+                    </div>
+
+                    <div class="mt-2">
+                        <small class="text-muted" style="display: block; line-height: 1.4;">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            You can upload your data separated by comma, tab, semicolon or space.
+                        </small>
+                        <small class="text-muted" style="display: block; font-weight: 500;">
+                            <strong> Note:</strong> First row must be the header including the variable names.
+                        </small>
+                    </div>
+                </div>
+                <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="custom-content-below-analysis-tab" data-toggle="pill"
+                           href="#custom-content-below-analysis" role="tab"
+                           aria-controls="custom-content-below-analysis"
+                           aria-selected="true">Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="custom-content-below-roc-analysis-tab" data-toggle="pill"
+                           href="#custom-content-below-roc-analysis" role="tab"
+                           aria-controls="custom-content-below-roc-analysis" aria-selected="false">ROC Analysis for
+                            Single Marker(s)</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="custom-content-below-tabContent">
+                    <div class="tab-pane fade show active" id="custom-content-below-analysis" role="tabpanel"
+                         aria-labelledby="custom-content-below-analysis-tab">The "Analysis" tab should be used for
+                        analysis to combine two diagnostic
+                        test markers. If you want to evaluate the performance of a single diagnostic test or compare
+                        the performance of more than one diagnostic test, the "ROC Analysis for Single Marker(s)"
+                        tab should be selected.
+                        <!-- /.card-header -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="marker1">Marker 1</label>
+                                    <select id="marker1" class="form-control select2bs4" style="width: 100%;">
+                                        <option value="" selected disabled>Please select...</option>
+                                        {% for col in result.columns %}
+                                        <option value="{{ col }}" {% if col in result.selectedMarker1 %}selected{%
+                                                endif %}>
+                                            {{ col }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <!-- /.form-group -->
+                                <div class="form-group">
+                                    <label for="marker2">Marker 2</label>
+                                    <select id="marker2" class="form-control select2bs4" style="width: 100%;">
+                                        <option value="" selected disabled>Please select...</option>
+                                        {% for col in result.columns %}
+                                        <option value="{{ col }}" {% if col.strip() in result.selectedMarker2
+                                                %}selected{%
+                                                endif
+                                                %}>
+                                            {{ col }}
+                                        </option>
+                                        {% endfor %}
+
+                                    </select>
+                                </div>
+                                <!-- /.form-group -->
+                                <div class="form-group">
+                                    <label for="status">Status</label>
+                                    <select id="status" class="form-control select2bs4" style="width: 100%;">
+                                        <option value="" selected disabled>Please select...</option>
+                                        {% for col in result.columns %}
+                                        <option value="{{ col }}" {% if col.strip() in result.selectedStatus
+                                                %}selected{%
+                                                endif
+                                                %}>
+                                            {{ col }}
+                                        </option>
+                                        {% endfor %}
+
+                                    </select>
+                                </div>
+                                <!-- /.form-group -->
+                                <div class="form-group">
+                                    <label for="category">Select category for cases</label>
+                                    <select id="category" class="form-control select2bs4" style="width: 100%;">
+                                        <option value="" selected disabled>Please select...</option>
+                                        {% for col in result.categories %}
+                                        <option value="{{ col }}" {% if col in result.selectedCategory %}selected{%
+                                                endif
+                                                %}>
+                                            {{ col }}
+                                        </option>
+                                        {% endfor %}
+
+                                    </select>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        <!-- /.row -->
+
+
+                    </div>
+                    <div class="tab-pane fade" id="custom-content-below-roc-analysis" role="tabpanel"
+                         aria-labelledby="custom-content-below-roc-analysis-tab">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Select markers (*)</label>
+                                <select name="markersRoc" class="select2bs4" multiple="multiple"
+                                        data-placeholder="Please select..."
+                                        style="width: 100%;">
+                                    {% for col in result.columns %}
+                                    <option value='{{col}}'>{{ col }}</option>
+                                    {% endfor %}
+
+                                </select>
+                                <div class="mt-1">
+                                    <small class="text-muted" style="display: block; font-weight: 500;">
+                                        <strong> Note:</strong> A maximum of 8 markers can be selected.
+                                    </small>
+                                </div>
+                            </div>
+                            <!-- /.form-group -->
+
+                            <div class="form-group">
+                                <label for="statusRoc">Status</label>
+                                <select id="statusRoc" class="form-control select2bs4" style="width: 100%;">
+                                    <option value="" selected disabled>Please select...</option>
+                                    {% for col in result.columns %}
+                                    <option value="{{ col }}" {% if col== result.selectedStatus %}selected{% endif
+                                            %}>
+                                        {{ col }}
+                                    </option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                            <div class="form-group">
+                                <label for="categoryRoc">Select category for cases</label>
+                                <select id="categoryRoc" class="form-control select2bs4" style="width: 100%;">
+                                    <option value="" selected disabled>Please select...</option>
+                                    {% for col in result.categories %}
+                                    <option>{{ col }}</option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </div>
+                <div class="form-group" id="datasets">
+                    <label>Datasets:</label><br/>
+                    <label>Examples</label>
+                    <div class="custom-control custom-radio">
+                        <input class="custom-control-input" type="radio" id="exampleDataRadio1"
+                               name="exampleDataRadio"
+                               value="laparotomy" checked>
+                        <label for="exampleDataRadio1" class="custom-control-label"
+                               style="font-weight: 400 !important;">Abdominal pain data (n = 225, p = 3)</label>
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                        <input class="custom-control-input" type="radio" id="exampleDataRadio2"
+                               name="exampleDataRadio"
+                               value="exampleData2">
+                        <label for="exampleDataRadio2" class="custom-control-label"
+                               style="font-weight: 400 !important;">DMD data (n = 120, p = 5)</label>
+                    </div>
+
+                    <div class="custom-control custom-radio">
+                        <input class="custom-control-input" type="radio" id="exampleDataRadio3"
+                               name="exampleDataRadio"
+                               value="exampleData3">
+                        <label for="exampleDataRadio3" class="custom-control-label"
+                               style="font-weight: 400 !important;">Simulation data (n = 500, p = 3)</label>
+                    </div>
+
+
+                    <div class="mt-2">
+                        <small class="text-muted" style="display: block; line-height: 1.4;">
+                            <strong> n:</strong> number of observations
+                        </small>
+                        <small class="text-muted" style="display: block; font-weight: 500;">
+                            <strong> p:</strong> number of variables
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group roc-analysis-advanced" style="display: none;">
+                    <div class="custom-control custom-checkbox">
+                        <input class="custom-control-input" type="checkbox" name="advancedCheckBox"
+                               id="advancedCheckBox" value="Advanced">
+                        <label for="advancedCheckBox" class="custom-control-label">Advanced</label>
+                    </div>
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group advancedCheckBox" style="display: none;">
+                    <label for="optimalCutOff">Select a method for optimal cut-off</label>
+                    <select id="optimalCutOff" class="form-control select2bs4" style="width: 100%;">
+                        <option value="Youden" selected>Youden</option>
+                        <option value="CB">CB</option>
+                        <option value="MCT">MCT</option>
+                        <option value="MinValueSp">MinValueSp</option>
+                        <option value="MinValueSe">MinValueSe</option>
+                        <option value="ValueSp">ValueSp</option>
+                        <option value="ValueSe">ValueSe</option>
+                        <option value="MinValueSpSe">MinValueSpSe</option>
+                        <option value="MaxSp">MaxSp</option>
+                        <option value="MaxSe">MaxSe</option>
+                        <option value="MaxSpSe">MaxSpSe</option>
+                        <option value="MaxProdSpSe">MaxProdSpSe</option>
+                        <option value="ROC01">ROC01</option>
+                        <option value="SpEqualSe">SpEqualSe</option>
+                        <option value="MaxEfficiency">MaxEfficiency</option>
+                        <option value="Minimax">Minimax</option>
+                        <option value="MaxDOR">MaxDOR</option>
+                        <option value="MaxKappa">MaxKappa</option>
+                        <option value="MinValueNPV">MinValueNPV</option>
+                        <option value="MinValuePPV">MinValuePPV</option>
+                        <option value="ValueNPV">ValueNPV</option>
+                        <option value="ValuePPV">ValuePPV</option>
+                        <option value="MinValueNPVPPV">MinValueNPVPPV</option>
+                        <option value="PROC01">PROC01</option>
+                        <option value="NPVEqualPPV">NPVEqualPPV</option>
+                        <option value="MaxNPVPPV">MaxNPVPPV</option>
+                        <option value="MaxSumNPVPPV">MaxSumNPVPPV</option>
+                        <option value="MaxProdNPVPPV">MaxProdNPVPPV</option>
+                        <option value="ValueDLR.Negative">ValueDLR.Negative</option>
+                        <option value="ValueDLR.Positive">ValueDLR.Positive</option>
+                        <option value="MinPvalue">MinPvalue</option>
+                        <option value="ObservedPrev">ObservedPrev</option>
+                        <option value="MeanPrev">MeanPrev</option>
+                        <option value="PrevalenceMatching">PrevalenceMatching</option>
+                    </select>
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group advancedCheckBox" style="display: none;">
+                    <label for="direction">Direction</label>
+                    <select id="direction" class="form-control select2bs4" style="width: 100%;">
+                        <option selected="selected">auto</option>
+                        <option><</option>
+                        <option>></option>
+                    </select>
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group advancedCheckBox" style="display: none;">
+                    <label for="confidenceLevel">Confidence Level</label>
+                    <input type="number" id="confidenceLevel" class="form-control" step="0.01" value="0.95"
+                           style="width: 100%;">
+                </div>
+                <!-- /.form-group -->
+            </div>
+            <!-- /.card-body -->
+
+            <div class="form-group row">
+                <button type="submit" class="btn btn-primary">Go</button>
+            </div>
+        </div>
+        <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+
+</div>
+<!-- /.col -->
+<div class="col-md-9">
+    <div class="card">
+
+        <div class="card-body">
+            <table id="analysisTable" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th></th>
+                    {# Sütun başlıklarını döner #}
+                    {% for col in result.columns %}
+                    <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {# Veri satırlarını döner #}
+                {% for row in result.data %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    {# Satır içindeki veriyi ilgili sütun ismine göre çeker #}
+                    {% for col in result.columns %}
+                    <td>{{ row[col] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div><!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+</div>
+<!-- /.col -->
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="./static/js/indexed-db-manager.js"></script>
+
+<script>
+    let dataTableSettings = {
+        "responsive": true,
+        "lengthChange": true,
+        "autoWidth": false,
+        "dom": "<'row'<'col-sm-12 col-md-8 d-flex align-items-center'B l><'col-sm-12 col-md-4 text-right'f>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        "buttons": [
+            {
+                extend: 'copy',
+                className: 'btn btn-custom-color btn-sm' // 'btn-custom-color' özel sınıfımız
+            },
+            {extend: 'csv', className: 'btn btn-custom-color btn-sm'},
+            {extend: 'excel', className: 'btn btn-custom-color btn-sm'},
+            {extend: 'pdf', className: 'btn btn-custom-color btn-sm'},
+            {extend: 'print', className: 'btn btn-custom-color btn-sm'}
+        ],
+        "language": {"lengthMenu": "_MENU_", "search": "Search:"}
+    };
+    $(function () {
+        //Initialize Select2 Elements
+        $('.select2bs4').select2({
+            theme: 'bootstrap4',
+            placeholder: "Please select...", // Görünecek metin
+            allowClear: true // Kullanıcının seçimi temizleyebilmesine izin verir
+        })
+    })
+    $(document).ready(async function () {
+        try {
+            const storedData = await dbManager.get();
+            const delimiter = await dbManager.get_delimiter();
+            if (delimiter != null) {
+                // Kaydedilmiş delimiter'ı radyo butonlarına yansıt
+                if (delimiter === 'comma') $('#delimiterRadio1').prop('checked', true);
+                else if (delimiter === 'tab') $('#delimiterRadio2').prop('checked', true);
+                else if (delimiter === 'semicolon') $('#delimiterRadio3').prop('checked', true);
+                else if (delimiter === 'space') $('#delimiterRadio4').prop('checked', true);
+            }
+            if (storedData && storedData.length > 0) {
+                // "Upload a file" modunu aktif et
+                $('#dataInputRadio1').prop('checked', true);
+                $('#delimiterOptions').show();
+                $('#datasets').hide();
+
+                const formatted = formatDataByDelimiter(storedData);
+                if (formatted) {
+                    updateTableAndDropdowns(formatted);
+                }
+
+                console.log("Hafızadaki veri başarıyla tabloya yansıtıldı.");
+            }
+        } catch (error) {
+            console.error("IndexedDB okuma hatası:", error);
+        }
+    });
+    $(document).ready(function () {
+
+        // DataTable'ı bir kez ilklendirelim
+        var table = $('#analysisTable').DataTable(dataTableSettings);
+
+        // Radyo butonları değiştiğinde tetiklenir
+        $('input[name="exampleDataRadio"]').on('change', function () {
+            const selectedData = $(this).val();
+            if ($.fn.DataTable.isDataTable('#analysisTable')) {
+                table.clear().destroy();
+            }
+            $('#analysisTable').empty();
+            $.ajax({
+                url: '/fetch-example-data',
+                method: 'POST',
+                dataType: 'json',
+                data: {data_name: selectedData},
+                success: function (response) {
+
+                    let $categorySelect = $('#category');
+                    let $categoryRocSelect = $('#categoryRoc');
+                    $categorySelect.empty();
+                    $categoryRocSelect.empty();
+
+                    // Backend'den gelen benzersiz değerleri Category listesine bas
+                    response.categories.forEach(cat => {
+                        let isSelected = response.selectedCategory.includes(cat);
+                        $categorySelect.append(new Option(cat, cat, isSelected, isSelected));
+                        $categoryRocSelect.append(new Option(cat, cat, isSelected, isSelected));
+                    });
+                    $categorySelect.trigger('change');
+                    $categoryRocSelect.trigger('change');
+
+                    const dropdowns = ['#marker1', '#marker2', '#status', '#statusRoc'];
+                    dropdowns.forEach(id => {
+                        let $select = $(id);
+                        $select.empty(); // Eskileri sil
+                        $select.append(new Option("Please select...", "", true, true));
+                        response.columns.forEach(col => {
+                            console.log(col)
+                            // response.selectedMarker1 içinde bu sütun var mı kontrol et (Liste kontrolü)
+                            let isSelected = false;
+                            if (id === '#marker1' && response.selectedMarker1.includes(col)) isSelected = true;
+                            if (id === '#marker2' && response.selectedMarker2.includes(col)) isSelected = true;
+                            if (id === '#status' && response.selectedStatus.includes(col)) isSelected = true;
+                            if (id === '#category' && response.selectedCategory.includes(col)) isSelected = true;
+
+                            let option = new Option(col, col, isSelected, isSelected);
+                            $select.append(option);
+                        });
+
+                        // Select2'yi yeni verilerle tetikle
+                        $select.trigger('change');
+                    });
+                    // Multi-select olan markersRoc için özel güncelleme
+                    let $markersRoc = $('select[name="markersRoc"]');
+                    $markersRoc.empty();
+                    response.columns.forEach(col => {
+                        $markersRoc.append(new Option(col, col));
+                    });
+                    $markersRoc.trigger('change');
+
+                    // 2. Yeni başlıkları (columns) oluştur - En başa "#" ekliyoruz
+                    let headerRow = '<thead><tr><th></th>'; // Satır numarası başlığı
+                    response.columns.forEach(col => {
+                        headerRow += `<th>${col}</th>`;
+                    });
+                    headerRow += '</tr></thead>';
+                    let tbody = "<tbody>";
+                    response.data.forEach((row, index) => {
+                        let rowHtml = `<tr><td>${index + 1}</td>`; // Satır numarası hücresi
+                        response.columns.forEach(col => {
+                            rowHtml += `<td>${row[col]}</td>`;
+                        });
+                        rowHtml += '</tr>';
+                        tbody += rowHtml;
+                    })
+                    tbody += '</tbody>';
+                    $('#analysisTable').append(headerRow + tbody);
+
+                    table = $('#analysisTable').DataTable(dataTableSettings);
+
+                }
+            });
+        });
+
+
+    });
+    document.querySelectorAll('input[name="dataInputRadio"]').forEach((radio) => {
+        radio.addEventListener('change', function () {
+            const delimiterDiv = document.getElementById('delimiterOptions');
+            const datasetsDiv = document.getElementById('datasets');
+            if (this.value === 'upload') {
+                delimiterDiv.style.display = 'block'; // Upload seçilirse göster
+                datasetsDiv.style.display = 'none'; // Upload seçilirse göster
+            } else {
+                delimiterDiv.style.display = 'none';  // Diğer durumlarda gizle
+                datasetsDiv.style.display = 'block';  // Diğer durumlarda gizle
+            }
+        });
+    });
+
+    document.getElementById('advancedCheckBox').addEventListener('change', function () {
+        // Class adı 'advancedCheckBox' olan tüm form-group'ları bul
+        const advancedElements = document.querySelectorAll('.form-group.advancedCheckBox');
+
+        advancedElements.forEach(el => {
+            if (this.checked) {
+                el.style.display = 'block';  // Seçili ise GİZLE
+            } else {
+                el.style.display = 'none'; // Seçili değilse GÖSTER
+            }
+        });
+    });
+
+    $(document).on('shown.bs.tab', 'a[data-toggle="pill"]', function (e) {
+        const targetId = $(e.target).attr('id');
+        const advancedDiv = $('.roc-analysis-advanced');
+        const advancedCheckBox = document.getElementById('advancedCheckBox')
+
+        // Eğer tıklanan tab "ROC Analysis" tabı ise göster, değilse gizle
+        if (targetId === 'custom-content-below-roc-analysis-tab') {
+            advancedDiv.fadeIn(); // Şık bir geçişle göster
+        } else {
+            advancedDiv.hide(); // Diğer tablarda gizle
+            if (advancedCheckBox.checked) {
+                advancedCheckBox.checked = false; // Eğer "Advanced" seçiliyse, diğer tablara geçerken sıfırla
+                $('.form-group.advancedCheckBox').hide(); // "Advanced" seçeneklerini gizle
+            }
+        }
+    });
+
+    document.querySelectorAll('input[name="dataInputRadio"]').forEach((radio) => {
+        radio.addEventListener('change', function () {
+            const delimiterDiv = document.getElementById('delimiterOptions');
+            const datasetsDiv = document.getElementById('datasets');
+
+            if (this.value === 'upload') {
+                if ($.fn.DataTable.isDataTable('#analysisTable')) {
+                    $('#analysisTable').DataTable().destroy();
+                }
+                $('#analysisTable').empty();
+                delimiterDiv.style.display = 'block';
+                datasetsDiv.style.display = 'none';
+
+                // --- TÜM SELECTLERİ BOŞALTMA İŞLEMİ ---
+                // Form içindeki tüm select elementlerini bul ve temizle
+                $('select.select2bs4').each(function () {
+                    $(this).empty(); // Seçenekleri sil
+                    $(this).trigger('change'); // Değişikliği Select2'ye bildir
+                });
+                // --------------------------------------
+
+            } else {
+                delimiterDiv.style.display = 'none';
+                datasetsDiv.style.display = 'block';
+
+                // Eğer "Load example data" seçilirse varsayılan veriyi
+                // tekrar yüklemek için radyo butonunu tetikleyebilirsiniz
+                $('input[name="exampleDataRadio"]:checked').trigger('change');
+            }
+        });
+    });
+
+    // Dosya seçildiğinde tetiklenir
+    $('#exampleInputFile').on('change', function () {
+        let file = this.files[0];
+        if (!file) return;
+
+        // Seçilen ayırıcıyı (delimiter) backend'e gönderiyoruz
+        let delimiter = $('input[name="delimiterRadio"]:checked').val();
+
+        let formData = new FormData();
+        formData.append("file", file);
+        formData.append("delimiter", delimiter);
+
+        $.ajax({
+            url: '/upload-csv',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                updateTableAndDropdowns(response); // Tabloyu çiz
+                $('.custom-file-label').html(file.name);
+                $('#dataInputRadio1').prop('checked', true).trigger('change');
+            },
+            error: function () {
+                alert("Dosya yüklenirken bir hata oluştu. Lütfen ayırıcıyı ve dosya formatını kontrol edin.");
+            }
+        });
+
+        // 2. DOSYAYI HAM METİN (STRING) OLARAK OKU VE INDEXEDDB'YE KAYDET
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const rawString = e.target.result; // Dosyanın orijinal metin hali
+            dbManager.save(rawString).then(() => {
+                console.log("Ham veri (string) IndexedDB'ye kaydedildi. Artık ayırıcı değişince bölünebilir.");
+            });
+            dbManager.save_delimiter(delimiter).then(() => {
+                console.log("delimiter IndexedDB'ye kaydedildi. Artık ayırıcı değişince bölünebilir.");
+            });
+        };
+        reader.readAsText(file); // Dosyayı string olarak oku
+    });
+
+    // Hem örnek veri hem de yüklenen veri için ortak güncelleme fonksiyonu
+    function updateTableAndDropdowns(response) {
+        // A. Tabloyu Temizle ve Yeniden Kur
+        if ($.fn.DataTable.isDataTable('#analysisTable')) {
+            $('#analysisTable').DataTable().destroy();
+        }
+        $('#analysisTable').empty();
+
+        let headerRow = '<thead><tr><th>#</th>';
+        response.columns.forEach(col => {
+            headerRow += `<th>${col}</th>`;
+        });
+        headerRow += '</tr></thead>';
+
+        let tbody = "<tbody>";
+        response.data.forEach((row, index) => {
+            let rowHtml = `<tr><td>${index + 1}</td>`;
+            response.columns.forEach(col => {
+                rowHtml += `<td>${row[col] || ''}</td>`;
+            });
+            rowHtml += '</tr>';
+            tbody += rowHtml;
+        });
+        tbody += '</tbody>';
+        $('#analysisTable').append(headerRow + tbody);
+
+        // DataTable'ı başlat (Daha önce belirlediğimiz #175f76 rengiyle)
+        $('#analysisTable').DataTable(dataTableSettings);
+
+        // B. Seçim Kutularını (Select) Doldur
+        const dropdowns = ['#marker1', '#marker2', '#status', '#statusRoc'];
+        dropdowns.forEach(id => {
+            let $select = $(id);
+            $select.empty();
+            $select.append(new Option("Please select...", "", true, true));
+            response.columns.forEach(col => {
+                $select.append(new Option(col, col, false, false));
+            });
+            $select.trigger('change');
+        });
+    }
+
+    let selectedFile = null; // Dosyayı global bir değişkende tutalım
+
+    // Dosya seçildiğinde dosyayı hafızaya al ve yüklemeyi tetikle
+    $('#exampleInputFile').on('change', function () {
+        selectedFile = this.files[0];
+        if (selectedFile) {
+            $('.custom-file-label').html(selectedFile.name);
+            uploadAndRefreshTable(); // Yükleme fonksiyonunu çağır
+        }
+    });
+
+
+    function uploadAndRefreshTable() {
+        if (!selectedFile) return;
+
+        let delimiter = $('input[name="delimiterRadio"]:checked').val();
+        dbManager.save_delimiter(delimiter).then(() => {
+            console.log("delimiter IndexedDB'ye kaydedildi. Artık ayırıcı değişince bölünebilir.");
+        });
+        let formData = new FormData();
+        formData.append("file", selectedFile);
+        formData.append("delimiter", delimiter);
+
+        $.ajax({
+            url: '/upload-csv',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                // Daha önce oluşturduğumuz ortak fonksiyonu çağırıyoruz
+                updateTableAndDropdowns(response);
+            },
+            error: function () {
+                console.error("Tablo güncellenirken bir hata oluştu.");
+            }
+        });
+    }
+
+    // Status dropdown değiştiğinde tetiklenir
+    $(document).on('change', '#status', function () {
+        const selectedStatus = $(this).val();
+
+        if (!selectedStatus || selectedStatus === "") {
+            $('#category').empty().trigger('change');
+            return;
+        }
+
+        $.ajax({
+            url: '/get-unique-categories',
+            method: 'POST',
+            data: {status_col: selectedStatus},
+            success: function (response) {
+                let $categorySelect = $('#category');
+                $categorySelect.empty();
+                $categorySelect.append(new Option("Please select category", "", true, true));
+
+                if (response.categories && response.categories.length > 0) {
+                    response.categories.forEach(cat => {
+                        $categorySelect.append(new Option(cat, cat));
+                    });
+                }
+                $categorySelect.trigger('change');
+            }
+        });
+    });
+
+    // Status dropdown değiştiğinde tetiklenir
+    $(document).on('change', '#statusRoc', function () {
+        const selectedStatus = $(this).val();
+
+        if (!selectedStatus || selectedStatus === "") {
+            $('#categoryRoc').empty().trigger('change');
+            return;
+        }
+
+        $.ajax({
+            url: '/get-unique-categories',
+            method: 'POST',
+            data: {status_col: selectedStatus},
+            success: function (response) {
+                let $categoryRocSelect = $('#categoryRoc');
+                $categoryRocSelect.empty();
+                $categoryRocSelect.append(new Option("Please select category", "", true, true));
+
+                if (response.categories && response.categories.length > 0) {
+                    response.categories.forEach(cat => {
+                        $categoryRocSelect.append(new Option(cat, cat));
+                    });
+                }
+                $categoryRocSelect.trigger('change');
+            }
+        });
+    });
+
+    // scripts bloğunun en altına ekleyin
+    function saveSession() {
+        let sessionData = {
+            // Radyo Butonları
+            dataInputRadio: $('input[name="dataInputRadio"]:checked').val(),
+            exampleDataRadio: $('input[name="exampleDataRadio"]:checked').val(),
+            delimiterRadio: $('input[name="delimiterRadio"]:checked').val(),
+
+            // Dropdownlar (Normal ve Select2)
+            marker1: $('#marker1').val(),
+            marker2: $('#marker2').val(),
+            status: $('#status').val(),
+            category: $('#category').val(),
+
+            // ROC Tab
+            markersRoc: $('select[name="markersRoc"]').val(), // Multi-select
+            statusRoc: $('#statusRoc').val(),
+            categoryRoc: $('#categoryRoc').val(),
+
+            // Gelişmiş Seçenekler
+            advanced: $('#advancedCheckBox').is(':checked'),
+            optimalCutOff: $('#optimalCutOff').val(),
+            direction: $('#direction').val(),
+            confidenceLevel: $('#confidenceLevel').val()
+        };
+
+        $.ajax({
+            url: '/update-session',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(sessionData),
+            success: function (response) {
+                console.log(sessionData)
+                console.log("Session güncellendi");
+            }
+        });
+    }
+
+    // Herhangi bir input değiştiğinde saveSession'ı tetikle
+    $(document).on('change', 'input, select', function () {
+        // Sadece belirli sınıflara sahip veya form elemanı olanları izle
+        saveSession();
+    });
+
+    // Select2 değişimlerini yakalamak için özel tetikleyici
+    $('.select2bs4').on('select2:select select2:unselect', function (e) {
+        saveSession();
+    });
+
+    // Seçili ayırıcı karakterini döndüren yardımcı fonksiyon
+    function getDelimiterChar() {
+        const val = $('input[name="delimiterRadio"]:checked').val();
+        dbManager.save_delimiter(val)
+        switch (val) {
+            case 'tab':
+                return '\t';
+            case 'semicolon':
+                return ';';
+            case 'space':
+                return ' ';
+            case 'comma':
+            default:
+                return ',';
+        }
+    }
+
+    // Ham veriyi (raw string) sütunlara ayıran fonksiyon
+    function formatDataByDelimiter(rawContent) {
+        const delimiter = getDelimiterChar();
+        const lines = rawContent.trim().split(/\r?\n/); // Satırlara böl
+        if (lines.length === 0) return null;
+
+        const headers = lines[0].split(delimiter).map(h => h.trim()); // Başlıklar
+        const data = lines.slice(1).map(line => {
+            const values = line.split(delimiter);
+            let row = {};
+            headers.forEach((header, index) => {
+                row[header] = values[index] ? values[index].trim() : "";
+            });
+            return row;
+        });
+
+        return {columns: headers, data: data};
+    }
+
+    $('input[name="delimiterRadio"]').on('change', async function () {
+        // 1. IndexedDB'den veriyi al
+        const content = await dbManager.get();
+
+        if (content) {
+            // HATA GİDERME: Eğer içerik dizi geliyorsa, tabloyu temizleyip tazelemek gerekir.
+            // Ancak görselin değişmesi için verinin HAM METİN olması şarttır.
+            if (typeof content === 'string') {
+                const formatted = formatDataByDelimiter(content);
+                if (formatted) {
+                    updateTableAndDropdowns(formatted);
+                }
+            } else if (Array.isArray(content)) {
+                // Eğer veri zaten dizi olarak kaydedilmişse, ayırıcıyı değiştirmek
+                // tarayıcı tarafında bir şeyi değiştirmez. Bu durumda sunucudan tazelemek zorunludur.
+                if (selectedFile) {
+                    uploadAndRefreshTable();
+                } else {
+                    // Sadece mevcut diziyi tekrar basar (Görsel değişmez)
+                    const columns = Object.keys(content[0]);
+                    updateTableAndDropdowns({columns: columns, data: content});
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

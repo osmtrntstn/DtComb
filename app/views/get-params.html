@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+
+{% block title %}Analiz Sayfası - {{ title }}{% endblock %}
+{% block pageTitle %}Analysis{{ pageTitle }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title" id="paramTitle"> {{ name }} -> Parametre Listesi</h3>
+        <input type="hidden" id="paramName" value="{{ name }}">
+        <button class="btn btn-primary float-right" onclick="addParameter('{{parent_id}}')">Yeni Ekle</button>
+    </div>
+    <div class="card-body">
+
+        <table id="parameterTable" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>Parametre Adı</th>
+                <th>Key</th>
+                <th>Giriş Tipi</th>
+                <th>Alt Öge</th>
+                <th>İşlemler</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for param in parameters %}
+            <tr>
+                <td>{{ param.ParameterName }}</td>
+                <td>{{ param.ParameterKey }}</td>
+                <td>{{ param.InputType }}</td>
+                <td>{% if param.ExistSubItem == 1 %}Var{% else %}Yok{% endif %}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="editParameter('{{ param.Id }}')">
+                        <i class="fas fa-edit"></i> Düzenle
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteParameter('{{ param.Id }}')">
+                        <i class="fas fa-trash"></i> Sil
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+<div id="parameter-procces"></div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    let paramTable = $('#parameterTable').DataTable({
+        ajax: {
+            url: `/parameters/{{parent_id}}`,
+            dataSrc: ''
+        },
+        columns: [
+            {data: 'ParameterName'},
+            {data: 'ParameterKey'},
+            {data: 'InputType'},
+            {
+                data: 'ExistSubItem',
+                render: function (data) {
+                    return data === 1 ? '<span class="badge badge-info">Evet</span>' : '<span class="badge badge-secondary">Hayır</span>';
+                }
+            },
+            {
+                data: null,
+                render: function (data) {
+                    let actionButtons = `
+                        <button class="btn btn-xs btn-info" onclick="editParameter('${data.Id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-xs btn-danger" onclick="deleteParam('${data.Id}')"><i class="fas fa-trash"></i></button>
+                    `;
+
+                    // Eğer alt öge ekleyebilecek bir yapıysa (Recursive)
+                    actionButtons += `<button class="btn btn-xs btn-warning" onclick="drillDown('${data.Id}', '${data.ParameterName}')"><i class="fas fa-sitemap"></i> Alt Parametreler</button>`;
+
+                    // Eğer Select tipi ise Değer ekleme butonu
+                    if (data.InputType === 'select' || data.InputType === 'radio') {
+                        actionButtons += `<button class="btn btn-xs btn-success" onclick="window.location.href='/get-params/${data.Id}/${$("#paramName").val() + " -> " + data.ParameterName}'"><i class="fas fa-list"></i> Değerler</button>`;
+                    }
+
+                    return actionButtons;
+                }
+            }
+        ]
+    });
+
+    function addParameter(id) {
+        $('#parameter-procces').html("");
+        $.ajax({
+            url: '/update-param',
+            method: 'GET',
+            data: {parent_id: id},
+            success: function (response) {
+                $('#parameter-procces').html(response);
+            },
+            error: function () {
+                alert('Parametre formu yüklenirken bir hata oluştu.');
+            }
+        })
+    }
+
+    function editParameter(id) {
+        $('#parameter-procces').html("");
+        $.ajax({
+            url: '/update-param',
+            data: {id: id},
+            method: 'GET',
+            success: function (response) {
+                $('#parameter-procces').html(response);
+            },
+            error: function () {
+                alert('Parametre formu yüklenirken bir hata oluştu.');
+            }
+        })
+    }
+
+</script>
+{% endblock %}

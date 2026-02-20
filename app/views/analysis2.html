@@ -1,0 +1,636 @@
+{% extends "layout.html" %}
+
+{% block title %}Analiz Sayfası - {{ title }}{% endblock %}
+{% block pageTitle %}Analysis{{ pageTitle }}{% endblock %}
+
+{% block content %}
+
+<div class="col-md-3" xmlns="http://www.w3.org/1999/html">
+
+    <!-- Profile Image -->
+    <div class="card card-primary card-outline">
+        <div class="card-body box-profile">
+            <div class="card-body" style="padding: 0.25rem !important;">
+                <form id="analysisForm">
+                    <div class="row">
+                        <div class="form-group" style="width: 100%;">
+                            <label for="functions">Combination approach</label>
+                            <select id="functions" class="form-control select2bs4" style="width: 100%;">
+                                {% for col in functions %}
+                                <option value="{{ col.FunctionKey }}" data-id="{{ col.Id }}" {% if loop.first
+                                        %}selected{%
+                                        endif
+                                        %}>
+                                    {{ col.FunctionName }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group" style="width: 100%;">
+                            <label for="methods">Combination Method</label>
+                            <select id="methods" class="form-control select2bs4" style="width: 100%;">
+                                {% for col in methods %}
+                                <option value="{{ col.MethodKey }}" data-id="{{ col.Id }}" {% if loop.first %}selected{%
+                                        endif
+                                        %}>
+                                    {{ col.MethodName }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- /.form-group -->
+                    </div>
+                    <div id="parameter-div">
+
+                    </div>
+                    <div id="dynamic-method-parameters-container" class="row" style="display: none;">
+                    </div>
+                    <div id="dynamic-function-parameters-container" class="row" style="display: none;">
+                    </div>
+
+
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input class="custom-control-input" type="checkbox" name="advancedCheckBox"
+                                       id="advancedCheckBox" value="Advanced">
+                                <label for="advancedCheckBox" class="custom-control-label">Advanced</label>
+                            </div>
+                        </div>
+                        <!-- /.form-group -->
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
+                            <label for="optimalCutOff">Select a method for optimal cut-off</label>
+                            <select id="optimalCutOff" class="form-control select2bs4" style="width: 100%;">
+                                <option value="Youden" selected>Youden</option>
+                                <option value="CB">CB</option>
+                                <option value="MCT">MCT</option>
+                                <option value="MinValueSp">MinValueSp</option>
+                                <option value="MinValueSe">MinValueSe</option>
+                                <option value="ValueSp">ValueSp</option>
+                                <option value="ValueSe">ValueSe</option>
+                                <option value="MinValueSpSe">MinValueSpSe</option>
+                                <option value="MaxSp">MaxSp</option>
+                                <option value="MaxSe">MaxSe</option>
+                                <option value="MaxSpSe">MaxSpSe</option>
+                                <option value="MaxProdSpSe">MaxProdSpSe</option>
+                                <option value="ROC01">ROC01</option>
+                                <option value="SpEqualSe">SpEqualSe</option>
+                                <option value="MaxEfficiency">MaxEfficiency</option>
+                                <option value="Minimax">Minimax</option>
+                                <option value="MaxDOR">MaxDOR</option>
+                                <option value="MaxKappa">MaxKappa</option>
+                                <option value="MinValueNPV">MinValueNPV</option>
+                                <option value="MinValuePPV">MinValuePPV</option>
+                                <option value="ValueNPV">ValueNPV</option>
+                                <option value="ValuePPV">ValuePPV</option>
+                                <option value="MinValueNPVPPV">MinValueNPVPPV</option>
+                                <option value="PROC01">PROC01</option>
+                                <option value="NPVEqualPPV">NPVEqualPPV</option>
+                                <option value="MaxNPVPPV">MaxNPVPPV</option>
+                                <option value="MaxSumNPVPPV">MaxSumNPVPPV</option>
+                                <option value="MaxProdNPVPPV">MaxProdNPVPPV</option>
+                                <option value="ValueDLR.Negative">ValueDLR.Negative</option>
+                                <option value="ValueDLR.Positive">ValueDLR.Positive</option>
+                                <option value="MinPvalue">MinPvalue</option>
+                                <option value="ObservedPrev">ObservedPrev</option>
+                                <option value="MeanPrev">MeanPrev</option>
+                                <option value="PrevalenceMatching">PrevalenceMatching</option>
+                            </select>
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
+                            <label for="direction">Direction</label>
+                            <select id="direction" class="form-control select2bs4" style="width: 100%;">
+                                <option selected="selected">auto</option>
+                                <option><</option>
+                                <option>></option>
+                            </select>
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
+                            <label for="confidenceLevel">Confidence Level</label>
+                            <input type="number" id="confidenceLevel" class="form-control" step="0.01" value="0.95"
+                                   style="width: 100%;">
+                        </div>
+                        <!-- /.form-group -->
+                    </div>
+                    <!-- /.row -->
+                    <div class="form-group row">
+                        <button type="button" id="collect-data" class="btn btn-primary">Go</button>
+                    </div>
+
+                </form>
+            </div>
+            <!-- /.card-body -->
+
+
+        </div>
+        <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+
+</div>
+<!-- /.col -->
+<div class="col-md-9">
+    <div class="card">
+
+        <div class="card-body">
+            <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="custom-content-below-results-tab" data-toggle="pill"
+                       href="#custom-content-below-results" role="tab"
+                       aria-controls="custom-content-below-results"
+                       aria-selected="true">Results</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="custom-content-below-plots-tab" data-toggle="pill"
+                       href="#custom-content-below-plots" role="tab"
+                       aria-controls="custom-content-below-plots" aria-selected="false">Plots</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="custom-content-below-tabContent">
+                <div class="tab-pane fade show active" id="custom-content-below-results" role="tabpanel"
+                     aria-labelledby="custom-content-below-results-tab">The "Analysis" tab should be used for
+                    analysis to combine two diagnostic
+                    test markers. If you want to evaluate the performance of a single diagnostic test or compare
+                    the performance of more than one diagnostic test, the "ROC Analysis for Single Marker(s)"
+                    tab should be selected.
+                    <!-- /.card-header -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card card-success">
+                                <div class="card-header">
+                                    <h3 class="card-title">Kombinasyon Formülü (Scoring)</h3>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Y = </strong> <span id="eq-intercept"></span>
+                                        <strong>+</strong> (<span id="eq-coef1"></span> &times; Marker 1)
+                                        <strong>+</strong> (<span id="eq-coef2"></span> &times; Marker 2)</p>
+                                    <hr>
+                                    <p class="mb-0"><strong>Optimal Kesme Noktası (Combined):</strong> <span
+                                            id="opt-threshold"></span></p>
+                                </div>
+                            </div>
+
+                            <div class="card card-info mt-3">
+                                <div class="card-header">
+                                    <h3 class="card-title">Eğri Altında Kalan Alan (AUC)</h3>
+                                </div>
+                                <div class="card-body table-responsive p-0">
+                                    <table class="table table-hover table-sm text-nowrap">
+                                        <thead>
+                                        <tr>
+                                            <th>Marker</th>
+                                            <th>AUC</th>
+                                            <th>p-value</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="auc-table-body">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.row -->
+                </div>
+                <div class="tab-pane fade" id="custom-content-below-plots" role="tabpanel"
+                     aria-labelledby="custom-content-below-plots-tab">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">ROC Curves for Combination Diagnostic Test</h3>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="rocChart"
+                                            style="min-height: 450px; height: 450px; max-width: 100%;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </div>
+        </div><!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+</div>
+<!-- /.col -->
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="./static/js/indexed-db-manager.js"></script>
+
+<script>
+
+    $('#collect-data').on('click', async function () {
+        // 1. Temel analiz bilgilerini al
+        let payload = await collectAllData()
+
+        console.log("R Motoruna gidecek paket:", payload);
+        // 4. Backend'e Gönder
+        $.ajax({
+            url: '/run-analysis',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            beforeSend: function () {
+                $('#collect-data').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Analyzing...');
+            },
+            success: function (response) {
+                console.log(response);
+                if (response.status === "success") {
+
+                    // --- 1. GRAFİK VERİSİNİ HAZIRLAMA ---
+                    // Marker isimlerine göre datayı grupla
+                    const groupedData = {};
+
+                    response.roc_data.forEach(row => {
+                        if (!groupedData[row.Marker]) {
+                            groupedData[row.Marker] = [];
+                        }
+                        // X ekseni (1 - Specificity)
+                        // Y ekseni (Sensitivity)
+                        groupedData[row.Marker].push({
+                            x: 1 - row.Specificity,
+                            y: row.Sensitivity,
+                            threshold: row.Threshold // Hover (tooltip) için saklıyoruz
+                        });
+                    });
+
+                    // Çizgilerin zikzak yapmaması için X eksenine göre sırala
+                    Object.keys(groupedData).forEach(key => {
+                        groupedData[key].sort((a, b) => a.x - b.x);
+                    });
+
+                    // Renk paleti
+                    const colors = {
+                        "Combination": "#F8766D", // Kırmızı
+                        "ddimer": "#619CFF",      // Mavi
+                        "log_leukocyte": "#00BA38" // Yeşil
+                    };
+
+                    const datasets = Object.keys(groupedData).map(marker => {
+                        return {
+                            label: marker === "Combination" ? "Combination Score" : marker, // İsimlendirme
+                            data: groupedData[marker],
+                            borderColor: colors[marker] || "#333333",
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            showLine: true,
+                            pointRadius: 0, // Noktaları gizle
+                            pointHoverRadius: 6 // Üzerine gelince noktalar görünsün
+                        };
+                    });
+
+                    // Köşegen Referans Çizgisi (Rastgele Şans)
+                    datasets.push({
+                        label: 'Reference Line',
+                        data: [{x: 0, y: 0}, {x: 1, y: 1}],
+                        borderColor: '#999999',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        showLine: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 0
+                    });
+
+                    // --- 2. GRAFİĞİ ÇİZDİRME (CHART.JS) ---
+                    const ctx = document.getElementById('rocChart').getContext('2d');
+
+                    // Varsa eski grafiği yok et
+                    if (window.rocChartInstance) {
+                        window.rocChartInstance.destroy();
+                    }
+
+                    window.rocChartInstance = new Chart(ctx, {
+                        type: 'scatter',
+                        data: {datasets: datasets},
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                x: {
+                                    type: 'linear',
+                                    position: 'bottom',
+                                    title: {display: true, text: '1 - Specificity (False Positive Rate)'},
+                                    min: 0, max: 1
+                                },
+                                y: {
+                                    title: {display: true, text: 'Sensitivity (True Positive Rate)'},
+                                    min: 0, max: 1
+                                }
+                            },
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            let point = context.raw;
+                                            let lbl = context.dataset.label;
+                                            if (lbl === 'Reference Line') return '';
+                                            let threshStr = point.threshold !== undefined ? point.threshold.toFixed(3) : 'N/A';
+                                            return `${lbl} | Cutoff: ${threshStr} | Sen: ${point.y.toFixed(2)} | 1-Spe: ${point.x.toFixed(2)}`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // --- 3. FORMÜL VE EŞİK DEĞERLERİNİ YAZDIRMA ---
+                    if (response.coefficients) {
+                        document.getElementById('eq-intercept').innerText = response.coefficients["(Intercept)"][0].toFixed(3);
+                        document.getElementById('eq-coef1').innerText = response.coefficients["markers[, 1]"][0].toFixed(3);
+                        document.getElementById('eq-coef2').innerText = response.coefficients["markers[, 2]"][0].toFixed(3);
+                    }
+                    if (response.thresholds && response.thresholds.combined) {
+                        document.getElementById('opt-threshold').innerText = response.thresholds.combined[0].toFixed(3);
+                    }
+
+                    // --- 4. AUC TABLOSUNU DOLDURMA ---
+                    let tbodyHtml = '';
+                    response.auc_data.forEach(row => {
+                        // Kombinasyon satırını kalın (bold) yapalım
+                        let fw = row._row === 'Combination Score' ? 'font-weight-bold' : '';
+                        tbodyHtml += `
+                <tr class="${fw}">
+                    <td>${row._row}</td>
+                    <td>${row.AUC.toFixed(4)}</td>
+                    <td>${row["p.value"].toExponential(2)}</td>
+                </tr>
+            `;
+                    });
+                    document.getElementById('auc-table-body').innerHTML = tbodyHtml;
+
+                } else {
+                    alert("Bir hata oluştu: Başarılı yanıt alınamadı.");
+                }
+            },
+            error: function (xhr) {
+                $('#collect-data').prop('disabled', false).text('Go');
+                Swal.fire('Analysis Error', xhr.responseJSON ? xhr.responseJSON.detail : 'Unknown error', 'error');
+            },
+            complete: function () {
+                $('#collect-data').prop('disabled', false).text('Go');
+            }
+        });
+        // 3. Veriyi Backend'e (FastAPI) gönder
+        //sendToAnalysis(payload);
+    });
+
+    async function collectAllData() {
+        // 1. IndexedDB'den asıl veriyi oku
+        const tableData = await dbManager.get();
+        const delimiter = await dbManager.get_delimiter();
+
+        if (!tableData) {
+            Swal.fire('Hata', 'Hafızada veri bulunamadı, lütfen dosyayı tekrar yükleyin.', 'error');
+            return;
+        }
+
+        // 2. Parametreleri ve tablo verisini birleştir
+        let payload = {
+            function: $('#functions').val(),
+            method: $('#methods').val(),
+            markers: tableData, // Tüm tabloyu buraya ekliyoruz
+            delimiter: delimiter
+        };
+        const isAdvancedChecked = $('#advancedCheckBox').is(':checked');
+
+        if (isAdvancedChecked) {
+            // Advanced alanları manuel ekle veya bu inputlara da 'data-dynamic' ekleyebilirsin
+            payload['cutoffMethod'] = $('#optimalCutOff').val();
+            payload['direction'] = $('#direction').val();
+
+            // Sayısal değerler için güvenli parseFloat
+            let confLevelRaw = $('#confidenceLevel').val();
+            payload['confLevel'] = parseFloat(confLevelRaw.replace(',', '.'));
+        }
+        // Dinamik inputları topla
+        $('[data-dynamic]').each(function () {
+            const name = $(this).attr('name');
+            const val = $(this).val();
+            if (name) payload[name] = val;
+        });
+        return payload;
+    }
+
+    $(document).ready(function () {
+        // 1. Sayfa ilk açıldığında seçili olan ana kategoriyi al
+        const initialFunctionId = $('#functions').find(':selected').data('id');
+
+        // 2. Eğer bir ID varsa parametreleri getir
+        if (initialFunctionId) {
+            fetchParams(initialFunctionId, 'dynamic-function-parameters-container');
+        }
+        const initialMethodId = $('#methods').find(':selected').data('id');
+        if (initialMethodId) {
+            fetchParams(initialMethodId, 'dynamic-method-parameters-container');
+        }
+    });
+
+    $(document).on('change', '#functions', function () {
+
+        const selectedOption = $(this).find('option:selected');
+
+        // Yöntem A: data() fonksiyonu ile (Önerilen)
+        const functionId = selectedOption.data('id');
+
+        $.ajax({
+            url: '/get-function-methods',
+            method: 'POST',
+            data: {id: functionId},
+            success: function (response) {
+                let $methodsSelect = $('#methods');
+                $methodsSelect.empty();
+
+                if (response && response.length > 0) {
+                    let selectedValue = true
+                    response.forEach(item => {
+                        // 1. Seçeneği oluştur: new Option(text, value)
+                        let newOption = new Option(item.MethodName, item.MethodKey, selectedValue, selectedValue);
+
+                        // 2. jQuery ile seçeneğe data attribute ekle
+                        $(newOption).attr('data-id', item.Id);
+
+                        // 3. Dropdown menüsüne ekle
+                        $methodsSelect.append(newOption);
+                        selectedValue = false;
+                    });
+                }
+                $methodsSelect.trigger('change');
+            }
+        });
+        fetchParams(functionId, 'dynamic-function-parameters-container');
+    });
+    $(document).on('change', '#methods', function () {
+        const methodId = $(this).find('option:selected').data('id');
+
+        fetchParams(methodId, 'dynamic-method-parameters-container');
+    });
+
+    // Gerekli mi? Evet, ama daha genel bir isimle daha işlevsel:
+    function fetchParams(parentId, targetContainerId) {
+        // Görsel geri bildirim için temizle ve yükleniyor göster
+        const $container = $(`#${targetContainerId}`);
+        $container.empty()
+        $.ajax({
+            url: '/get-params',
+            method: 'POST',
+            data: {parentId: parentId},
+            success: function (response) {
+                renderDynamicParameters(response, targetContainerId);
+            },
+            error: function () {
+                $container.hide().empty();
+            }
+        });
+    }
+
+    function renderDynamicParameters(data, targetContainerId = 'dynamic-function-parameters-container') {
+        const container = $(`#${targetContainerId}`);
+        if (targetContainerId === 'dynamic-function-parameters-container') container.empty();
+
+        if (!data || data.length === 0) return;
+        container.show();
+        data.forEach(param => {
+            let formElement = '';
+            const subAreaId = `sub_area_${param.Id}`;
+
+            if (param.InputType === 'select') {
+
+                let optionsHtml = param.Values.map(opt => {
+                    let isSelected = param.DefaultValue === opt.ValueKey ? 'selected' : '';
+                    return `<option value="${opt.ValueKey}" data-id="${opt.Id}" data-sub="${opt.ExistSubItem}" ${isSelected}>${opt.ValueName}</option>`
+                }).join('');
+
+                formElement = `
+            <div class="form-group param-group mb-0" style="width: 100%;">
+                <label>${param.ParameterName}</label>
+                <select name="${param.ParameterKey}" class="form-control select2bs4 dynamic-select" data-dynamic data-param-id="${param.Id}">
+                    <option value="" disabled selected>Seçiniz...</option>
+                    ${optionsHtml}
+                </select>
+                <div id="${subAreaId}" class="sub-parameter-area mt-2"></div>
+            </div>`;
+            } else if (param.InputType === 'number') {
+                // Sayısal girdi oluşturma
+                let html = `<input type="number" name="${param.ParameterKey}" class="form-control method-dynamic-input" data-dynamic
+                        value="${param.DefaultValue || ''}"
+                        min="${param.MinValue || ''}"
+                        max="${param.MaxValue || ''}" step="${param.ValueStep || 'any'}">`;
+                formElement = `
+            <div class="form-group param-group" style="width: 100%;">
+                <label>${param.ParameterName}</label>
+                ${html}
+            </div>`;
+            } else if (param.InputType === 'radio') {
+                let radiosHtml = param.Values.map(opt => {
+                    const isSelected = (opt.ValueKey === param.DefaultValue) ? 'checked' : '';
+                    return `
+                 <div class="custom-control custom-radio">
+                    <label for="rad_${opt.Id}" class="custom-control-label">${opt.ValueName}</label>
+                    <input class="custom-control-input dynamic-radio" type="radio" data-dynamic
+                           id="rad_${opt.Id}" name="${param.ParameterName}" value="${opt.ValueKey}"
+                           data-id="${opt.Id}" data-sub="${opt.ExistSubItem}" data-param-id="${param.Id}" ${isSelected}>
+                </div>`
+                }).join('');
+
+                formElement = `
+            <div class="form-group param-group" style="width: 100%;">
+                <label>${param.ParameterName}</label>
+                ${radiosHtml}
+                <div id="${subAreaId}" class="sub-parameter-area mt-2"></div>
+            </div>`;
+            }
+
+            container.append(formElement);
+            // Yeni eklenen selectler için select2'yi tekrar başlat
+            $('.select2bs4').select2({theme: 'bootstrap4'});
+        });
+    }
+
+    // SELECT Değişimi
+    $(document).on('change', '.dynamic-select', function () {
+        const selectedOption = $(this).find('option:selected');
+        const valueId = selectedOption.data('id');
+        const hasSub = selectedOption.data('sub');
+        const paramId = $(this).data('param-id');
+        const subContainer = $(`#sub_area_${paramId}`);
+
+        subContainer.empty(); // Eski alt parametreleri temizle
+
+        if (hasSub == 1 && valueId) {
+            fetchParams(valueId, subContainer.attr('id'));
+        }
+    });
+
+    // RADIO Değişimi
+    $(document).on('change', '.dynamic-radio', function () {
+        const valueId = $(this).data('id');
+        const hasSub = $(this).data('sub');
+        const paramId = $(this).data('param-id');
+        const subContainer = $(`#sub_area_${paramId}`);
+
+        subContainer.empty();
+
+        if (hasSub == 1) {
+            fetchParams(valueId, subContainer.attr('id'));
+        }
+    });
+
+
+</script>
+
+<script>
+    let dataTableSettings = {
+        "responsive": true,
+        "lengthChange": true,
+        "autoWidth": false,
+        "dom": "<'row'<'col-sm-12 col-md-8 d-flex align-items-center'B l><'col-sm-12 col-md-4 text-right'f>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        "buttons": [
+            {
+                extend: 'copy',
+                className: 'btn btn-custom-color btn-sm' // 'btn-custom-color' özel sınıfımız
+            },
+            {extend: 'csv', className: 'btn btn-custom-color btn-sm'},
+            {extend: 'excel', className: 'btn btn-custom-color btn-sm'},
+            {extend: 'pdf', className: 'btn btn-custom-color btn-sm'},
+            {extend: 'print', className: 'btn btn-custom-color btn-sm'}
+        ],
+        "language": {"lengthMenu": "_MENU_", "search": "Search:"}
+    };
+    $(function () {
+        //Initialize Select2 Elements
+        $('.select2bs4').select2({
+            theme: 'bootstrap4',
+            placeholder: "Please select...", // Görünecek metin
+            allowClear: true // Kullanıcının seçimi temizleyebilmesine izin verir
+        })
+    })
+    document.getElementById('advancedCheckBox').addEventListener('change', function () {
+        // Class adı 'advancedCheckBox' olan tüm form-group'ları bul
+        const advancedElements = document.querySelectorAll('.form-group.advancedCheckBox');
+
+        advancedElements.forEach(el => {
+            if (this.checked) {
+                el.style.display = 'block';  // Seçili ise GİZLE
+            } else {
+                el.style.display = 'none'; // Seçili değilse GÖSTER
+            }
+        });
+    });
+
+</script>
+{% endblock %}

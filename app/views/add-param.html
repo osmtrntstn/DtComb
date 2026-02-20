@@ -1,0 +1,300 @@
+{% extends "layout.html" %}
+
+{% block title %}Analiz Sayfası - {{ title }}{% endblock %}
+{% block pageTitle %}Analysis{{ pageTitle }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <form id="paramForm">
+        <div class="card-header">
+            <h4 class="modal-title">Parametre Tanımı</h4>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" onclick="closeParamProcess()">
+                    <i class="fas fa-times" style="font-size: 1.5rem; color: #666;"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <input type="hidden" name="Id" id="Id" value="{{ parameter.Id or id }}">
+            <input type="hidden" name="ParentId" id="ParentId" value="{{ parameter.ParentId or parent_id }}">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Parametre Adı</label>
+                        <input type="text" name="ParameterName" class="form-control"
+                               value="{{ parameter.ParameterName or '' }}" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Key</label>
+                        <input type="text" name="ParameterKey" class="form-control"
+                               value="{{ parameter.ParameterKey or '' }}" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Input Tipi</label>
+                        <select name="InputType" id="InputType" class="form-control select2bs4">
+                            <option value="number" {% if parameter.InputType==
+                            'number' %}selected{% endif %}>Number</option>
+                            <option value="select" {% if parameter.InputType==
+                            'select' %}selected{% endif %}>Select</option>
+                            <option value="radio" {% if parameter.InputType==
+                            'radio' %}selected{% endif %}>Radio</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Default Değer</label>
+                        <input type="text" name="DefaultValue" class="form-control"
+                               value="{{ parameter.DefaultValue or '' }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Min Değer</label>
+                        <input type="number" name="MinValue" class="form-control"
+                               value="{{ parameter.MinValue or '' }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Max Değer</label>
+                        <input type="number" name="MaxValue" class="form-control"
+                               value="{{ parameter.MaxValue or '' }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Value Step</label>
+                        <input type="number" name="ValueStep" step="any" lang="en" placeholder="0.00"
+                               value="{{ parameter.ValueStep or '' }}"
+                               class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Sıra</label>
+                        <input type="number" name="OrderNumber" class="form-control"
+                               value="{{ parameter.OrderNumber or '' }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Alt eleman</label>
+                        <select name="ExistSubItem" class="form-control select2bs4">
+                            <option value="0" {% if parameter.ExistSubItem== 0 %}selected{% endif %}>Yok</option>
+                            <option value="1" {% if parameter.ExistSubItem== 1 %}selected{% endif %}>Var</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="valueSection" style="display: none;">
+            <hr>
+            <h5>Parametre Değerleri (Opsiyonel)</h5>
+            <div class="row mb-2">
+                <div class="col-md-12">
+                    <table class="table table-sm table-bordered" id="valueTable">
+                        <thead>
+                        <tr>
+                            <th>Görünür İsim (ValueName)</th>
+                            <th>Anahtar (ValueKey)</th>
+                            <th>Sıra</th>
+                            <th>Alt eleman</th>
+                            <th style="width: 40px">#</th>
+                        </tr>
+                        </thead>
+                        <tbody id="valueTableBody">
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-xs btn-primary"
+                            onclick="addNewValueRow(null, '#valueTableBody')">
+                        <i class="fas fa-plus"></i> Yeni Değer Ekle
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Kaydet</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    function closeParamProcess() {
+        // 1. Hedef div'in içeriğini tamamen siler
+        $('#parameter-procces').empty();
+
+        // 2. Eğer bu alan gizlenmesi gerekiyorsa (opsiyonel)
+        // $('#parameter-procces').hide();
+
+        // 3. Varsa sayfadaki global seçimleri veya ID'leri sıfırlayabilirsiniz
+        // currentParamId = null;
+    }
+    $('#paramForm').on('submit', function (e) {
+        e.preventDefault();
+        const paramData = {
+            Id: $(this).find('input[name="Id"]').val() || null,
+            ParentId: $('#ParentId').val(),
+            ParameterName: $(this).find('input[name="ParameterName"]').val(),
+            ParameterKey: $(this).find('input[name="ParameterKey"]').val(),
+            InputType: $(this).find('select[name="InputType"]').val(),
+            DefaultValue: $(this).find('input[name="DefaultValue"]').val(),
+            MinValue: parseFloat($(this).find('input[name="MinValue"]').val()) || null,
+            MaxValue: parseFloat($(this).find('input[name="MaxValue"]').val()) || null,
+            OrderNumber: parseInt($(this).find('input[name="OrderNumber"]').val()) || 0,
+            ExistSubItem: parseInt($(this).find('select[name="ExistSubItem"]').val()) || 0,
+            ValueStep: parseFloat($(this).find('input[name="ValueStep"]').val().replace(',', '.')) || 1,
+            // 2. Alt Değerleri (Values) Dizi Olarak Başlat
+            Values: []
+        };
+
+        // 3. Dinamik Tablodaki Her Satırı Oku
+        $('.value-row').each(function () {
+            const valueRow = {
+                Id: $(this).find('input[name="ValueId"]').val() || null,
+                ValueName: $(this).find('.val-name').val(),
+                ValueKey: $(this).find('.val-key').val(),
+                ExistSubItem: $(this).find('.val-exist-subitem').val(),
+                OrderNumber: parseInt($(this).find('.val-order').val()) || 0
+            };
+            // Sadece isim ve key doluysa ekle
+            if (valueRow.ValueName && valueRow.ValueKey) {
+                paramData.Values.push(valueRow);
+            }
+        });
+        console.log(paramData);
+        $.ajax({
+            url: '/parameters/save',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(paramData),
+            success: function () {
+                $('#paramModal').modal('hide');
+                paramTable.ajax.reload();
+                $(this).find('input[name="Id"]').val("")
+                Swal.fire('Başarılı', 'Parametre hiyerarşiye eklendi.', 'success');
+            }
+        });
+    });
+    function addNewValueRow(data = null, table = '#valueTableBody') {
+        const rowId = 'val_' + Math.random().toString(36).substr(2, 9);
+        let addParamHtml = ""
+        if (data) {
+            addParamHtml = `<button type="button" class="btn btn-xs btn-primary" onclick="window.location.href='/get-params/${data.Id}/${$('#paramName').val() + '->' + data.ValueName}'">
+                    <i class="fas fa-plus"></i> Alt Parametre Ekle
+                </button>`;
+        }
+        const html = `
+        <tr id="${rowId}" class="value-row">
+            <td>
+                <input type="hidden" name="ValueId" value="${data ? data.Id : ''}">
+                <input type="text" class="form-control form-control-sm val-name" value="${data ? data.ValueName : ''}" required>
+            </td>
+            <td><input type="text" class="form-control form-control-sm val-key" value="${data ? data.ValueKey : ''}" required></td>
+            <td><input type="number" class="form-control form-control-sm val-order" value="${data ? data.OrderNumber : 0}"></td>
+            <td><select class="form-control form-control-sm val-exist-subitem">
+                <option value="0" ${data && data.ExistSubItem === 0 ? 'selected' : ''}>Yok</option>
+                <option value="1" ${data && data.ExistSubItem === 1 ? 'selected' : ''}>Var</option></select></td>
+            <td>
+                <button type="button" class="btn btn-xs btn-danger" onclick="removeValueRow('${rowId}','${data ? data.Id : ''}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+
+                ${addParamHtml}
+            </td>
+        </tr>
+    `;
+        $(table).append(html);
+    }
+
+    function removeValueRow(rowId, valueId = '') {
+        if (valueId) {
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: "Bu parametre değeri kalıcı olarak silinecektir!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Evet, sil!',
+                cancelButtonText: 'Vazgeç'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/delete-param-value/${valueId}`,
+                        type: 'DELETE',
+                        success: function (response) {
+                            $(`#${rowId}`).remove();
+                            Swal.fire('Silindi!', 'Parametre başarıyla kaldırıldı.', 'success');
+                        },
+                        error: function (xhr) {
+                            Swal.fire('Hata', 'Silme işlemi başarısız: ' + xhr.responseText, 'error');
+                        }
+                    });
+                }
+            });
+        } else {
+            $(`#${rowId}`).remove();
+        }
+    }
+
+    $(document).ready(function () {
+        if ($('#InputType').val() === 'select' || $('#InputType').val() === 'radio') {
+            $('#valueSection').show();
+            $.ajax({
+                url: '/parameter-values/' + $('#Id').val(),
+                method: 'GET',
+                success: function (response) {
+                    response.forEach(function (value) {
+                        addNewValueRow(value, '#valueTableBody');
+                    });
+                },
+                error: function () {
+                    alert('Parametre değerleri yüklenirken bir hata oluştu.');
+                }
+            });
+        }
+        $('#InputType').change(function () {
+            if ($(this).val() === 'select' || $(this).val() === 'radio') {
+                $('#valueSection').show();
+            } else {
+                $('#valueSection').hide();
+                $('#valueTableBody').html('');
+            }
+        });
+
+
+        $('#paramForm').submit(function (e) {
+            e.preventDefault();
+            var formData = $(this).serializeArray();
+            // $.ajax({
+            //     url: '/save-param',
+            //     method: 'POST',
+            //     data: formData,
+            //     success: function (response) {
+            //         alert('Parametre başarıyla kaydedildi.');
+            //         window.location.href = '/get-params/{{ parent_id }}';
+            //     },
+            //     error: function () {
+            //         alert('Parametre kaydedilirken bir hata oluştu.');
+            //     }
+            // });
+        });
+    });
+
+</script>
+{% endblock %}

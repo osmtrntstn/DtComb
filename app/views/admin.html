@@ -1,0 +1,886 @@
+{% extends "layout.html" %}
+
+{% block title %}Analiz Sayfası - {{ title }}{% endblock %}
+{% block pageTitle %}Analysis{{ pageTitle }}{% endblock %}
+
+{% block content %}
+
+<div class="card col-12">
+    <div class="card-header">
+        <h3 class="card-title">Analiz Metotları</h3>
+        <button class="btn btn-primary float-right" onclick="openModal()">Yeni Ekle</button>
+    </div>
+    <div class="card-body">
+        <table id="functionTable" class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Anahtar</th>
+                <th>İsim</th>
+                <th>Sıra</th>
+                <th>İşlemler</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="functionModal">
+    <div class="modal-dialog">
+        <form id="functionForm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <input type="hidden" name="Id" class="form-control" required>
+
+                    <div class="form-group">
+                        <label>Key</label>
+                        <input type="text" name="FunctionKey" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>İsim</label>
+                        <input type="text" name="FunctionName" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Sıra</label>
+                        <input type="number" name="OrderNumber" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Kaydet</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="card col-12">
+    <div class="card-header">
+        <h3 class="card-title">Metot Listesi</h3>
+        <button class="btn btn-primary float-right" onclick="openMethodModal()">Yeni Metot Ekle</button>
+    </div>
+    <div class="card-body">
+        <table id="methodTable" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Metot Adı</th>
+                <th>Bağlı Fonksiyon</th>
+                <th>Key</th>
+                <th>Sıra</th>
+                <th>İşlemler</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="methodModal">
+    <div class="modal-dialog">
+        <form id="methodForm">
+            <div class="modal-content">
+                <div class="modal-header"><h4 class="modal-title">Metot Yönetimi</h4></div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id">
+                    <div class="form-group">
+                        <label>Bağlı Fonksiyon</label>
+                        <select name="FunctionId" id="functionSelect" class="form-control select2bs4" required>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Metot Key</label>
+                        <input type="text" name="MethodKey" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Metot İsmi</label>
+                        <input type="text" name="MethodName" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Sıra</label>
+                        <input type="number" name="OrderNumber" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal fade" id="paramListModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="paramTitle">Parametre Listesi</h3>
+                <div class="modal-tools">
+                    <button class="btn btn-sm btn-secondary" onclick="goBackParam()" id="btnBackParam"
+                            style="display:none;">
+                        <i class="fas fa-arrow-left"></i> Geri
+                    </button>
+                    <button class="btn btn-sm btn-primary" onclick="openParamModal()">
+                        <i class="fas fa-plus"></i> Yeni Parametre
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb" id="paramBreadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)" onclick="loadRootParams()">Root</a>
+                        </li>
+                    </ol>
+                </nav>
+
+                <table id="parameterTable" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th>Parametre Adı</th>
+                        <th>Key</th>
+                        <th>Giriş Tipi</th>
+                        <th>Alt Öge</th>
+                        <th>İşlemler</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="paramModal">
+    <div class="modal-dialog modal-xl">
+        <form id="paramForm">
+            <div class="modal-content">
+                <div class="modal-header"><h4 class="modal-title">Parametre Tanımı</h4></div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id">
+                    <input type="hidden" name="ParentId" id="currentParentId">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Parametre Adı</label>
+                                <input type="text" name="ParameterName" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Key</label>
+                                <input type="text" name="ParameterKey" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Input Tipi</label>
+                                <select name="InputType" class="form-control select2bs4">
+                                    <option value="number">Number</option>
+                                    <option value="select">Select</option>
+                                    <option value="radio">Radio</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Default Değer</label>
+                                <input type="text" name="DefaultValue" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Min Değer</label>
+                                <input type="number" name="MinValue" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Max Değer</label>
+                                <input type="number" name="MaxValue" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Value Step</label>
+                                <input type="number" name="ValueStep" step="any" lang="en" placeholder="0.00"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Sıra</label>
+                                <input type="number" name="OrderNumber" class="form-control" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Alt eleman</label>
+                                <select name="ExistSubItem" class="form-control select2bs4">
+                                    <option value="0" selected>Yok</option>
+                                    <option value="1">Var</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="valueSection" style="display: none;">
+                    <hr>
+                    <h5>Parametre Değerleri (Opsiyonel)</h5>
+                    <div class="row mb-2">
+                        <div class="col-md-12">
+                            <table class="table table-sm table-bordered" id="valueTable">
+                                <thead>
+                                <tr>
+                                    <th>Görünür İsim (ValueName)</th>
+                                    <th>Anahtar (ValueKey)</th>
+                                    <th>Sıra</th>
+                                    <th>Alt eleman</th>
+                                    <th style="width: 40px">#</th>
+                                </tr>
+                                </thead>
+                                <tbody id="valueTableBody">
+                                </tbody>
+                            </table>
+                            <button type="button" class="btn btn-xs btn-primary"
+                                    onclick="addNewValueRow(null, '#valueTableBody')">
+                                <i class="fas fa-plus"></i> Yeni Değer Ekle
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Kaydet</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal fade" id="valuesModal" tabindex="-1" role="dialog" aria-labelledby="valuesModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="valuesModalLabel">
+                    <i class="fas fa-list-ul mr-2"></i> <span id="targetParamName">Parametre</span> Değerleri
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="modalTargetParamId">
+
+                <div class="alert alert-info py-2">
+                    <small><i class="fas fa-info-circle mr-1"></i> Bu parametre için görünecek seçenekleri aşağıdan
+                        ekleyebilir veya düzenleyebilirsiniz.</small>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover table-bordered" id="modalValueTable">
+                        <thead class="thead-light">
+                        <tr>
+                            <th>Görünür İsim (ValueName)</th>
+                            <th>Anahtar (ValueKey)</th>
+                            <th style="width: 100px;">Sıra</th>
+                            <th style="width: 50px;">#</th>
+                        </tr>
+                        </thead>
+                        <tbody id="modalValueTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <button type="button" class="btn btn-outline-primary btn-sm mt-2"
+                        onclick="addNewValueRow(null, '#modalValueTableBody')">
+                    <i class="fas fa-plus"></i> Yeni Değer Ekle
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Vazgeç</button>
+                <button type="button" class="btn btn-success" onclick="saveAllValues()">
+                    <i class="fas fa-save mr-1"></i> Tüm Değerleri Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    // DataTable nesnesini global veya kapsam içinde bir değişkene atayın
+    let functionTable;
+    let methodTable;
+    let paramTable;
+    let parentStack = []; // Geri dönüş yolları için
+    $(document).ready(function () {
+        functionTable = $('#functionTable').DataTable({
+            ajax: {
+                url: '/functions',
+                dataSrc: '',
+                // Sayfa her yüklendiğinde veya yenilendiğinde taze veri çekmesini zorunlu kılın
+                cache: false
+            },
+            columns: [
+                {data: 'Id'},
+                {data: 'FunctionKey'},
+                {data: 'FunctionName'},
+                {data: 'OrderNumber'},
+                {
+                    data: null,
+                    orderable: false, // İşlem sütununda sıralamayı kapatın
+                    render: function (data) {
+                        // Veriyi güvenli bir şekilde string'e çevirip openModal'a gönderiyoruz
+                        const strData = JSON.stringify(data).replace(/'/g, "\\'");
+                        return `
+                        <button class="btn btn-sm btn-info" onclick='openModal(${strData})'>
+                            <i class="fas fa-edit"></i> Düzenle
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteFunction('${data.Id}')">
+                            <i class="fas fa-trash"></i> Sil
+                        </button>
+                        <button class="btn btn-sm btn-dark" onclick="window.location.href='/get-params/${data.Id}/${data.FunctionName}'">
+                            <i class="fas fa-list"></i> Parametreler
+                        </button>
+                    `;
+                    }
+                }
+            ],
+            // Tablo boş olduğunda gösterilecek metni özelleştirin
+            language: {
+                emptyTable: "Henüz bir analiz metodu eklenmemiş."
+            }
+        });
+
+        // 1. Fonksiyon listesini dropdown için yükle
+        loadFunctionsToSelect();
+
+        // 2. Metot tablosunu ilklendir
+        methodTable = $('#methodTable').DataTable({
+            ajax: {url: '/methods', dataSrc: ''},
+            columns: [
+                {data: 'Id'},   // JSON'da "MethodName" mi yoksa "methodname" mi?
+                {data: 'MethodName'},   // JSON'da "MethodName" mi yoksa "methodname" mi?
+                {data: 'FunctionName'}, // Join ile gelen alan
+                {data: 'MethodKey'},
+                {data: 'OrderNumber'},
+                {
+                    data: null,
+                    orderable: false, // İşlem sütununda sıralamayı kapatın
+                    render: function (data) {
+                        // Veriyi güvenli bir şekilde string'e çevirip openModal'a gönderiyoruz
+                        const strData = JSON.stringify(data).replace(/'/g, "\\'");
+                        return `
+                        <button class="btn btn-sm btn-info" onclick='openMethodModal(${strData})'>
+                            <i class="fas fa-edit"></i> Düzenle
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteMethod('${data.Id}')">
+                            <i class="fas fa-trash"></i> Sil
+                        </button>
+                        <button class="btn btn-sm btn-dark" onclick="window.location.href='/get-params/${data.Id}/${data.MethodName}'">
+                            <i class="fas fa-list"></i> Parametreler
+                        </button>
+                    `;
+                    }
+                }
+            ]
+        });
+
+        // Sayfadaki '.modal' sınıfına sahip tüm elemanları dinle
+        $('.modal').on('hidden.bs.modal', function () {
+            $('.modal').modal('hide');
+            console.log("Bir modal kapandı: ", this.id);
+
+            // 1. Modal içindeki tüm formları bul ve resetle
+            $(this).find('form').each(function () {
+                this.reset();
+            });
+
+            // 2. Gizli inputları (hidden) manuel temizle (reset() gizli alanları dokunmaz)
+            $(this).find('input[type="hidden"]').val('');
+
+            // 3. Dinamik oluşturulan tablo gövdelerini veya divleri boşalt
+            // (ID'si 'Body' veya 'Container' ile bitenleri hedefleyebiliriz)
+            $(this).find('tbody').empty();
+
+            // 4. Select2 kullanıyorsanız seçimleri de görsel olarak sıfırlayın
+            $(this).find('.select2bs4').val(null).trigger('change');
+
+            // 5. Özel global değişkenleriniz varsa sıfırlayın
+            $('#currentParentId').val('');
+        });
+    });
+
+    function deleteFunction(id) {
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: "Bu fonksiyon silinecektir!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Evet, sil!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/functions/${id}`,
+                    type: 'DELETE',
+                    success: function () {
+                        $('#functionTable').DataTable().ajax.reload();
+                        Swal.fire('Silindi!', '', 'success');
+                    }
+                });
+            }
+        });
+    }
+
+    $('#functionForm').on('submit', function (e) {
+        e.preventDefault();
+
+        // Form verilerini objeye dönüştür
+        const formData = {
+            Id: $(this).find('input[name="Id"]').val() || null, // Boşsa null gönder (Backend uuid üretir)
+            FunctionKey: $(this).find('input[name="FunctionKey"]').val(),
+            FunctionName: $(this).find('input[name="FunctionName"]').val(),
+            OrderNumber: parseInt($(this).find('input[name="OrderNumber"]').val()) || 0
+        };
+        console.log(formData)
+        console.log(JSON.stringify(formData))
+        $.ajax({
+            url: '/functions/save',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function (response) {
+                $('#functionModal').modal('hide');
+                if (functionTable) {
+                    functionTable.ajax.reload(null, false);
+                    console.log("Tablo yenilendi.");
+                }
+            },
+            error: function (xhr) {
+                Swal.fire('Hata', 'Kayıt sırasında bir sorun oluştu: ' + xhr.responseText, 'error');
+            }
+        });
+    });
+
+    /**
+     * Modal penceresini açar.
+     * @param {Object|null} data - Düzenleme modunda fonksiyon objesi, ekleme modunda null.
+     */
+    function openModal(data = null) {
+        const $form = $('#functionForm');
+        const $modal = $('#functionModal');
+
+        // Formu sıfırla (Eski veriler kalmasın)
+        $form[0].reset();
+
+        if (data) {
+            // --- DÜZENLEME MODU ---
+            $modal.find('.modal-title').text('Fonksiyonu Düzenle');
+
+            // Form alanlarını doldur
+            $form.find('input[name="Id"]').val(data.Id);
+            $form.find('input[name="FunctionKey"]').val(data.FunctionKey);
+            $form.find('input[name="FunctionName"]').val(data.FunctionName);
+            $form.find('input[name="OrderNumber"]').val(data.OrderNumber);
+        } else {
+            // --- YENİ EKLEME MODU ---
+            $modal.find('.modal-title').text('Yeni Fonksiyon Ekle');
+
+            // Id alanını boş bırakıyoruz; Backend (Pydantic) tarafında
+            // default_factory=uuid4 kullandığımız için boş gitmesi yeni bir ID üretilmesini sağlar.
+            $form.find('input[name="Id"]').val('');
+        }
+
+        // Modalı göster
+        $modal.modal('show');
+    }
+
+    // Dropdown'ı doldurma
+    function loadFunctionsToSelect() {
+        $.get('/functions', function (data) {
+            let options = '<option value="" disabled selected>Fonksiyon Seçiniz...</option>';
+            data.forEach(item => {
+                options += `<option value="${item.Id}">${item.FunctionName}</option>`;
+            });
+            $('#functionSelect').html(options);
+        });
+    }
+
+    /**
+     * Metot Modalını açar.
+     * @param {Object|null} data - Düzenleme modunda metot nesnesi, ekleme modunda null.
+     */
+    function openMethodModal(data = null) {
+        const $form = $('#methodForm');
+        const $modal = $('#methodModal');
+
+        $form[0].reset(); // Formu temizle
+
+        if (data) {
+            $modal.find('.modal-title').text('Metodu Düzenle');
+            $form.find('input[name="Id"]').val(data.Id);
+            $form.find('select[name="FunctionId"]').val(data.FunctionId); // Bağlı olduğu fonksiyon
+            $form.find('input[name="MethodKey"]').val(data.MethodKey);
+            $form.find('input[name="MethodName"]').val(data.MethodName);
+            $form.find('input[name="OrderNumber"]').val(data.OrderNumber);
+        } else {
+            $modal.find('.modal-title').text('Yeni Metot Ekle');
+            $form.find('input[name="Id"]').val(''); // Yeni kayıt için ID boş
+        }
+
+        $modal.modal('show');
+    }
+
+    $('#methodForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const idVal = $(this).find('input[name="Id"]').val();
+
+        const formData = {
+            Id: (idVal && idVal.trim() !== "") ? idVal : null,
+            FunctionId: $(this).find('select[name="FunctionId"]').val(), // Seçili fonksiyonun ID'si
+            MethodKey: $(this).find('input[name="MethodKey"]').val() || "",
+            MethodName: $(this).find('input[name="MethodName"]').val() || "",
+            OrderNumber: parseInt($(this).find('input[name="OrderNumber"]').val()) || 0
+        };
+
+        $.ajax({
+            url: '/methods/save',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function (response) {
+                $('#methodModal').modal('hide');
+
+                // DataTable'ı yenile (methodTable değişkeni DataTable nesnesidir)
+                if (typeof methodTable !== 'undefined') {
+                    methodTable.ajax.reload(null, false);
+                }
+
+                Swal.fire('Başarılı', 'Metot kaydedildi.', 'success');
+            },
+            error: function (xhr) {
+                Swal.fire('Hata', 'İşlem başarısız: ' + xhr.responseText, 'error');
+            }
+        });
+    });
+
+    // Metot Silme Fonksiyonu
+    function deleteMethod(id) {
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: "Bu metot kalıcı olarak silinecektir!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/methods/${id}`,
+                    type: 'DELETE',
+                    success: function (response) {
+                        methodTable.ajax.reload(null, false); // Tabloyu tazele
+                        Swal.fire('Silindi!', 'Metot başarıyla kaldırıldı.', 'success');
+                    },
+                    error: function (xhr) {
+                        Swal.fire('Hata', 'Silme işlemi başarısız: ' + xhr.responseText, 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Parameter Modalını açar.
+     * @param {Object|null} data - Düzenleme modunda metot nesnesi, ekleme modunda null.
+     */
+    function openParameterListModal(parentId = null) {
+        const $modal = $('#paramListModal');
+
+        initParamTable(parentId)
+
+        $modal.modal('show');
+    }
+
+    function openParamModal(data = null) {
+        console.log(data);
+        const $form = $('#paramForm');
+        const $modal = $('#paramModal');
+        const $valueTableBody = $('#valueTableBody');
+        const $valueSection = $('#valueSection');
+
+        $form[0].reset();
+        $valueTableBody.empty(); // Eski satırları temizle
+
+        if (data) {
+            $modal.find('.modal-title').text('Parametreyi Düzenle');
+            // Form alanlarını doldur...
+            $form.find('input[name="Id"]').val(data.Id);
+            $form.find('input[name="ParameterName"]').val(data.ParameterName);
+            $form.find('input[name="ParameterKey"]').val(data.ParameterKey);
+            $form.find('input[name="OrderNumber"]').val(data.OrderNumber);
+            $form.find('input[name="DefaultValue"]').val(data.DefaultValue);
+            $form.find('input[name="MinValue"]').val(data.MinValue);
+            $form.find('input[name="MaxValue"]').val(data.MaxValue);
+            $form.find('input[name="ValueStep"]').val(data.ValueStep);
+            $form.find('select[name="InputType"]').val(data.InputType).trigger('change');
+            $form.find('select[name="ExistSubItem"]').val(data.ExistSubItem).trigger('change');
+
+            // Eğer veritabanında bu parametreye ait değerler varsa onları tabloya ekle
+            if (data.Values && data.Values.length > 0) {
+                data.Values.forEach(val => addNewValueRow(val));
+            }
+        } else {
+            $modal.find('.modal-title').text('Yeni Parametre');
+            $valueSection.hide(); // Yeni kayıtta varsayılan olarak gizle
+        }
+
+        $modal.modal('show');
+    }
+
+    function openParamValueModal() {
+        const $modal = $('#paramValueModal');
+
+        $modal.modal('show');
+    }
+
+    function initParamTable(parentId) {
+        $('#currentParentId').val(parentId);
+
+        if ($.fn.DataTable.isDataTable('#parameterTable')) {
+            paramTable.destroy();
+        }
+
+        paramTable = $('#parameterTable').DataTable({
+            ajax: {
+                url: `/parameters/${parentId}`,
+                dataSrc: ''
+            },
+            columns: [
+                {data: 'ParameterName'},
+                {data: 'ParameterKey'},
+                {data: 'InputType'},
+                {
+                    data: 'ExistSubItem',
+                    render: function (data) {
+                        return data === 1 ? '<span class="badge badge-info">Evet</span>' : '<span class="badge badge-secondary">Hayır</span>';
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data) {
+                        let actionButtons = `
+                        <button class="btn btn-xs btn-info" onclick='openParamModal(${JSON.stringify(data)})'><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-xs btn-danger" onclick="deleteParam('${data.Id}')"><i class="fas fa-trash"></i></button>
+                    `;
+
+                        // Eğer alt öge ekleyebilecek bir yapıysa (Recursive)
+                        actionButtons += `<button class="btn btn-xs btn-warning" onclick="drillDown('${data.Id}', '${data.ParameterName}')"><i class="fas fa-sitemap"></i> Alt Parametreler</button>`;
+
+                        // Eğer Select tipi ise Değer ekleme butonu
+                        if (data.InputType === 'select' || data.InputType === 'radio') {
+                            actionButtons += `<button class="btn btn-xs btn-success" onclick="openValuesModal('${data.Id}')"><i class="fas fa-list"></i> Değerler</button>`;
+                        }
+
+                        return actionButtons;
+                    }
+                }
+            ]
+        });
+    }
+
+    /**
+     * Parametreye ait değerleri (Value) yönetmek için modalı açar.
+     * @param {string} parameterId - Bağlı olduğu Tbl_Parameter Id'si.
+     */
+    function openValuesModal(parameterId) {
+        const $modal = $('#valuesModal'); // Mevcut parametre modalını kullanabilir veya ayrı bir modal açabilirsiniz
+        const $valueTableBody = $('#modalValueTableBody');
+
+        // 1. Mevcut satırları temizle
+        $valueTableBody.empty();
+
+        // 2. ParentId (ParameterId) bilgisini formda sakla
+        $('#currentParameterId').val(parameterId);
+
+        // 3. Sunucudan bu parametreye ait mevcut değerleri getir
+        $.ajax({
+            url: `/parameter-values/${parameterId}`,
+            type: 'GET',
+            success: function (response) {
+                // Değerler bölümünü görünür yap
+                $modal.modal('show');
+                if (response && response.length > 0) {
+                    // Her bir değer için tabloya yeni satır ekle
+                    response.forEach(val => {
+                        addNewValueRow(val, "#modalValueTableBody");
+                    });
+                } else {
+                    // Eğer hiç değer yoksa kullanıcıya boş bir satır sun
+                    addNewValueRow(null, "#modalValueTableBody");
+                }
+
+                // Eğer bu modal parametre modalından bağımsızsa modalı göster
+                // $('#valuesModal').modal('show');
+            },
+            error: function () {
+                Swal.fire('Hata', 'Değerler yüklenirken bir sorun oluştu.', 'error');
+            }
+        });
+    }
+
+    // Alt seviyeye inme
+    function drillDown(newParentId, name) {
+        const currentId = $('#currentParentId').val();
+        parentStack.push(currentId);
+
+        $('#btnBackParam').show();
+        $('#paramBreadcrumb').append(`<li class="breadcrumb-item active" id="bc-${newParentId}">${name}</li>`);
+        initParamTable(newParentId);
+    }
+
+    // Geri çıkma
+    function goBackParam() {
+        if (parentStack.length > 0) {
+            const prevId = parentStack.pop();
+            if (parentStack.length === 0) $('#btnBackParam').hide();
+
+            $('#paramBreadcrumb li:last-child').remove();
+            initParamTable(prevId);
+        }
+    }
+
+    $('#paramForm').on('submit', function (e) {
+        e.preventDefault();
+        const paramData = {
+            Id: $(this).find('input[name="Id"]').val() || null,
+            ParentId: $('#currentParentId').val(),
+            ParameterName: $(this).find('input[name="ParameterName"]').val(),
+            ParameterKey: $(this).find('input[name="ParameterKey"]').val(),
+            InputType: $(this).find('select[name="InputType"]').val(),
+            DefaultValue: $(this).find('input[name="DefaultValue"]').val(),
+            MinValue: parseFloat($(this).find('input[name="MinValue"]').val()) || null,
+            MaxValue: parseFloat($(this).find('input[name="MaxValue"]').val()) || null,
+            OrderNumber: parseInt($(this).find('input[name="OrderNumber"]').val()) || 0,
+            ExistSubItem: parseInt($(this).find('select[name="ExistSubItem"]').val()) || 0,
+            ValueStep: parseFloat($(this).find('input[name="ValueStep"]').val().replace(',', '.')) || 1,
+            // 2. Alt Değerleri (Values) Dizi Olarak Başlat
+            Values: []
+        };
+
+        // 3. Dinamik Tablodaki Her Satırı Oku
+        $('.value-row').each(function () {
+            const valueRow = {
+                Id: $(this).find('input[name="ValueId"]').val() || null,
+                ValueName: $(this).find('.val-name').val(),
+                ValueKey: $(this).find('.val-key').val(),
+                ExistSubItem: $(this).find('.val-exist-subitem').val(),
+                OrderNumber: parseInt($(this).find('.val-order').val()) || 0
+            };
+            // Sadece isim ve key doluysa ekle
+            if (valueRow.ValueName && valueRow.ValueKey) {
+                paramData.Values.push(valueRow);
+            }
+        });
+        console.log(paramData);
+        $.ajax({
+            url: '/parameters/save',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(paramData),
+            success: function () {
+                $('#paramModal').modal('hide');
+                paramTable.ajax.reload();
+                $(this).find('input[name="Id"]').val("")
+                Swal.fire('Başarılı', 'Parametre hiyerarşiye eklendi.', 'success');
+            }
+        });
+    });
+
+    // Metot Silme Fonksiyonu
+    function deleteParam(id) {
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: "Bu parametre kalıcı olarak silinecektir!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/parameters/${id}`,
+                    type: 'DELETE',
+                    success: function (response) {
+                        paramTable.ajax.reload(null, false); // Tabloyu tazele
+                        Swal.fire('Silindi!', 'Parametre başarıyla kaldırıldı.', 'success');
+                    },
+                    error: function (xhr) {
+                        Swal.fire('Hata', 'Silme işlemi başarısız: ' + xhr.responseText, 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    function addSubParams(id) {
+        $('#currentParentId').val(id);
+
+        openParamModal(null);
+    }
+
+    function addNewValueRow(data = null, table = '#valueTableBody') {
+        const rowId = 'val_' + Math.random().toString(36).substr(2, 9);
+        let addParamHtml = ""
+        if (data) {
+            addParamHtml = `<button type="button" class="btn btn-xs btn-primary" onclick="addSubParams('${data.Id}')">
+                    <i class="fas fa-plus"></i> Alt Parametre Ekle
+                </button>`;
+        }
+        const html = `
+        <tr id="${rowId}" class="value-row">
+            <td>
+                <input type="hidden" name="ValueId" value="${data ? data.Id : ''}">
+                <input type="text" class="form-control form-control-sm val-name" value="${data ? data.ValueName : ''}" required>
+            </td>
+            <td><input type="text" class="form-control form-control-sm val-key" value="${data ? data.ValueKey : ''}" required></td>
+            <td><input type="number" class="form-control form-control-sm val-order" value="${data ? data.OrderNumber : 0}"></td>
+            <td><select class="form-control form-control-sm val-exist-subitem">
+                <option value="0" ${data && data.ExistSubItem === 0 ? 'selected' : ''}>Yok</option>
+                <option value="1" ${data && data.ExistSubItem === 1 ? 'selected' : ''}>Var</option></select></td>
+            <td>
+                <button type="button" class="btn btn-xs btn-danger" onclick="removeValueRow('${rowId}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+
+                ${addParamHtml}
+            </td>
+        </tr>
+    `;
+        $(table).append(html);
+    }
+
+    $(document).on('change', 'select[name="InputType"]', function () {
+        const selectedType = $(this).val();
+        const $valueSection = $('#valueSection');
+
+        // Sadece select veya radio seçildiğinde göster
+        if (selectedType === 'select' || selectedType === 'radio') {
+            $valueSection.fadeIn(); // Şık bir geçişle göster
+        } else {
+            $valueSection.fadeOut(); // Gizle
+            // Opsiyonel: Gizlendiğinde daha önce eklenmiş satırları temizlemek isterseniz:
+            // $('#valueTableBody').empty();
+        }
+    });
+
+    function removeValueRow(rowId) {
+        $(`#${rowId}`).remove();
+    }
+
+
+</script>
+{% endblock %}
