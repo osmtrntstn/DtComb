@@ -628,19 +628,16 @@
                 $('#collect-data').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Analyzing...');
             },
             success: function (response) {
-                if (response.status === "success") {
-                    drawRocChart(response);
-                    fillRocCoordinatesTables(response.roc_data);
-                    fillAucStatisticsTable(response.auc_data);
-                    fillMultipleComparisonTable(response.mult_comp_data);
-                    fillThreeCutPointTables(response);
-                    fillDiagnosticTables(response.diag_stat_data);
+                drawRocChart(response);
+                fillRocCoordinatesTables(response.roc_data);
+                fillAucStatisticsTable(response.auc_data);
+                fillMultipleComparisonTable(response.mult_comp_data);
+                fillThreeCutPointTables(response);
+                fillDiagnosticTables(response.diag_stat_data);
 
-                    drawDensityPlot(response.markers, response.thresholds.marker1, "ddimer", "group", "destiny_plot_marker_1");
-                    drawDensityPlot(response.markers, response.thresholds.marker1, "log_leukocyte", "group", "destiny_plot_marker_2");
-                } else {
-                    alert("Bir hata oluştu: Başarılı yanıt alınamadı.");
-                }
+                drawDensityPlot(response.markers, response.thresholds.marker1, response.marker1, response.status, "destiny_plot_marker_1");
+                drawDensityPlot(response.markers, response.thresholds.marker1, response.marker2, response.status, "destiny_plot_marker_2");
+
             },
             error: function (xhr) {
                 $('#collect-data').prop('disabled', false).text('Go');
@@ -898,6 +895,7 @@
     }
 
     function drawRocChart(response) {
+        console.log(response);
         // --- 1. GRAFİK VERİSİNİ HAZIRLAMA ---
         // Marker isimlerine göre datayı grupla
         const groupedData = {};
@@ -923,8 +921,8 @@
         // Renk paleti
         const colors = {
             "Combination": "#F8766D", // Kırmızı
-            "ddimer": "#619CFF",      // Mavi
-            "log_leukocyte": "#00BA38" // Yeşil
+            [response.marker1]: "#619CFF",      // Mavi
+            [response.marker2]: "#00BA38" // Yeşil
         };
 
         const datasets = Object.keys(groupedData).map(marker => {
@@ -1097,11 +1095,11 @@
             markers: tableData, // Tüm tabloyu buraya ekliyoruz
             delimiter: delimiter,
             dataInput: dataInputRadio,
-            exampleData : exampleDataRadio,
-            marker1 : marker1,
-            marker2 : marker2,
-            category : category,
-            status : status,
+            exampleData: exampleDataRadio,
+            marker1: marker1,
+            marker2: marker2,
+            category: category,
+            status: status,
         };
         const isAdvancedChecked = $('#advancedCheckBox').is(':checked');
 

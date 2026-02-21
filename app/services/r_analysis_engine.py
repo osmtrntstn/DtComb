@@ -46,9 +46,14 @@ def call_roc_plot_analysis(data):
             cutoff_method = parsed_data.get('cuttoffMethod', {})
             coefficients = parsed_data.get('coefficients', {})
             markers = parsed_data.get('markers', {})
+            marker1 = parsed_data.get('marker1', {})
+            marker2 = parsed_data.get('marker2', {})
+            status = parsed_data.get('status', {})
 
         return {
-            "status": "success",
+            "status": status,
+            "marker1": marker1,
+            "marker2": marker2,
             "roc_data": roc_data,
             "auc_data": auc_data,
             "mult_comp_data": mult_comp_data,

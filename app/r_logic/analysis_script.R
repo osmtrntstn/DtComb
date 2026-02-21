@@ -118,6 +118,9 @@ createROCPlot <- function(input, output = NULL, session = NULL) {
 
       modelFit$coefficients = if(!is.null(modelFit$fit$parameters)) as.list(modelFit$fit$parameters) else list()
       modelFit$markers = df
+      modelFit$marker1 <- input$marker1
+      modelFit$marker2 <- input$marker2
+      modelFit$status <- input$status
       return(jsonlite::toJSON(modelFit, pretty = TRUE, auto_unbox = TRUE, force = TRUE))
 
     } else {
