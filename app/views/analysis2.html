@@ -154,14 +154,238 @@
             </ul>
             <div class="tab-content" id="custom-content-below-tabContent">
                 <div class="tab-pane fade show active" id="custom-content-below-results" role="tabpanel"
-                     aria-labelledby="custom-content-below-results-tab">The "Analysis" tab should be used for
-                    analysis to combine two diagnostic
-                    test markers. If you want to evaluate the performance of a single diagnostic test or compare
-                    the performance of more than one diagnostic test, the "ROC Analysis for Single Marker(s)"
-                    tab should be selected.
-                    <!-- /.card-header -->
-                    <div class="row">
-                        <div class="col-md-12">
+                     aria-labelledby="custom-content-below-results-tab">
+                    <!-- Custom Tabs -->
+                    <div class="card mt-2">
+                        <div class="card-header d-flex p-0">
+                            <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                          href="javascript:alert('tiklandi')">ROC
+                                Coordinates</a></h3>
+                            <ul class="nav nav-pills ml-auto p-2">
+                                <li class="nav-item"><a class="nav-link active" href="#tab_roc_coordinates_comb_score"
+                                                        data-toggle="tab">Combination Score</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#tab_roc_coordinates_marker_1"
+                                                        data-toggle="tab">Marker 1</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#tab_roc_coordinates_marker_2"
+                                                        data-toggle="tab">Marker 2</a></li>
+
+                            </ul>
+                        </div><!-- /.card-header -->
+                        <div id="card_roc_coordinates" class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="tab_roc_coordinates_comb_score">
+                                    <table id="table_roc_coordinates_comb_score"
+                                           class="table table-bordered table-hover dataTable">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Marker</th>
+                                            <th>Threshold</th>
+                                            <th>Specificity</th>
+                                            <th>Sensitivity</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                                <!-- /.tab-pane -->
+                                <div class="tab-pane" id="tab_roc_coordinates_marker_1">
+                                    <table id="table_roc_coordinates_marker_1"
+                                           class="table table-bordered table-hover dataTable">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Marker</th>
+                                            <th>Threshold</th>
+                                            <th>Specificity</th>
+                                            <th>Sensitivity</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <!-- /.tab-pane -->
+                                <div class="tab-pane" id="tab_roc_coordinates_marker_2">
+                                    <table id="table_roc_coordinates_marker_2"
+                                           class="table table-bordered table-hover dataTable">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Marker</th>
+                                            <th>Threshold</th>
+                                            <th>Specificity</th>
+                                            <th>Sensitivity</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <!-- /.tab-pane -->
+                            </div>
+                            <!-- /.tab-content -->
+                        </div><!-- /.card-body -->
+                    </div>
+                    <!-- ./card -->
+                    <div class="card mt-2">
+                        <div class="card-header d-flex p-0">
+                            <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                          href="javascript:alert('tiklandi')">AUC
+                                Table</a></h3>
+                            <ul class="nav nav-pills mr-auto p-2" style="display: none">
+                                <li class="nav-item"><a class="nav-link" href="#tab_auc_table" data-toggle="tab">AUC
+                                    Table</a></li>
+                            </ul>
+                        </div><!-- /.card-header -->
+                        <div id="card_auc_table" class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="tab_auc_table">
+                                    <table id="table_auc_statistics" class="table table-bordered table-hover dataTable">
+                                        <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>AUC</th>
+                                            <th>SE.AUC</th>
+                                            <th>LowerLimit</th>
+                                            <th>UpperLimit</th>
+                                            <th>z</th>
+                                            <th>p-value</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                                <!-- /.tab-pane -->
+                            </div>
+                            <!-- /.tab-content -->
+                        </div><!-- /.card-body -->
+                    </div>
+                    <!-- ./card -->
+                    <div class="card mt-2">
+                        <div class="card-header d-flex p-0">
+                            <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                          href="javascript:alert('tiklandi')">Multiple
+                                Comparison Table</a></h3>
+                            <ul class="nav nav-pills ml-auto p-2" style="display: none">
+                                <li class="nav-item"><a class="nav-link" href="#tab_multiple_comparison_table"
+                                                        data-toggle="tab">Multiple Comparison Table</a></li>
+                            </ul>
+                        </div><!-- /.card-header -->
+                        <div id="card_multiple_comparison_table" class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="tab_multiple_comparison_table">
+                                    <table id="table_multiple_comparison"
+                                           class="table table-bordered table-hover dataTable">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Marker1 (A)</th>
+                                            <th>Marker2 (B)</th>
+                                            <th>AUC (A)</th>
+                                            <th>AUC (B)</th>
+                                            <th>|A-B|</th>
+                                            <th>SE(|A-B|)</th>
+                                            <th>z</th>
+                                            <th>p-value</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                                <!-- /.tab-pane -->
+                            </div>
+                            <!-- /.tab-content -->
+                        </div><!-- /.card-body -->
+                    </div>
+                    <!-- ./card -->
+                    <div class="card mt-2">
+                        <div class="card-header d-flex p-0">
+                            <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                          href="javascript:alert('tiklandi')">Cut
+                                Points</a></h3>
+                            <ul class="nav nav-pills ml-auto p-2">
+                                <li class="nav-item"><a class="nav-link active" href="#tab_cutpoint_comb_score"
+                                                        data-toggle="tab">Combination Score</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#tab_cutpoint_marker_1"
+                                                        data-toggle="tab">Marker 1</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#tab_cutpoint_marker_2"
+                                                        data-toggle="tab">Marker 2</a></li>
+
+                            </ul>
+                        </div><!-- /.card-header -->
+                        <div id="card_cutpoint" class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="tab_cutpoint_comb_score">
+                                    <table id="table_cut_combined" class="table table-sm w-100"></table>
+                                </div>
+                                <!-- /.tab-pane -->
+                                <div class="tab-pane" id="tab_cutpoint_marker_1">
+                                    <table id="table_cut_marker1" class="table table-sm w-100"></table>
+                                </div>
+                                <!-- /.tab-pane -->
+                                <div class="tab-pane" id="tab_cutpoint_marker_2">
+                                    <table id="table_cut_marker2" class="table table-sm w-100"></table>
+                                </div>
+                                <!-- /.tab-pane -->
+                            </div>
+                            <!-- /.tab-content -->
+                        </div><!-- /.card-body -->
+                    </div>
+                    <!-- ./card -->
+                    <div class="card mt-2">
+                        <div class="card-header d-flex p-0">
+                            <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                          href="javascript:alert('tiklandi')">Performance
+                                Measures</a></h3>
+                            <ul class="nav nav-pills ml-auto p-2">
+                                <li class="nav-item"><a class="nav-link active"
+                                                        href="#tab_performance_measures_comb_score"
+                                                        data-toggle="tab">Combination Score</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#tab_performance_measures_marker_1"
+                                                        data-toggle="tab">Marker 1</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#tab_performance_measures_marker_2"
+                                                        data-toggle="tab">Marker 2</a></li>
+
+                            </ul>
+                        </div><!-- /.card-header -->
+                        <div id="card_performance_measures" class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="tab_performance_measures_comb_score">
+                                    <h5>Confusion Matrix</h5>
+                                    <table id="table_conf_combined" class="table table-sm table-bordered mb-4"></table>
+                                    <h5 class="mt-4">Diagnostic Statistics</h5>
+                                    <table id="table_stat_combined" class="table table-sm table-bordered"></table>
+                                </div>
+                                <!-- /.tab-pane -->
+                                <div class="tab-pane" id="tab_performance_measures_marker_1">
+                                    <h5>Confusion Matrix</h5>
+                                    <table id="table_conf_marker1" class="table table-sm table-bordered mb-4"></table>
+                                    <h5 class="mt-4">Diagnostic Statistics</h5>
+                                    <table id="table_stat_marker1" class="table table-sm table-bordered"></table>
+                                </div>
+                                <!-- /.tab-pane -->
+                                <div class="tab-pane" id="tab_performance_measures_marker_2">
+                                    <h5>Confusion Matrix</h5>
+                                    <table id="table_conf_marker2" class="table table-sm table-bordered mb-4"></table>
+                                    <h5 class="mt-4">Diagnostic Statistics</h5>
+                                    <table id="table_stat_marker2" class="table table-sm table-bordered"></table>
+                                </div>
+                                <!-- /.tab-pane -->
+                            </div>
+                            <!-- /.tab-content -->
+                        </div><!-- /.card-body -->
+                    </div>
+                    <!-- ./card -->
+                </div>
+                <div class="tab-pane fade" id="custom-content-below-plots" role="tabpanel"
+                     aria-labelledby="custom-content-below-plots-tab">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        ROC Curves for Combination Diagnostic Test</h3>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="rocChart"
+                                            style="min-height: 450px; height: 450px; max-width: 100%;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
                             <div class="card card-success">
                                 <div class="card-header">
                                     <h3 class="card-title">Kombinasyon Formülü (Scoring)</h3>
@@ -196,25 +420,144 @@
                             </div>
                         </div>
                     </div>
-                    <!-- /.row -->
-                </div>
-                <div class="tab-pane fade" id="custom-content-below-plots" role="tabpanel"
-                     aria-labelledby="custom-content-below-plots-tab">
                     <div class="row justify-content-center">
-                        <div class="col-md-8">
-                            <div class="card card-primary">
-                                <div class="card-header">
-                                    <h3 class="card-title">ROC Curves for Combination Diagnostic Test</h3>
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="rocChart"
-                                            style="min-height: 450px; height: 450px; max-width: 100%;"></canvas>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="card mt-2 col-12">
+                            <div class="card-header d-flex p-0">
+                                <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                              href="javascript:alert('tiklandi')">Kernel
+                                    density graphs</a></h3>
+                                <ul class="nav nav-pills ml-auto p-2">
+                                    <li class="nav-item"><a class="nav-link"
+                                                            href="#tab_destiny_chart_plot_comb_score"
+                                                            data-toggle="tab">Combination Score</a></li>
+                                    <li class="nav-item"><a class="nav-link active"
+                                                            href="#tab_destiny_chart_plot_marker_1"
+                                                            data-toggle="tab">Marker 1</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#tab_destiny_chart_plot_marker_2"
+                                                            data-toggle="tab">Marker 2</a></li>
 
+                                </ul>
+                            </div><!-- /.card-header -->
+                            <div id="card_destiny_chart_plot" class="card-body ml-auto mr-auto">
+                                <div class="tab-content">
+                                    <div class="tab-pane justify-content-center" id="tab_destiny_chart_plot_comb_score">
+                                        <div id="destiny_plot_comb_score"
+                                             style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                    <div class="tab-pane justify-content-center active"
+                                         id="tab_destiny_chart_plot_marker_1">
+                                        <div id="destiny_plot_marker_1"
+                                             style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                    <div class="tab-pane justify-content-center" id="tab_destiny_chart_plot_marker_2">
+                                        <div id="destiny_plot_marker_2"
+                                             style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                </div>
+                                <!-- /.tab-content -->
+                            </div><!-- /.card-body -->
+                        </div>
+                        <!-- ./card -->
                     </div>
-                    <!-- /.col -->
+
+                    <div class="row justify-content-center">
+                        <div class="card mt-2 col-12">
+                            <div class="card-header d-flex p-0">
+                                <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                              href="javascript:alert('tiklandi')">Individual-value
+                                    Graphs</a></h3>
+                                <ul class="nav nav-pills ml-auto p-2">
+                                    <li class="nav-item"><a class="nav-link"
+                                                            href="#tab_individual_value_comb_score"
+                                                            data-toggle="tab">Combination Score</a></li>
+                                    <li class="nav-item"><a class="nav-link active"
+                                                            href="#tab_individual_value_marker_1"
+                                                            data-toggle="tab">Marker 1</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#tab_individual_value_marker_2"
+                                                            data-toggle="tab">Marker 2</a></li>
+
+                                </ul>
+                            </div><!-- /.card-header -->
+                            <div id="card_individual_value" class="card-body ml-auto mr-auto">
+                                <div class="tab-content">
+                                    <div class="tab-pane justify-content-center" id="tab_individual_value_comb_score">
+                                        <div id="individual_value_comb_score"
+                                             style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                    <div class="tab-pane justify-content-center active"
+                                         id="tab_individual_value_marker_1">
+                                        <div id="individual_value_marker_1"
+                                             style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                    <div class="tab-pane justify-content-center" id="tab_individual_value_marker_2">
+                                        <div id="individual_value_marker_2"
+                                             style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                </div>
+                                <!-- /.tab-content -->
+                            </div><!-- /.card-body -->
+                        </div>
+                        <!-- ./card -->
+                    </div>
+
+                    <div class="row justify-content-center">
+                        <div class="card mt-2 col-12">
+                            <div class="card-header d-flex p-0">
+                                <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                              href="javascript:alert('tiklandi')">Sens.
+                                    & Spec. Curve</a></h3>
+                                <ul class="nav nav-pills ml-auto p-2">
+                                    <li class="nav-item"><a class="nav-link"
+                                                            href="#tab_sens_spec_curve_comb_score"
+                                                            data-toggle="tab">Combination Score</a></li>
+                                    <li class="nav-item"><a class="nav-link active"
+                                                            href="#tab_sens_spec_curve_marker_1"
+                                                            data-toggle="tab">Marker 1</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#tab_sens_spec_curve_marker_2"
+                                                            data-toggle="tab">Marker 2</a></li>
+
+                                </ul>
+                            </div><!-- /.card-header -->
+                            <div id="card_sens_spec_curve" class="card-body ml-auto mr-auto">
+                                <div class="tab-content">
+                                    <div class="tab-pane justify-content-center" id="tab_sens_spec_curve_comb_score">
+                                        <div id="sens_spec_curve_comb_score"
+                                             style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                    <div class="tab-pane justify-content-center active"
+                                         id="tab_sens_spec_curve_marker_1">
+                                        <div id="sens_spec_curve_marker_1"
+                                             style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                    <div class="tab-pane justify-content-center" id="tab_sens_spec_curve_marker_2">
+                                        <div id="sens_spec_curve_marker_2"
+                                             style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                </div>
+                                <!-- /.tab-content -->
+                            </div><!-- /.card-body -->
+                        </div>
+                        <!-- ./card -->
+                    </div>
+
                 </div>
             </div>
         </div><!-- /.card-body -->
@@ -228,9 +571,30 @@
 
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 <script src="./static/js/indexed-db-manager.js"></script>
 
 <script>
+    let dataTableSettings = {
+        "responsive": true,
+        "lengthChange": true,
+        "autoWidth": false,
+        "dom": "<'row'<'col-sm-12 col-md-8 d-flex align-items-center'B l><'col-sm-12 col-md-4 text-right'f>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        "buttons": [
+            {
+                extend: 'copy',
+                className: 'btn btn-custom-color btn-sm' // 'btn-custom-color' özel sınıfımız
+            },
+            {extend: 'csv', className: 'btn btn-custom-color btn-sm'},
+            {extend: 'excel', className: 'btn btn-custom-color btn-sm'},
+            {extend: 'pdf', className: 'btn btn-custom-color btn-sm'},
+            {extend: 'print', className: 'btn btn-custom-color btn-sm'}
+        ],
+        "language": {"lengthMenu": "_MENU_", "search": "Search:"}
+    };
+
     function fixResponsiveLayout() {
         const windowWidth = $(window).width();
 
@@ -254,7 +618,6 @@
     $('#collect-data').on('click', async function () {
         // 1. Temel analiz bilgilerini al
         let payload = await collectAllData()
-
         // 4. Backend'e Gönder
         $.ajax({
             url: '/run-analysis',
@@ -266,153 +629,16 @@
             },
             success: function (response) {
                 if (response.status === "success") {
-                    // --- 1. GRAFİK VERİSİNİ HAZIRLAMA ---
-                    // Marker isimlerine göre datayı grupla
-                    const groupedData = {};
+                    console.log(response);
+                    drawRocChart(response);
+                    fillRocCoordinatesTables(response.roc_data);
+                    fillAucStatisticsTable(response.auc_data);
+                    fillMultipleComparisonTable(response.mult_comp_data);
+                    fillThreeCutPointTables(response);
+                    fillDiagnosticTables(response.diag_stat_data);
 
-                    response.roc_data.forEach(row => {
-                        if (!groupedData[row.Marker]) {
-                            groupedData[row.Marker] = [];
-                        }
-                        // X ekseni (1 - Specificity)
-                        // Y ekseni (Sensitivity)
-                        groupedData[row.Marker].push({
-                            x: 1 - row.Specificity,
-                            y: row.Sensitivity,
-                            threshold: row.Threshold // Hover (tooltip) için saklıyoruz
-                        });
-                    });
-
-                    // Çizgilerin zikzak yapmaması için X eksenine göre sırala
-                    Object.keys(groupedData).forEach(key => {
-                        groupedData[key].sort((a, b) => a.x - b.x);
-                    });
-
-                    // Renk paleti
-                    const colors = {
-                        "Combination": "#F8766D", // Kırmızı
-                        "ddimer": "#619CFF",      // Mavi
-                        "log_leukocyte": "#00BA38" // Yeşil
-                    };
-
-                    const datasets = Object.keys(groupedData).map(marker => {
-                        return {
-                            label: marker === "Combination" ? "Combination Score" : marker, // İsimlendirme
-                            data: groupedData[marker],
-                            borderColor: colors[marker] || "#333333",
-                            backgroundColor: 'transparent',
-                            borderWidth: 3,
-                            showLine: true,
-                            pointRadius: 0, // Noktaları gizle
-                            pointHoverRadius: 6 // Üzerine gelince noktalar görünsün
-                        };
-                    });
-
-                    // Köşegen Referans Çizgisi (Rastgele Şans)
-                    datasets.push({
-                        label: 'Reference Line',
-                        data: [{x: 0, y: 0}, {x: 1, y: 1}],
-                        borderColor: '#999999',
-                        borderWidth: 2,
-                        borderDash: [5, 5],
-                        showLine: true,
-                        pointRadius: 0,
-                        pointHoverRadius: 0
-                    });
-
-                    // --- 2. GRAFİĞİ ÇİZDİRME (CHART.JS) ---
-                    const ctx = document.getElementById('rocChart').getContext('2d');
-
-                    // Varsa eski grafiği yok et
-                    if (window.rocChartInstance) {
-                        window.rocChartInstance.destroy();
-                    }
-
-                    // 1. Dark Mode kontrolü yap ve renkleri belirle
-                    const isDarkMode = $('body').hasClass('dark-mode');
-                    const textColor = isDarkMode ? '#ffffff' : '#666666'; // Metin rengi
-                    const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'; // Izgara çizgileri
-
-                    window.rocChartInstance = new Chart(ctx, {
-                        type: 'scatter',
-                        data: {datasets: datasets},
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                x: {
-                                    type: 'linear',
-                                    position: 'bottom',
-                                    grid: {color: gridColor}, // Izgara çizgisi rengi
-                                    ticks: {color: textColor}, // Eksen rakamları rengi
-                                    title: {
-                                        display: true,
-                                        text: '1 - Specificity (False Positive Rate)',
-                                        color: textColor // Eksen başlığı rengi
-                                    },
-                                    min: 0, max: 1
-                                },
-                                y: {
-                                    grid: {color: gridColor},
-                                    ticks: {color: textColor},
-                                    title: {
-                                        display: true,
-                                        text: 'Sensitivity (True Positive Rate)',
-                                        color: textColor
-                                    },
-                                    min: 0, max: 1
-                                }
-                            },
-                            plugins: {
-                                legend: {
-                                    labels: {
-                                        color: textColor // Üstteki lejant metinlerinin rengi
-                                    }
-                                },
-                                tooltip: {
-                                    // Tooltip arka planını dark mode'da biraz daha belirgin yapabilirsin
-                                    backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-                                    titleColor: isDarkMode ? '#fff' : '#000',
-                                    bodyColor: isDarkMode ? '#fff' : '#000',
-                                    callbacks: {
-                                        label: function (context) {
-                                            let point = context.raw;
-                                            let lbl = context.dataset.label;
-                                            if (lbl === 'Reference Line') return '';
-                                            let threshStr = point.threshold !== undefined ? point.threshold.toFixed(3) : 'N/A';
-                                            return `${lbl} | Cutoff: ${threshStr} | Sen: ${point.y.toFixed(2)} | 1-Spe: ${point.x.toFixed(2)}`;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-
-                    // --- 3. FORMÜL VE EŞİK DEĞERLERİNİ YAZDIRMA ---
-                    if (response.coefficients) {
-                        document.getElementById('eq-intercept').innerText = response.coefficients["(Intercept)"][0].toFixed(3);
-                        document.getElementById('eq-coef1').innerText = response.coefficients["markers[, 1]"][0].toFixed(3);
-                        document.getElementById('eq-coef2').innerText = response.coefficients["markers[, 2]"][0].toFixed(3);
-                    }
-                    if (response.thresholds && response.thresholds.combined) {
-                        document.getElementById('opt-threshold').innerText = response.thresholds.combined[0].toFixed(3);
-                    }
-
-                    // --- 4. AUC TABLOSUNU DOLDURMA ---
-                    let tbodyHtml = '';
-                    response.auc_data.forEach(row => {
-                        // Kombinasyon satırını kalın (bold) yapalım
-                        let fw = row._row === 'Combination Score' ? 'font-weight-bold' : '';
-                        tbodyHtml += `
-                <tr class="${fw}">
-                    <td>${row._row}</td>
-                    <td>${row.AUC.toFixed(4)}</td>
-                    <td>${row["p.value"].toExponential(2)}</td>
-                </tr>
-            `;
-                    });
-                    document.getElementById('auc-table-body').innerHTML = tbodyHtml;
-
+                    drawDensityPlot(response.markers, response.thresholds.marker1, "ddimer", "group", "destiny_plot_marker_1");
+                    drawDensityPlot(response.markers, response.thresholds.marker1, "log_leukocyte", "group", "destiny_plot_marker_2");
                 } else {
                     alert("Bir hata oluştu: Başarılı yanıt alınamadı.");
                 }
@@ -428,6 +654,398 @@
 
     });
 
+    function fillDiagnosticTables(diagData) {
+
+        const markers = ['combined', 'marker1', 'marker2'];
+
+        markers.forEach(mKey => {
+            const data = diagData[mKey];
+            if (!data) return;
+
+            // --- 1. CONFUSION MATRIX (Üst Tablo) ---
+            const confId = `#table_conf_${mKey}`;
+            if ($.fn.DataTable.isDataTable(confId)) $(confId).DataTable().destroy();
+
+            $(confId).DataTable({
+                data: data.tab,
+                paging: false, searching: false, info: false, ordering: false,
+                columns: [
+                    {data: '_row', title: ''},
+                    {data: 'outComePlus', title: 'Outcome +'},
+                    {data: 'outComeMinus', title: 'Outcome -'},
+                    {data: 'total', title: 'Total'}
+                ]
+            });
+
+            // --- 2. DIAGNOSTIC STATISTICS (Alt Tablo) ---
+            const statId = `#table_stat_${mKey}`;
+            if ($.fn.DataTable.isDataTable(statId)) $(statId).DataTable().destroy();
+
+            $(statId).DataTable(Object.assign({}, dataTableSettings, {
+                data: data.detail,
+                paging: false,
+                columns: [
+                    {data: null, defaultContent: '', title: '#'},
+                    {data: 'statistic', title: 'Statistic', render: d => getStatName(d)},
+                    {data: 'est', title: 'Est', render: d => d.toFixed(3)},
+                    {data: 'lower', title: 'Lower', render: d => d.toFixed(3)},
+                    {data: 'upper', title: 'Upper', render: d => d.toFixed(3)}
+                ],
+                drawCallback: function () {
+                    var api = this.api();
+                    api.column(0).nodes().each((cell, i) => cell.innerHTML = i + 1);
+                }
+            }));
+        });
+    }
+
+    // İstatistik kısaltmalarını görseldeki gibi uzun isimlere çevirir
+    function getStatName(code) {
+        const names = {
+            'ap': 'Apparent prevalence', 'tp': 'True prevalence',
+            'se': 'Sensitivity', 'sp': 'Specificity',
+            'diag.ac': 'Correctly classified proportion',
+            'pv.pos': 'Positive predictive value', 'pv.neg': 'Negative predictive value',
+            'lr.pos': 'Positive likelihood ratio', 'lr.neg': 'Negative likelihood ratio'
+        };
+        return names[code] || code;
+    }
+
+    function fillThreeCutPointTables(response) {
+        let row1 = "Optimal cut-off method";
+        let row2 = "Optimal criterion";
+        let row3 = "Optimal cut-off point";
+        let cutPointData = {
+            combined: [
+                {name: row1, value: response.cutoff_Method},
+                {name: row2, value: response.criterion_data.combined},
+                {name: row3, value: response.thresholds.combined}
+            ],
+            marker1: [
+                {name: row1, value: response.cutoff_Method},
+                {name: row2, value: response.criterion_data.marker1},
+                {name: row3, value: response.thresholds.marker1}
+            ],
+            marker2: [
+                {name: row1, value: response.cutoff_method},
+                {name: row2, value: response.criterion_data.marker2},
+                {name: row3, value: response.thresholds.marker2}
+            ]
+        }
+        // Dinamik başlıkları ayarla
+        $('#title_m1').text($('#marker1').val() || 'Marker 1');
+        $('#title_m2').text($('#marker2').val() || 'Marker 2');
+
+        const configs = [
+            {id: '#table_cut_combined', data: cutPointData.combined},
+            {id: '#table_cut_marker1', data: cutPointData.marker1},
+            {id: '#table_cut_marker2', data: cutPointData.marker2}
+        ];
+
+        configs.forEach(conf => {
+            if ($.fn.DataTable.isDataTable(conf.id)) {
+                $(conf.id).DataTable().destroy();
+                $(conf.id).empty();
+            }
+
+            // Genel ayarları bu özel yapıya uyarla
+            let settings = Object.assign({}, dataTableSettings, {
+                data: conf.data,
+                paging: false,      // Kısa tablo olduğu için sayfalamaya gerek yok
+                info: false,        // Bilgi metnini gizle
+                ordering: false, // Kullanıcının sütun başlığına tıklayıp sıralamasını da engeller
+                order: [],
+                columns: [
+                    {data: 'name', title: '', className: 'font-weight-bold'},
+                    {
+                        data: 'value',
+                        title: 'Value',
+                        render: d => (typeof d === 'number') ? d.toFixed(4) : (d || '-')
+                    }
+                ]
+            });
+
+            $(conf.id).DataTable(settings);
+        });
+    }
+
+    function fillMultipleComparisonTable(compData) {
+        const tableId = '#table_multiple_comparison';
+
+        if ($.fn.DataTable.isDataTable(tableId)) {
+            $(tableId).DataTable().destroy();
+            $(tableId).empty();
+        }
+
+        // Mevcut global settings'i bu tabloya uyarla
+        let settings = Object.assign({}, dataTableSettings, {
+            data: compData,
+            columns: [
+                {data: null, defaultContent: ''}, // Satır No
+                {data: 'marker1A', title: 'Marker1 (A)'},
+                {data: 'marker2B', title: 'Marker (B)'},
+                {data: 'aucA', title: 'AUC (A)', render: d => d.toFixed(4)},
+                {data: 'aucB', title: 'AUC (B)', render: d => d.toFixed(4)},
+                {data: 'a_b', title: '|A-B|', render: d => d.toFixed(4)},
+                {data: 'se_a_b', title: 'SE(|A-B|)', render: d => d.toFixed(4)},
+                {data: 'z', title: 'z', render: d => d.toFixed(3)},
+                {
+                    data: 'pValue',
+                    title: 'p-value',
+                    render: d => d
+                }
+            ],
+            drawCallback: function () {
+                var api = this.api();
+                api.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }
+
+        });
+
+        $(tableId).DataTable(settings);
+    }
+
+    function fillAucStatisticsTable(aucData) {
+        const tableId = '#table_auc_statistics';
+        // Mevcut tabloyu temizle
+        if ($.fn.DataTable.isDataTable(tableId)) {
+            $(tableId).DataTable().destroy();
+        }
+
+        // Ayarları kopyala ve bu tabloya özel kolonları ekle
+        let settings = Object.assign({}, dataTableSettings, {
+            data: aucData,
+            columns: [
+                {
+                    data: '_row',
+                    title: 'Marker',
+                    render: d => d === 'Combination' ? `<strong>${d} Score</strong>` : d
+                },
+                {data: 'auc', render: d => d.toFixed(4)},
+                {data: 'seAuc', render: d => d},
+                {
+                    data: null,
+                    render: row => `${row.lowerLimit.toFixed(4)}`
+                },
+                {
+                    data: null,
+                    render: row => `${row.upperLimit.toFixed(4)}`
+                },
+                {data: 'z', render: d => d.toFixed(3)},
+                {
+                    data: 'pValue',
+                    render: d => d
+                }
+            ],
+            // Satır numaralarını otomatik ekle
+            drawCallback: function () {
+                var api = this.api();
+                api.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }
+        });
+
+        $(tableId).DataTable(settings);
+    }
+
+    function fillRocCoordinatesTables(rocData) {
+        // 1. Veri içindeki benzersiz marker isimlerini ayıkla (Combination hariç olanlar)
+        const uniqueMarkers = [...new Set(rocData.map(item => item.marker))].filter(m => m !== 'Combination');
+
+        // 2. Tablo yapılandırmasını dinamik olarak oluştur
+        const tableConfigs = [
+            {id: '#table_roc_coordinates_comb_score', marker: 'Combination'}
+        ];
+
+        // Marker 1 ve Marker 2'yi sırasıyla ekle
+        if (uniqueMarkers[0]) {
+            tableConfigs.push({id: '#table_roc_coordinates_marker_1', marker: uniqueMarkers[0]});
+        }
+        if (uniqueMarkers[1]) {
+            tableConfigs.push({id: '#table_roc_coordinates_marker_2', marker: uniqueMarkers[1]});
+        }
+        tableConfigs.forEach(config => {
+            const filteredData = rocData.filter(item => item.marker === config.marker);
+
+            if ($.fn.DataTable.isDataTable(config.id)) {
+                $(config.id).DataTable().destroy();
+            }
+
+            // Ayarları klonla ve tabloya özel verileri üzerine ekle
+            let currentSettings = Object.assign({}, dataTableSettings, {
+                data: filteredData,
+                columns: [
+                    {data: null, defaultContent: '', title: '#'},
+                    {data: 'marker', title: 'Markers', render: d => d ? d : '-'},
+                    {data: 'threshold', title: 'Threshold', render: d => d ? d.toFixed(4) : '-'},
+                    {data: 'specificity', title: 'Specificity', render: d => d.toFixed(4)},
+                    {data: 'sensitivity', title: 'Sensitivity', render: d => d.toFixed(4)}
+                ],
+                // Sıralama ve Numaralandırma işlemleri
+                drawCallback: function () {
+                    var api = this.api();
+                    api.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
+                        cell.innerHTML = i + 1;
+                    });
+                }
+            });
+
+            // Tabloyu ilklendir
+            $(config.id).DataTable(currentSettings);
+        });
+    }
+
+    function drawRocChart(response) {
+        // --- 1. GRAFİK VERİSİNİ HAZIRLAMA ---
+        // Marker isimlerine göre datayı grupla
+        const groupedData = {};
+
+        response.roc_data.forEach(row => {
+            if (!groupedData[row.marker]) {
+                groupedData[row.marker] = [];
+            }
+            // X ekseni (1 - Specificity)
+            // Y ekseni (Sensitivity)
+            groupedData[row.marker].push({
+                x: 1 - row.specificity,
+                y: row.sensitivity,
+                threshold: row.threshold // Hover (tooltip) için saklıyoruz
+            });
+        });
+
+        // Çizgilerin zikzak yapmaması için X eksenine göre sırala
+        Object.keys(groupedData).forEach(key => {
+            groupedData[key].sort((a, b) => a.x - b.x);
+        });
+
+        // Renk paleti
+        const colors = {
+            "Combination": "#F8766D", // Kırmızı
+            "ddimer": "#619CFF",      // Mavi
+            "log_leukocyte": "#00BA38" // Yeşil
+        };
+
+        const datasets = Object.keys(groupedData).map(marker => {
+            return {
+                label: marker === "Combination" ? "Combination Score" : marker, // İsimlendirme
+                data: groupedData[marker],
+                borderColor: colors[marker] || "#333333",
+                backgroundColor: 'transparent',
+                borderWidth: 3,
+                showLine: true,
+                pointRadius: 0, // Noktaları gizle
+                pointHoverRadius: 6 // Üzerine gelince noktalar görünsün
+            };
+        });
+
+        // Köşegen Referans Çizgisi (Rastgele Şans)
+        datasets.push({
+            label: 'Reference Line',
+            data: [{x: 0, y: 0}, {x: 1, y: 1}],
+            borderColor: '#999999',
+            borderWidth: 2,
+            borderDash: [5, 5],
+            showLine: true,
+            pointRadius: 0,
+            pointHoverRadius: 0
+        });
+
+        // --- 2. GRAFİĞİ ÇİZDİRME (CHART.JS) ---
+        const ctx = document.getElementById('rocChart').getContext('2d');
+
+        // Varsa eski grafiği yok et
+        if (window.rocChartInstance) {
+            window.rocChartInstance.destroy();
+        }
+
+        // 1. Dark Mode kontrolü yap ve renkleri belirle
+        const isDarkMode = $('body').hasClass('dark-mode');
+        const textColor = isDarkMode ? '#ffffff' : '#666666'; // Metin rengi
+        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'; // Izgara çizgileri
+
+        window.rocChartInstance = new Chart(ctx, {
+            type: 'scatter',
+            data: {datasets: datasets},
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        grid: {color: gridColor}, // Izgara çizgisi rengi
+                        ticks: {color: textColor}, // Eksen rakamları rengi
+                        title: {
+                            display: true,
+                            text: '1 - Specificity (False Positive Rate)',
+                            color: textColor // Eksen başlığı rengi
+                        },
+                        min: 0, max: 1
+                    },
+                    y: {
+                        grid: {color: gridColor},
+                        ticks: {color: textColor},
+                        title: {
+                            display: true,
+                            text: 'Sensitivity (True Positive Rate)',
+                            color: textColor
+                        },
+                        min: 0, max: 1
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: textColor // Üstteki lejant metinlerinin rengi
+                        }
+                    },
+                    tooltip: {
+                        // Tooltip arka planını dark mode'da biraz daha belirgin yapabilirsin
+                        backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+                        titleColor: isDarkMode ? '#fff' : '#000',
+                        bodyColor: isDarkMode ? '#fff' : '#000',
+                        callbacks: {
+                            label: function (context) {
+                                let point = context.raw;
+                                let lbl = context.dataset.label;
+                                if (lbl === 'Reference Line') return '';
+                                let threshStr = point.threshold !== undefined ? point.threshold.toFixed(3) : 'N/A';
+                                return `${lbl} | Cutoff: ${threshStr} | Sen: ${point.y.toFixed(2)} | 1-Spe: ${point.x.toFixed(2)}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // --- 3. FORMÜL VE EŞİK DEĞERLERİNİ YAZDIRMA ---
+        if (response.coefficients) {
+            document.getElementById('eq-intercept').innerText = response.coefficients["(Intercept)"].toFixed(3);
+            document.getElementById('eq-coef1').innerText = response.coefficients["markers[, 1]"].toFixed(3);
+            document.getElementById('eq-coef2').innerText = response.coefficients["markers[, 2]"].toFixed(3);
+        }
+        if (response.thresholds && response.thresholds.combined) {
+            document.getElementById('opt-threshold').innerText = response.thresholds.combined.toFixed(3);
+        }
+
+        // --- 4. AUC TABLOSUNU DOLDURMA ---
+        let tbodyHtml = '';
+        response.auc_data.forEach(row => {
+            // Kombinasyon satırını kalın (bold) yapalım
+            let fw = row._row === 'Combination Score' ? 'font-weight-bold' : '';
+            tbodyHtml += `
+                <tr class="${fw}">
+                    <td>${row._row}</td>
+                    <td>${row.auc.toFixed(4)}</td>
+                    <td>${row.pValue.toExponential(2)}</td>
+                </tr>
+            `;
+        });
+        document.getElementById('auc-table-body').innerHTML = tbodyHtml;
+    }
 
     function refreshChartTheme() {
         if (!window.rocChartInstance) return;
@@ -661,29 +1279,96 @@
         }
     });
 
+    /**
+     * @param {Array} data - JSON veri dizisi
+     * @param {number} threshold - Dikey çizgi değeri
+     * @param {string} valueKey - Değerin olduğu anahtar (örn: "ddimer")
+     * @param {string} labelKey - Grubun olduğu anahtar (örn: "group")
+     */
+    function drawDensityPlot(data, threshold, valueKey, labelKey = "group", targetDivId = 'densityChartDiv') {
+        console.log(data)
+        console.log(threshold)
+        console.log(valueKey)
+        console.log(labelKey)
+        const groups = {};
 
+        // 1. Veriyi gruplandır (Dinamik anahtarlar kullanarak)
+        data.forEach(item => {
+            const label = item[labelKey];
+            const val = parseFloat(item[valueKey]);
+
+            if (label && !isNaN(val)) {
+                if (!groups[label]) groups[label] = [];
+                groups[label].push(val);
+            }
+        });
+
+        const plotData = [];
+        const colors = {'needed': '#F8766D', 'not_needed': '#00BFC4'};
+
+        // 2. Yoğunluk eğrilerini hesapla
+        Object.keys(groups).forEach(label => {
+            const values = groups[label];
+            if (values.length === 0) return;
+
+            const kde = calcKDE(values);
+
+            plotData.push({
+                x: kde.x,
+                y: kde.y,
+                mode: 'lines',
+                name: label,
+                line: {width: 3, color: colors[label] || null},
+                fill: 'none'
+            });
+        });
+
+        // 3. Grafik Düzeni
+        const isDark = $('body').hasClass('dark-mode');
+        const layout = {
+            title: `<b>Kernel density plot (${valueKey})</b>`,
+            xaxis: {title: valueKey, gridcolor: isDark ? '#444' : '#eee'},
+            yaxis: {title: 'Density', gridcolor: isDark ? '#444' : '#eee'},
+            legend: {orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2},
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: {color: isDark ? '#ffffff' : '#333'},
+            shapes: [{
+                type: 'line',
+                x0: threshold, x1: threshold,
+                y0: 0, y1: 1, yref: 'paper',
+                line: {color: isDark ? '#bbb' : 'grey', width: 2, dash: 'dot'}
+            }]
+        };
+
+        Plotly.newPlot(targetDivId, plotData, layout);
+    }
+
+    // KDE hesaplama fonksiyonu aynı kalıyor...
+    // Basit Kernel Yoğunluk Hesaplama Fonksiyonu
+    function calcKDE(values) {
+        const min = Math.min(...values) - 1;
+        const max = Math.max(...values) + 1;
+        const steps = 100;
+        const bandwidth = 0.5; // ggplot2'nin 'bw' parametresine benzer
+        const x = [], y = [];
+
+        for (let i = 0; i <= steps; i++) {
+            const curX = min + (i * (max - min) / steps);
+            let sum = 0;
+            values.forEach(v => {
+                const z = (curX - v) / bandwidth;
+                sum += Math.exp(-0.5 * z * z) / (Math.sqrt(2 * Math.PI) * bandwidth);
+            });
+            x.push(curX);
+            y.push(sum / values.length);
+        }
+        return {x, y};
+    }
 </script>
 
 <script>
-    let dataTableSettings = {
-        "responsive": true,
-        "lengthChange": true,
-        "autoWidth": false,
-        "dom": "<'row'<'col-sm-12 col-md-8 d-flex align-items-center'B l><'col-sm-12 col-md-4 text-right'f>>" +
-            "<'row'<'col-sm-12'tr>>" +
-            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-        "buttons": [
-            {
-                extend: 'copy',
-                className: 'btn btn-custom-color btn-sm' // 'btn-custom-color' özel sınıfımız
-            },
-            {extend: 'csv', className: 'btn btn-custom-color btn-sm'},
-            {extend: 'excel', className: 'btn btn-custom-color btn-sm'},
-            {extend: 'pdf', className: 'btn btn-custom-color btn-sm'},
-            {extend: 'print', className: 'btn btn-custom-color btn-sm'}
-        ],
-        "language": {"lengthMenu": "_MENU_", "search": "Search:"}
-    };
+
     $(function () {
         //Initialize Select2 Elements
         $('.select2bs4').select2({

@@ -50,31 +50,72 @@ createROCPlot <- function(input, output = NULL, session = NULL) {
       } else {
         list()
       }
-# R tarafında isimli bir liste oluşturuyoruz
-      output_for_python <- list(
-        roc_data = as.data.frame(modelFit$ROC_coordinates),
-        auc_data = as.data.frame(modelFit$AUC_table),
-        thresholds = list(
-          marker1 = as.numeric(modelFit$ThresholdMarker1[1]),
-          marker2 = as.numeric(modelFit$ThresholdMarker2[1]),
-          combined = as.numeric(modelFit$ThresholdCombined[1])
-        ),
-        coefficients = if(!is.null(modelFit$fit$Parameters)) as.list(modelFit$fit$Parameters) else list()
-      )
-
       # İsimleri manuel olarak tekrar ata (İsim çakışmalarını önlemek için kritik)
-      names(output_for_python) <- c("roc_data", "auc_data", "thresholds", "coefficients")
+      names(modelFit) <- c("rocCoordinates",
+                           "aucTable",
+                           "multCompTable",
+                           "diagStatMarker1",
+                           "diagStatMarker2",
+                           "diagStatCombined",
+                           "thresholdMarker1",
+                           "thresholdMarker2",
+                           "thresholdCombined",
+                           "criterionM1",
+                           "criterionM2",
+                           "criterionC",
+                           "combScore",
+                           "cuttoffMethod",
+                           "fit" )
+      names(modelFit$rocCoordinates) <- c("marker", "threshold", "specificity", "sensitivity")
+      names(modelFit$aucTable) <- c("auc", "seAuc", "lowerLimit", "upperLimit", "z", "pValue")
+      names(modelFit$multCompTable) <- c("marker1A", "marker2B", "aucA", "aucB", "a_b", "se_a_b", "z", "pValue" )
+      names(modelFit$diagStatMarker1$tab) <- c("outComePlus","outComeMinus","total" )
+      names(modelFit$diagStatMarker2$tab) <- c("outComePlus","outComeMinus","total" )
+      names(modelFit$diagStatCombined$tab) <- c("outComePlus","outComeMinus","total" )
 
-      return(jsonlite::toJSON(list(
-        roc_data = as.data.frame(modelFit$ROC_coordinates),
-        auc_data = as.data.frame(modelFit$AUC_table, stringsAsFactors=FALSE),
-        thresholds = list(
-          marker1 = as.numeric(modelFit$ThresholdMarker1[1]),
-          marker2 = as.numeric(modelFit$ThresholdMarker2[1]),
-          combined = as.numeric(modelFit$ThresholdCombined[1])
-        ),
-        coefficients = if(!is.null(modelFit$fit$Parameters)) as.list(modelFit$fit$Parameters) else list()
-      )))
+      modelFit$diagStatMarkers <- list(
+        marker1 = modelFit$diagStatMarker1,
+        marker2 = modelFit$diagStatMarker2,
+        combined = modelFit$diagStatCombined
+      )
+      modelFit$diagStatMarker1 <- NULL
+      modelFit$diagStatMarker2 <- NULL
+      modelFit$diagStatCombined <- NULL
+
+      modelFit$criterions <- list(
+        marker1 = modelFit$criterionM1,
+        marker2 = modelFit$criterionM2,
+        combined = modelFit$criterionC
+      )
+      modelFit$criterionM1 <- NULL
+      modelFit$criterionM2 <- NULL
+      modelFit$criterionC <- NULL
+
+      names(modelFit$fit) <- c("combType", "method", "parameters", "stdModel", "classification", "standardize" )
+
+      modelFit$thresholds = list(
+           marker1 = as.numeric(modelFit$thresholdMarker1[1]),
+           marker2 = as.numeric(modelFit$thresholdMarker2[1]),
+           combined = as.numeric(modelFit$thresholdCombined[1])
+      )
+      modelFit$thresholdMarker1 <- NULL
+      modelFit$thresholdMarker2 <- NULL
+      modelFit$thresholdCombined <- NULL
+
+      modelFit$coefficients = if(!is.null(modelFit$fit$parameters)) as.list(modelFit$fit$parameters) else list()
+      modelFit$markers = df
+      return(jsonlite::toJSON(modelFit, pretty = TRUE, auto_unbox = TRUE, force = TRUE))
+
+#       return(jsonlite::toJSON(list(
+#         roc_data = as.data.frame(modelFit$ROC_coordinates),
+#         auc_data = as.data.frame(modelFit$AUC_table, stringsAsFactors=FALSE),
+#         thresholds = list(
+#           marker1 = as.numeric(modelFit$ThresholdMarker1[1]),
+#           marker2 = as.numeric(modelFit$ThresholdMarker2[1]),
+#           combined = as.numeric(modelFit$ThresholdCombined[1])
+#         ),
+#         coefficients = if(!is.null(modelFit$fit$Parameters)) as.list(modelFit$fit$Parameters) else list()
+#       )))
 
     } else {
       stop(paste("Tanımlanmayan fonksiyon tipi:", input$`function`))

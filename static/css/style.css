@@ -86,7 +86,18 @@
         margin-right: 0 !important;
     }
 }
-
+/* Başlığın içindeki linke özel hover kuralı */
+/*.tab-card-header a:hover {*/
+/*    color: rgb(0, 123, 255) !important;*/
+/*    text-decoration: none; !* Alt çizgiyi kaldırmak istersen *!*/
+/*    transition: color 0.3s ease; !* Renk geçişini yumuşatır *!*/
+/*}*/
+.tab-card-header-a{
+    color: #212529 !important
+}
+.tab-card-header-a:hover{
+    color: rgb(0, 123, 255) !important;
+}
 /* Arama kutusunun olduğu div'i en sağa iter */
 .dataTables_filter {
     float: right !important;

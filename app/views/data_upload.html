@@ -715,20 +715,25 @@
             url: '/get-unique-categories',
             method: 'POST',
             data: {status_col: selectedStatus, data: data, delimiter: delimiter},
-            success: function (response) {
-                let categorySelectId = currentStatusId === 'status' ? '#category' : '#categoryRoc';
-                let $categorySelect = $(`${categorySelectId}`);
+            success: async function (response) {
+                let categorySelectId = currentStatusId === 'status' ? 'category' : 'categoryRoc';
+                let $categorySelect = $(`#${categorySelectId}`);
                 $categorySelect.empty();
                 $categorySelect.append(new Option("Please select category", "", true, true));
 
                 if (response.categories && response.categories.length > 0) {
-                    response.categories.forEach(cat => {
+                    for (const cat of response.categories) {
                         if (response.selectedCategory === cat) {
                             $categorySelect.append(new Option(cat, cat, true, true));
                         } else {
-                            $categorySelect.append(new Option(cat, cat));
+                            const selectedCategory = await dbManager.get_setting(categorySelectId);
+                            if (selectedCategory === cat) {
+                                $categorySelect.append(new Option(cat, cat, true, true));
+                            } else {
+                                $categorySelect.append(new Option(cat, cat));
+                            }
                         }
-                    });
+                    }
                 }
                 $categorySelect.trigger('change');
             }
@@ -1015,9 +1020,13 @@
         try {
             // 2. Tüm verileri topla ve IndexedDB'ye yaz
             await saveCurrentSelectionsToDb();
+            const analysis_type = await dbManager.set_setting("analysis_type", "roc-analysis");
+            if (analysis_type === "roc-analysis") {
+                // window.location.href = "/roc-analysis";
+            } else {
+                window.location.href = "/analysis2";
+            }
 
-            // Kullanıcıya bilgi ver (Opsiyonel)
-            window.location.href = "/analysis2";
         } catch (error) {
             console.error("Kaydetme hatası:", error);
         } finally {
