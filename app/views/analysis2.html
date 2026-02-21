@@ -442,20 +442,20 @@
                                 <div class="tab-content">
                                     <div class="tab-pane justify-content-center" id="tab_destiny_chart_plot_comb_score">
                                         <div id="destiny_plot_comb_score"
-                                             style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+                                             style="height: 450px; width: 100%; overflow: hidden;"></div>
 
                                     </div>
                                     <!-- /.tab-pane -->
                                     <div class="tab-pane justify-content-center active"
                                          id="tab_destiny_chart_plot_marker_1">
-                                        <div id="destiny_plot_marker_1"
-                                             style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+                                        <div id="destiny_plot_marker_1" class="density-chart"
+                                             style="height: 450px; width: 100%; overflow: hidden;"></div>
 
                                     </div>
                                     <!-- /.tab-pane -->
                                     <div class="tab-pane justify-content-center" id="tab_destiny_chart_plot_marker_2">
-                                        <div id="destiny_plot_marker_2"
-                                             style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+                                        <div id="destiny_plot_marker_2" class="density-chart"
+                                             style="height: 450px; width: 100%; overflow: hidden;"></div>
 
                                     </div>
                                     <!-- /.tab-pane -->
@@ -1291,14 +1291,12 @@
      * @param {string} labelKey - Grubun olduğu anahtar (örn: "group")
      */
     function drawDensityPlot(data, threshold, valueKey, labelKey = "group", targetDivId = 'densityChartDiv') {
-
         const groups = {};
+        const isDark = $('body').hasClass('dark-mode'); // Koyu mod kontrolü
 
-        // 1. Veriyi gruplandır (Dinamik anahtarlar kullanarak)
         data.forEach(item => {
             const label = item[labelKey];
             const val = parseFloat(item[valueKey]);
-
             if (label && !isNaN(val)) {
                 if (!groups[label]) groups[label] = [];
                 groups[label].push(val);
@@ -1308,11 +1306,9 @@
         const plotData = [];
         const colors = {'needed': '#F8766D', 'not_needed': '#00BFC4'};
 
-        // 2. Yoğunluk eğrilerini hesapla
         Object.keys(groups).forEach(label => {
             const values = groups[label];
             if (values.length === 0) return;
-
             const kde = calcKDE(values);
 
             plotData.push({
@@ -1325,13 +1321,37 @@
             });
         });
 
-        // 3. Grafik Düzeni
-        const isDark = $('body').hasClass('dark-mode');
         const layout = {
-            title: `<b>Kernel density plot (${valueKey})</b>`,
-            xaxis: {title: valueKey, gridcolor: isDark ? '#444' : '#eee'},
-            yaxis: {title: 'Density', gridcolor: isDark ? '#444' : '#eee'},
-            legend: {orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2},
+            title: {
+                text: `<b>Kernel density plot (${valueKey})</b>`,
+                font: {color: isDark ? '#ffffff' : '#333'}
+            },
+            // Çerçeve ve Eksen Ayarları
+            xaxis: {
+                title: valueKey,
+                gridcolor: isDark ? '#878787' : '#eee',
+                showline: true,         // Eksen çizgisini göster
+                mirror: true,           // Çerçeve oluşturmak için karşıya yansıt
+                linecolor: isDark ? '#666' : '#ccc', // Çerçeve rengi
+                linewidth: 2            // Çerçeve kalınlığı
+            },
+            yaxis: {
+                title: 'Density',
+                gridcolor: isDark ? '#878787' : '#eee',
+                showline: true,         // Eksen çizgisini göster
+                mirror: true,           // Çerçeve oluşturmak için karşıya yansıt
+                linecolor: isDark ? '#666' : '#ccc', // Çerçeve rengi
+                linewidth: 2            // Çerçeve kalınlığı
+            },
+            autosize: true,
+            margin: {l: 50, r: 30, t: 50, b: 80}, // Çerçeve için boşlukları biraz artırdık
+            legend: {
+                orientation: "h",
+                y: -0.25,
+                x: 0.5,
+                xanchor: "center",
+                font: {color: isDark ? '#ffffff' : '#333'}
+            },
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
             font: {color: isDark ? '#ffffff' : '#333'},
@@ -1343,7 +1363,12 @@
             }]
         };
 
-        Plotly.newPlot(targetDivId, plotData, layout);
+        const config = {
+            responsive: true,
+            displayModeBar: false
+        };
+
+        Plotly.newPlot(targetDivId, plotData, layout, config);
     }
 
     // KDE hesaplama fonksiyonu aynı kalıyor...

@@ -34,6 +34,25 @@ $(document).ready(function () {
         if (typeof refreshChartTheme === 'function') {
             refreshChartTheme();
         }
+        const chartIds = ['densityChartDiv', 'destiny_plot_marker_1', 'destiny_plot_marker_2'];
+
+        chartIds.forEach(id => {
+            if (document.getElementById(id)) {
+                // Temayı anlık güncelle
+                Plotly.relayout(id, {
+                        'title.font': {color: state ? '#ffffff' : '#333'},
+                        'xaxis.gridcolor': state ? '#878787' : '#eee',
+                        'yaxis.gridcolor': state ? '#878787' : '#eee',
+                        'yaxis.linecolor': state ? '#666' : '#ccc',
+                        'xaxis.linecolor': state ? '#666' : '#ccc',
+                        'legend.font': {color: state ? '#ffffff' : '#333'},
+                        'shapes.line': {color: state ? '#bbb' : 'grey', width: 2, dash: 'dot'},
+                        font: {color: state ? '#ffffff' : '#333'},
+
+                    }
+                );
+            }
+        });
     });
 });
 

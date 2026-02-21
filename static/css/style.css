@@ -1,3 +1,16 @@
+/* Grafiğin parent div'i aşmasını engeller */
+    .density-chart {
+        width: 100% !important;
+        display: block !important;
+    }
+
+    /* Mobilde grafik yüksekliğini biraz azaltarak daha iyi sığmasını sağlarız */
+    @media (max-width: 768px) {
+        .density-chart {
+            height: 350px !important;
+        }
+    }
+
 /* Ana sarmalayıcıyı esnetilebilir ama taşmaz yap */
 .row {
     display: flex !important;
