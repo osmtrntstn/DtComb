@@ -1365,7 +1365,16 @@
 
         const config = {
             responsive: true,
-            displayModeBar: false
+            displayModeBar: true, // Paneli görünür yapar
+            displaylogo: false,   // Plotly logosunu gizleyerek kalabalığı önler
+            modeBarButtonsToRemove: ['select2d', 'lasso2d'], // Gereksiz butonları temizleyebilirsin
+            toImageButtonOptions: {
+                format: 'png', // İndirme butonunun formatı
+                filename: 'density_plot',
+                height: 500,
+                width: 700,
+                scale: 2 // Daha kaliteli çıktı için çözünürlüğü artırır
+            }
         };
 
         Plotly.newPlot(targetDivId, plotData, layout, config);
