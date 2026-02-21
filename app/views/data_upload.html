@@ -5,9 +5,7 @@
 
 {% block content %}
 
-<div class="col-md-3">
-
-    <!-- Profile Image -->
+<div class="col-md-3 fixed-sidebar" style="">
     <div class="card card-primary card-outline">
         <div class="card-body box-profile">
 
@@ -109,12 +107,7 @@
                                     <label for="marker1">Marker 1</label>
                                     <select id="marker1" class="form-control select2bs4" style="width: 100%;">
                                         <option value="" selected disabled>Please select...</option>
-                                        {% for col in result.columns %}
-                                        <option value="{{ col }}" {% if col in result.selectedMarker1 %}selected{%
-                                                endif %}>
-                                            {{ col }}
-                                        </option>
-                                        {% endfor %}
+
                                     </select>
                                 </div>
 
@@ -123,14 +116,7 @@
                                     <label for="marker2">Marker 2</label>
                                     <select id="marker2" class="form-control select2bs4" style="width: 100%;">
                                         <option value="" selected disabled>Please select...</option>
-                                        {% for col in result.columns %}
-                                        <option value="{{ col }}" {% if col.strip() in result.selectedMarker2
-                                                %}selected{%
-                                                endif
-                                                %}>
-                                            {{ col }}
-                                        </option>
-                                        {% endfor %}
+
 
                                     </select>
                                 </div>
@@ -139,14 +125,7 @@
                                     <label for="status">Status</label>
                                     <select id="status" class="form-control select2bs4" style="width: 100%;">
                                         <option value="" selected disabled>Please select...</option>
-                                        {% for col in result.columns %}
-                                        <option value="{{ col }}" {% if col.strip() in result.selectedStatus
-                                                %}selected{%
-                                                endif
-                                                %}>
-                                            {{ col }}
-                                        </option>
-                                        {% endfor %}
+
 
                                     </select>
                                 </div>
@@ -155,13 +134,7 @@
                                     <label for="category">Select category for cases</label>
                                     <select id="category" class="form-control select2bs4" style="width: 100%;">
                                         <option value="" selected disabled>Please select...</option>
-                                        {% for col in result.categories %}
-                                        <option value="{{ col }}" {% if col in result.selectedCategory %}selected{%
-                                                endif
-                                                %}>
-                                            {{ col }}
-                                        </option>
-                                        {% endfor %}
+
 
                                     </select>
                                 </div>
@@ -178,12 +151,10 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label>Select markers (*)</label>
-                                <select name="markersRoc" class="select2bs4" multiple="multiple"
+                                <select name="markersRoc" id="markersRoc" class="select2bs4" multiple="multiple"
                                         data-placeholder="Please select..."
                                         style="width: 100%;">
-                                    {% for col in result.columns %}
-                                    <option value='{{col}}'>{{ col }}</option>
-                                    {% endfor %}
+
 
                                 </select>
                                 <div class="mt-1">
@@ -198,12 +169,7 @@
                                 <label for="statusRoc">Status</label>
                                 <select id="statusRoc" class="form-control select2bs4" style="width: 100%;">
                                     <option value="" selected disabled>Please select...</option>
-                                    {% for col in result.columns %}
-                                    <option value="{{ col }}" {% if col== result.selectedStatus %}selected{% endif
-                                            %}>
-                                        {{ col }}
-                                    </option>
-                                    {% endfor %}
+
 
                                 </select>
                             </div>
@@ -212,9 +178,7 @@
                                 <label for="categoryRoc">Select category for cases</label>
                                 <select id="categoryRoc" class="form-control select2bs4" style="width: 100%;">
                                     <option value="" selected disabled>Please select...</option>
-                                    {% for col in result.categories %}
-                                    <option>{{ col }}</option>
-                                    {% endfor %}
+
 
                                 </select>
                             </div>
@@ -328,7 +292,7 @@
             <!-- /.card-body -->
 
             <div class="form-group row">
-                <button type="submit" class="btn btn-primary">Go</button>
+                <button id="btn-save" type="button" class="btn btn-primary">Go</button>
             </div>
         </div>
         <!-- /.card-body -->
@@ -343,25 +307,8 @@
         <div class="card-body">
             <table id="analysisTable" class="table table-bordered table-hover">
                 <thead>
-                <tr>
-                    <th></th>
-                    {# Sütun başlıklarını döner #}
-                    {% for col in result.columns %}
-                    <th>{{ col }}</th>
-                    {% endfor %}
-                </tr>
                 </thead>
                 <tbody>
-                {# Veri satırlarını döner #}
-                {% for row in result.data %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    {# Satır içindeki veriyi ilgili sütun ismine göre çeker #}
-                    {% for col in result.columns %}
-                    <td>{{ row[col] }}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
                 </tbody>
             </table>
         </div><!-- /.card-body -->
@@ -406,8 +353,8 @@
     })
     $(document).ready(async function () {
         try {
-            const storedData = await dbManager.get();
-            const delimiter = await dbManager.get_delimiter();
+            const storedData = await dbManager.get_data();
+            const delimiter = await dbManager.get_setting("delimiter");
             if (delimiter != null) {
                 // Kaydedilmiş delimiter'ı radyo butonlarına yansıt
                 if (delimiter === 'comma') $('#delimiterRadio1').prop('checked', true);
@@ -421,105 +368,105 @@
                 $('#delimiterOptions').show();
                 $('#datasets').hide();
 
-                const formatted = formatDataByDelimiter(storedData);
+                const formatted = await formatDataByDelimiter(storedData);
                 if (formatted) {
                     updateTableAndDropdowns(formatted);
                 }
 
-                console.log("Hafızadaki veri başarıyla tabloya yansıtıldı.");
             }
         } catch (error) {
             console.error("IndexedDB okuma hatası:", error);
         }
     });
     $(document).ready(function () {
-
-        // DataTable'ı bir kez ilklendirelim
-        var table = $('#analysisTable').DataTable(dataTableSettings);
-
-        // Radyo butonları değiştiğinde tetiklenir
-        $('input[name="exampleDataRadio"]').on('change', function () {
-            const selectedData = $(this).val();
-            if ($.fn.DataTable.isDataTable('#analysisTable')) {
-                table.clear().destroy();
-            }
-            $('#analysisTable').empty();
-            $.ajax({
-                url: '/fetch-example-data',
-                method: 'POST',
-                dataType: 'json',
-                data: {data_name: selectedData},
-                success: function (response) {
-
-                    let $categorySelect = $('#category');
-                    let $categoryRocSelect = $('#categoryRoc');
-                    $categorySelect.empty();
-                    $categoryRocSelect.empty();
-
-                    // Backend'den gelen benzersiz değerleri Category listesine bas
-                    response.categories.forEach(cat => {
-                        let isSelected = response.selectedCategory.includes(cat);
-                        $categorySelect.append(new Option(cat, cat, isSelected, isSelected));
-                        $categoryRocSelect.append(new Option(cat, cat, isSelected, isSelected));
-                    });
-                    $categorySelect.trigger('change');
-                    $categoryRocSelect.trigger('change');
-
-                    const dropdowns = ['#marker1', '#marker2', '#status', '#statusRoc'];
-                    dropdowns.forEach(id => {
-                        let $select = $(id);
-                        $select.empty(); // Eskileri sil
-                        $select.append(new Option("Please select...", "", true, true));
-                        response.columns.forEach(col => {
-                            console.log(col)
-                            // response.selectedMarker1 içinde bu sütun var mı kontrol et (Liste kontrolü)
-                            let isSelected = false;
-                            if (id === '#marker1' && response.selectedMarker1.includes(col)) isSelected = true;
-                            if (id === '#marker2' && response.selectedMarker2.includes(col)) isSelected = true;
-                            if (id === '#status' && response.selectedStatus.includes(col)) isSelected = true;
-                            if (id === '#category' && response.selectedCategory.includes(col)) isSelected = true;
-
-                            let option = new Option(col, col, isSelected, isSelected);
-                            $select.append(option);
-                        });
-
-                        // Select2'yi yeni verilerle tetikle
-                        $select.trigger('change');
-                    });
-                    // Multi-select olan markersRoc için özel güncelleme
-                    let $markersRoc = $('select[name="markersRoc"]');
-                    $markersRoc.empty();
-                    response.columns.forEach(col => {
-                        $markersRoc.append(new Option(col, col));
-                    });
-                    $markersRoc.trigger('change');
-
-                    // 2. Yeni başlıkları (columns) oluştur - En başa "#" ekliyoruz
-                    let headerRow = '<thead><tr><th></th>'; // Satır numarası başlığı
-                    response.columns.forEach(col => {
-                        headerRow += `<th>${col}</th>`;
-                    });
-                    headerRow += '</tr></thead>';
-                    let tbody = "<tbody>";
-                    response.data.forEach((row, index) => {
-                        let rowHtml = `<tr><td>${index + 1}</td>`; // Satır numarası hücresi
-                        response.columns.forEach(col => {
-                            rowHtml += `<td>${row[col]}</td>`;
-                        });
-                        rowHtml += '</tr>';
-                        tbody += rowHtml;
-                    })
-                    tbody += '</tbody>';
-                    $('#analysisTable').append(headerRow + tbody);
-
-                    table = $('#analysisTable').DataTable(dataTableSettings);
-
-                }
-            });
-        });
-
-
+        fetchExampleData();
     });
+    // Radyo butonları değiştiğinde tetiklenir
+    $('input[name="exampleDataRadio"]').on('change', function () {
+        fetchExampleData();
+    });
+
+    function fetchExampleData() {
+        const selectedData = $('input[name="exampleDataRadio"]:checked').val();
+        $('#analysisTable').empty();
+        $.ajax({
+            url: '/fetch-example-data',
+            method: 'POST',
+            dataType: 'json',
+            data: {data_name: selectedData},
+            success: function (response) {
+                updateTableAndDropdowns({
+                    columns: response.columns,
+                    data: response.data
+                });
+
+                let $categorySelect = $('#category');
+                let $categoryRocSelect = $('#categoryRoc');
+                $categorySelect.empty();
+                $categoryRocSelect.empty();
+
+                // Backend'den gelen benzersiz değerleri Category listesine bas
+                response.categories.forEach(cat => {
+                    let isSelected = response.selectedCategory.includes(cat);
+                    $categorySelect.append(new Option(cat, cat, isSelected, isSelected));
+                    $categoryRocSelect.append(new Option(cat, cat, isSelected, isSelected));
+                });
+                $categorySelect.trigger('change');
+                $categoryRocSelect.trigger('change');
+
+                const dropdowns = ['#marker1', '#marker2', '#status', '#statusRoc'];
+                dropdowns.forEach(id => {
+                    let $select = $(id);
+                    $select.empty(); // Eskileri sil
+                    $select.append(new Option("Please select...", "", true, true));
+                    response.columns.forEach(col => {
+                        // response.selectedMarker1 içinde bu sütun var mı kontrol et (Liste kontrolü)
+                        let isSelected = false;
+                        if (id === '#marker1' && response.selectedMarker1.includes(col)) isSelected = true;
+                        if (id === '#marker2' && response.selectedMarker2.includes(col)) isSelected = true;
+                        if (id === '#status' && response.selectedStatus.includes(col)) isSelected = true;
+                        if (id === '#category' && response.selectedCategory.includes(col)) isSelected = true;
+                        if (id === '#statusRoc' && response.selectedStatus.includes(col)) isSelected = true;
+
+                        let option = new Option(col, col, isSelected, isSelected);
+                        $select.append(option);
+                    });
+
+                    // Select2'yi yeni verilerle tetikle
+                    $select.trigger('change');
+                });
+                // Multi-select olan markersRoc için özel güncelleme
+                let $markersRoc = $('select[name="markersRoc"]');
+                $markersRoc.empty();
+                response.columns.forEach(col => {
+                    $markersRoc.append(new Option(col, col));
+                });
+                $markersRoc.trigger('change');
+
+                // 2. Yeni başlıkları (columns) oluştur - En başa "#" ekliyoruz
+                let headerRow = '<thead><tr><th></th>'; // Satır numarası başlığı
+                response.columns.forEach(col => {
+                    headerRow += `<th>${col}</th>`;
+                });
+                headerRow += '</tr></thead>';
+                let tbody = "<tbody>";
+                response.data.forEach((row, index) => {
+                    let rowHtml = `<tr><td>${index + 1}</td>`; // Satır numarası hücresi
+                    response.columns.forEach(col => {
+                        rowHtml += `<td>${row[col]}</td>`;
+                    });
+                    rowHtml += '</tr>';
+                    tbody += rowHtml;
+                })
+                tbody += '</tbody>';
+                // $('#analysisTable').append(headerRow + tbody);
+
+                // table = $('#analysisTable').DataTable(dataTableSettings);
+
+            }
+        });
+    }
+
     document.querySelectorAll('input[name="dataInputRadio"]').forEach((radio) => {
         radio.addEventListener('change', function () {
             const delimiterDiv = document.getElementById('delimiterOptions');
@@ -538,6 +485,43 @@
         // Class adı 'advancedCheckBox' olan tüm form-group'ları bul
         const advancedElements = document.querySelectorAll('.form-group.advancedCheckBox');
 
+        // const key = $el.attr('id');
+        // const value = $el.val();
+        // // 2. Sadece bu alanı IndexedDB'ye gönder
+        // if (key) {
+        //     saveSingleField(key, value);
+        // }
+        advancedElements.forEach(el => {
+            // 2. Eğer alanlar görünür olduysa (veya her durumda) içindeki inputları kaydet
+            const inputs = el.querySelectorAll('input, select');
+            let key, value;
+            inputs.forEach(input => {
+                key = input.id || input.name;
+                if (input.type === 'checkbox') {
+                    value = input.checked;
+                } else {
+                    value = input.value;
+                }
+
+
+            });
+            if (this.checked) {
+                if (key && value) {
+                    saveSingleField(key, value); // Tekil kayıt fonksiyonunu çağır
+                }
+                el.style.display = 'block';  // Seçili ise göster
+            } else {
+                if (key && value) {
+                    dbManager.delete_setting(key); // Tekil kayıt fonksiyonunu çağır
+                }
+                el.style.display = 'none'; // Seçili değilse gizle
+            }
+        });
+    });
+    document.getElementById('custom-content-below-tab').addEventListener('change', function () {
+        // Class adı 'advancedCheckBox' olan tüm form-group'ları bul
+        const advancedElements = document.getElementById('custom-content-below-tab');
+
         advancedElements.forEach(el => {
             if (this.checked) {
                 el.style.display = 'block';  // Seçili ise GİZLE
@@ -547,15 +531,19 @@
         });
     });
 
-    $(document).on('shown.bs.tab', 'a[data-toggle="pill"]', function (e) {
+    $(document).on('shown.bs.tab', 'a[data-toggle="pill"]', async function (e) {
         const targetId = $(e.target).attr('id');
         const advancedDiv = $('.roc-analysis-advanced');
         const advancedCheckBox = document.getElementById('advancedCheckBox')
 
         // Eğer tıklanan tab "ROC Analysis" tabı ise göster, değilse gizle
         if (targetId === 'custom-content-below-roc-analysis-tab') {
+            await dbManager.set_setting("analysis_type", "roc-analysis");
+
             advancedDiv.fadeIn(); // Şık bir geçişle göster
         } else {
+            // await dbManager.set_analysis_type("analysis"); // Analysis tabına geçildiğinde session'daki analysis_type'ı güncelle
+            await dbManager.set_setting("analysis_type", "analysis");
             advancedDiv.hide(); // Diğer tablarda gizle
             if (advancedCheckBox.checked) {
                 advancedCheckBox.checked = false; // Eğer "Advanced" seçiliyse, diğer tablara geçerken sıfırla
@@ -592,50 +580,51 @@
                 // Eğer "Load example data" seçilirse varsayılan veriyi
                 // tekrar yüklemek için radyo butonunu tetikleyebilirsiniz
                 $('input[name="exampleDataRadio"]:checked').trigger('change');
+
             }
         });
     });
 
     // Dosya seçildiğinde tetiklenir
-    $('#exampleInputFile').on('change', function () {
+    $('#exampleInputFile').on('change', async function () {
         let file = this.files[0];
         if (!file) return;
 
-        // Seçilen ayırıcıyı (delimiter) backend'e gönderiyoruz
+        // Arayüzü güncelle
+        $('.custom-file-label').html(file.name);
         let delimiter = $('input[name="delimiterRadio"]:checked').val();
 
-        let formData = new FormData();
-        formData.append("file", file);
-        formData.append("delimiter", delimiter);
-
-        $.ajax({
-            url: '/upload-csv',
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                updateTableAndDropdowns(response); // Tabloyu çiz
-                $('.custom-file-label').html(file.name);
-                $('#dataInputRadio1').prop('checked', true).trigger('change');
-            },
-            error: function () {
-                alert("Dosya yüklenirken bir hata oluştu. Lütfen ayırıcıyı ve dosya formatını kontrol edin.");
-            }
-        });
-
-        // 2. DOSYAYI HAM METİN (STRING) OLARAK OKU VE INDEXEDDB'YE KAYDET
+        // 1. DOSYAYI OKU VE INDEXEDDB'YE KAYDET
         const reader = new FileReader();
-        reader.onload = function (e) {
+
+        // Okuma işlemi bittiğinde çalışacak olan olay (Event)
+        reader.onload = async function (e) {
             const rawString = e.target.result; // Dosyanın orijinal metin hali
-            dbManager.save(rawString).then(() => {
-                console.log("Ham veri (string) IndexedDB'ye kaydedildi. Artık ayırıcı değişince bölünebilir.");
-            });
-            dbManager.save_delimiter(delimiter).then(() => {
-                console.log("delimiter IndexedDB'ye kaydedildi. Artık ayırıcı değişince bölünebilir.");
-            });
+
+            try {
+                // Loader'ı göster
+                $('#global-loader').show();
+
+                // Veritabanı işlemlerini yap
+                await dbManager.save_data(rawString);
+                await dbManager.set_setting("delimiter", delimiter);
+                await dbManager.set_setting("fileName", file.name); // Dosya adını da saklayalım
+
+                // 2. BACKEND VE TABLO GÜNCELLEME
+                // uploadAndRefreshTable fonksiyonu içerisinden rawString'i
+                // veya doğrudan inputları kullanabilirsin.
+                await uploadAndRefreshTable();
+
+                console.log("Dosya IndexedDB'ye ve sisteme başarıyla işlendi.");
+            } catch (error) {
+                console.error("Dosya işleme hatası:", error);
+            } finally {
+                $('#global-loader').fadeOut('fast');
+            }
         };
-        reader.readAsText(file); // Dosyayı string olarak oku
+
+        // Dosya okumayı BAŞLAT (Kritik satır!)
+        reader.readAsText(file);
     });
 
     // Hem örnek veri hem de yüklenen veri için ortak güncelleme fonksiyonu
@@ -668,7 +657,7 @@
         $('#analysisTable').DataTable(dataTableSettings);
 
         // B. Seçim Kutularını (Select) Doldur
-        const dropdowns = ['#marker1', '#marker2', '#status', '#statusRoc'];
+        const dropdowns = ['#marker1', '#marker2', '#status', '#markersRoc', '#statusRoc'];
         dropdowns.forEach(id => {
             let $select = $(id);
             $select.empty();
@@ -680,66 +669,65 @@
         });
     }
 
-    let selectedFile = null; // Dosyayı global bir değişkende tutalım
 
-    // Dosya seçildiğinde dosyayı hafızaya al ve yüklemeyi tetikle
-    $('#exampleInputFile').on('change', function () {
-        selectedFile = this.files[0];
-        if (selectedFile) {
-            $('.custom-file-label').html(selectedFile.name);
-            uploadAndRefreshTable(); // Yükleme fonksiyonunu çağır
-        }
-    });
+    // // Dosya seçildiğinde dosyayı hafızaya al ve yüklemeyi tetikle
+    // $('#exampleInputFile').on('change', function () {
+    //     selectedFile = this.files[0];
+    //     if (selectedFile) {
+    //         $('.custom-file-label').html(selectedFile.name);
+    //         uploadAndRefreshTable(); // Yükleme fonksiyonunu çağır
+    //     }
+    // });
 
 
-    function uploadAndRefreshTable() {
-        if (!selectedFile) return;
+    async function uploadAndRefreshTable() {
 
+        const storedData = await dbManager.get_data();
         let delimiter = $('input[name="delimiterRadio"]:checked').val();
-        dbManager.save_delimiter(delimiter).then(() => {
-            console.log("delimiter IndexedDB'ye kaydedildi. Artık ayırıcı değişince bölünebilir.");
-        });
-        let formData = new FormData();
-        formData.append("file", selectedFile);
-        formData.append("delimiter", delimiter);
+        await dbManager.set_setting("delimiter", delimiter);
 
-        $.ajax({
-            url: '/upload-csv',
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                // Daha önce oluşturduğumuz ortak fonksiyonu çağırıyoruz
-                updateTableAndDropdowns(response);
-            },
-            error: function () {
-                console.error("Tablo güncellenirken bir hata oluştu.");
-            }
-        });
+        const formatted = await formatDataByDelimiter(storedData);
+        updateTableAndDropdowns(formatted);
+
     }
 
     // Status dropdown değiştiğinde tetiklenir
-    $(document).on('change', '#status', function () {
-        const selectedStatus = $(this).val();
+    $(document).on('change', '#status, #statusRoc', async function () {
 
+        const selectedStatus = $(this).val();
         if (!selectedStatus || selectedStatus === "") {
             $('#category').empty().trigger('change');
             return;
         }
+        let dataInputRadioVal = $('input[name="dataInputRadio"]:checked').val();
+        let delimiter
 
+        let data;
+        if (dataInputRadioVal === 'upload') {
+            data = await dbManager.get_data()
+            delimiter = await dbManager.get_setting("delimiter");
+        } else {
+            data = dataInputRadioVal;
+            delimiter = $('input[name="exampleDataRadio"]:checked').val();
+        }
+        let currentStatusId = $(this)[0].id;
         $.ajax({
             url: '/get-unique-categories',
             method: 'POST',
-            data: {status_col: selectedStatus},
+            data: {status_col: selectedStatus, data: data, delimiter: delimiter},
             success: function (response) {
-                let $categorySelect = $('#category');
+                let categorySelectId = currentStatusId === 'status' ? '#category' : '#categoryRoc';
+                let $categorySelect = $(`${categorySelectId}`);
                 $categorySelect.empty();
                 $categorySelect.append(new Option("Please select category", "", true, true));
 
                 if (response.categories && response.categories.length > 0) {
                     response.categories.forEach(cat => {
-                        $categorySelect.append(new Option(cat, cat));
+                        if (response.selectedCategory === cat) {
+                            $categorySelect.append(new Option(cat, cat, true, true));
+                        } else {
+                            $categorySelect.append(new Option(cat, cat));
+                        }
                     });
                 }
                 $categorySelect.trigger('change');
@@ -747,50 +735,49 @@
         });
     });
 
-    // Status dropdown değiştiğinde tetiklenir
-    $(document).on('change', '#statusRoc', function () {
-        const selectedStatus = $(this).val();
+    // Herhangi bir input değiştiğinde saveSession'ı tetikle
+    // $(document).on('change', 'input, select, radio', function () {
+    //     // Sadece belirli sınıflara sahip veya form elemanı olanları izle
+    //     saveDb();
+    // });
+    // Herhangi bir input değiştiğinde sadece o alanı güncelle
+    $(document).on('change', 'input, select', function () {
+        const $el = $(this);
+        let key, value;
 
-        if (!selectedStatus || selectedStatus === "") {
-            $('#categoryRoc').empty().trigger('change');
-            return;
+        // 1. Key belirleme (Radio buttonlar için 'name', diğerleri için 'id' kullanılır)
+        if ($el.is(':radio')) {
+            key = $el.attr('name');
+            value = $('input[name="' + key + '"]:checked').val();
+        } else if ($el.is(':checkbox')) {
+            key = $el.attr('id');
+            value = $el.is(':checked'); // Boolean değer saklar
+        } else {
+            key = $el.attr('id');
+            value = $el.val();
         }
 
-        $.ajax({
-            url: '/get-unique-categories',
-            method: 'POST',
-            data: {status_col: selectedStatus},
-            success: function (response) {
-                let $categoryRocSelect = $('#categoryRoc');
-                $categoryRocSelect.empty();
-                $categoryRocSelect.append(new Option("Please select category", "", true, true));
-
-                if (response.categories && response.categories.length > 0) {
-                    response.categories.forEach(cat => {
-                        $categoryRocSelect.append(new Option(cat, cat));
-                    });
-                }
-                $categoryRocSelect.trigger('change');
-            }
-        });
+        // 2. Sadece bu alanı IndexedDB'ye gönder
+        if (key) {
+            saveSingleField(key, value);
+        }
     });
 
     // scripts bloğunun en altına ekleyin
-    function saveSession() {
+    async function saveDb() {
+        // 1. Verileri topla
         let sessionData = {
             // Radyo Butonları
             dataInputRadio: $('input[name="dataInputRadio"]:checked').val(),
             exampleDataRadio: $('input[name="exampleDataRadio"]:checked').val(),
             delimiterRadio: $('input[name="delimiterRadio"]:checked').val(),
 
-            // Dropdownlar (Normal ve Select2)
+            // Dropdownlar ve Seçimler
             marker1: $('#marker1').val(),
             marker2: $('#marker2').val(),
             status: $('#status').val(),
             category: $('#category').val(),
-
-            // ROC Tab
-            markersRoc: $('select[name="markersRoc"]').val(), // Multi-select
+            markersRoc: $('select[name="markersRoc"]').val(),
             statusRoc: $('#statusRoc').val(),
             categoryRoc: $('#categoryRoc').val(),
 
@@ -801,33 +788,125 @@
             confidenceLevel: $('#confidenceLevel').val()
         };
 
-        $.ajax({
-            url: '/update-session',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(sessionData),
-            success: function (response) {
-                console.log(sessionData)
-                console.log("Session güncellendi");
+        // 2. Düzenli Kayıt İşlemi: Obje üzerindeki her bir key-value çiftini döngüyle kaydet
+        const savePromises = Object.entries(sessionData).map(([key, value]) => {
+            // Sadece değeri boş olmayanları veya boolean olanları kaydetmek istersen kontrol ekleyebilirsin
+            return dbManager.set_setting(key, value);
+        });
+
+        // 3. Tüm kayıtların bitmesini bekle
+        await Promise.all(savePromises);
+    }
+
+    async function saveSingleField(key, value) {
+        try {
+            await dbManager.set_setting(key, value);
+        } catch (error) {
+            console.error(`${key} kaydedilirken hata oluştu:`, error);
+        }
+    }
+
+    async function updateSelectedDataInput(key, value) {
+        await dbManager.set_setting(key, value);
+    }
+
+
+    // Seçim yapıldığında çalışacak ortak fonksiyon
+    function syncSelectors() {
+        const selectors = ['#marker1', '#marker2', '#status'];
+
+        // 1. Mevcut tüm seçili değerleri bir listeye topla (boş olmayanlar)
+        const selectedValues = selectors
+            .map(id => $(id).val())
+            .filter(val => val !== "" && val !== null);
+
+        selectors.forEach(id => {
+            const $currentSelector = $(id);
+            const currentValue = $currentSelector.val();
+
+            // 2. Her select kutusundaki her option'ı kontrol et
+            $currentSelector.find('option').each(function () {
+                const optionValue = $(this).val();
+
+                // Eğer bu option boş değilse ve BAŞKA bir kutuda seçilmişse disable et
+                if (optionValue !== "" && selectedValues.includes(optionValue) && optionValue !== currentValue) {
+                    $(this).prop('disabled', true);
+                } else {
+                    $(this).prop('disabled', false);
+                }
+            });
+
+            // 3. Değişikliği IndexedDB'ye kaydet
+            if (currentValue) {
+                dbManager.set_setting(id.replace('#', ''), currentValue);
             }
         });
     }
 
-    // Herhangi bir input değiştiğinde saveSession'ı tetikle
-    $(document).on('change', 'input, select', function () {
-        // Sadece belirli sınıflara sahip veya form elemanı olanları izle
-        saveSession();
+    // Event Listener'ları bağla
+    $('#marker1, #marker2, #status').on('change', function () {
+        syncSelectors();
     });
 
+    // Seçim yapıldığında çalışacak ortak fonksiyon
+    function syncSelectorsForRoc() {
+        const selectors = ['#markersRoc', '#statusRoc'];
+
+        // 1. Tüm seçili değerleri düz bir liste (flat array) olarak topla
+        let allSelected = [];
+        selectors.forEach(id => {
+            const val = $(id).val();
+            if (val) {
+                // Eğer değer bir diziyse (multiple), listeye ekle; değilse tekil ekle
+                if (Array.isArray(val)) {
+                    allSelected = allSelected.concat(val);
+                } else {
+                    allSelected.push(val);
+                }
+            }
+        });
+
+        selectors.forEach(id => {
+            const $currentSelector = $(id);
+            const currentValue = $currentSelector.val() || []; // Seçili olanlar (tekil veya dizi)
+
+            $currentSelector.find('option').each(function () {
+                const optionValue = $(this).val();
+                if (optionValue === "") return;
+
+                // Bu opsiyon BAŞKA bir yerde seçilmiş mi kontrol et
+                const isSelectedElsewhere = Array.isArray(currentValue)
+                    ? allSelected.filter(v => !currentValue.includes(v)).includes(optionValue)
+                    : allSelected.includes(optionValue) && optionValue !== currentValue;
+
+                if (isSelectedElsewhere) {
+                    $(this).prop('disabled', true);
+                } else {
+                    $(this).prop('disabled', false);
+                }
+            });
+
+            // 3. Değişikliği IndexedDB'ye kaydet
+            dbManager.set_setting(id.replace('#', ''), currentValue);
+        });
+
+        // Select2 kullanıyorsan görselleri güncellemek için tetikle
+        // $('.select2').trigger('change.select2');
+    }
+
+    // Event Listener'ları bağla
+    $('#markersRoc, #statusRoc').on('change', function () {
+        syncSelectorsForRoc();
+    });
     // Select2 değişimlerini yakalamak için özel tetikleyici
     $('.select2bs4').on('select2:select select2:unselect', function (e) {
-        saveSession();
+        saveDb();
     });
 
     // Seçili ayırıcı karakterini döndüren yardımcı fonksiyon
-    function getDelimiterChar() {
+    async function getDelimiterChar() {
         const val = $('input[name="delimiterRadio"]:checked').val();
-        dbManager.save_delimiter(val)
+        await dbManager.set_setting("delimiter", val)
         switch (val) {
             case 'tab':
                 return '\t';
@@ -842,8 +921,11 @@
     }
 
     // Ham veriyi (raw string) sütunlara ayıran fonksiyon
-    function formatDataByDelimiter(rawContent) {
-        const delimiter = getDelimiterChar();
+    async function formatDataByDelimiter(rawContent) {
+        console.log(rawContent)
+        const delimiter = await getDelimiterChar();
+        console.log(delimiter)
+
         const lines = rawContent.trim().split(/\r?\n/); // Satırlara böl
         if (lines.length === 0) return null;
 
@@ -862,27 +944,85 @@
 
     $('input[name="delimiterRadio"]').on('change', async function () {
         // 1. IndexedDB'den veriyi al
-        const content = await dbManager.get();
+        const content = await dbManager.get_data();
 
         if (content) {
             // HATA GİDERME: Eğer içerik dizi geliyorsa, tabloyu temizleyip tazelemek gerekir.
             // Ancak görselin değişmesi için verinin HAM METİN olması şarttır.
             if (typeof content === 'string') {
-                const formatted = formatDataByDelimiter(content);
+                const formatted = await formatDataByDelimiter(content);
                 if (formatted) {
                     updateTableAndDropdowns(formatted);
                 }
-            } else if (Array.isArray(content)) {
-                // Eğer veri zaten dizi olarak kaydedilmişse, ayırıcıyı değiştirmek
-                // tarayıcı tarafında bir şeyi değiştirmez. Bu durumda sunucudan tazelemek zorunludur.
-                if (selectedFile) {
-                    uploadAndRefreshTable();
-                } else {
-                    // Sadece mevcut diziyi tekrar basar (Görsel değişmez)
-                    const columns = Object.keys(content[0]);
-                    updateTableAndDropdowns({columns: columns, data: content});
-                }
             }
+        }
+    });
+
+    async function saveCurrentSelectionsToDb() {
+        // Sayfadaki tüm anlamlı inputları yakala
+        let sessionData = {
+            analysis_type: await dbManager.get_setting("analysis_type") || "analysis", // Hangi tabda olduğumuzu bilmek için
+            // Radyo Butonları
+            dataInputRadio: $('input[name="dataInputRadio"]:checked').val(),
+            exampleDataRadio: $('input[name="exampleDataRadio"]:checked').val(),
+            delimiterRadio: $('input[name="delimiterRadio"]:checked').val(),
+
+            // Dropdownlar (Select)
+            marker1: $('#marker1').val(),
+            marker2: $('#marker2').val(),
+            status: $('#status').val(),
+            category: $('#category').val(),
+
+            // Çoklu Seçim (Multiple Select)
+            markersRoc: $('#markersRoc').val(),
+            statusRoc: $('#statusRoc').val(),
+            categoryRoc: $('#categoryRoc').val(),
+
+            // Checkbox ve Gelişmiş Seçenekler
+            advanced: $('#advancedCheckBox').is(':checked'),
+            optimalCutOff: $('#optimalCutOff').val(),
+            direction: $('#direction').val(),
+            confidenceLevel: $('#confidenceLevel').val()
+        };
+
+        if (sessionData.analysis_type !== "roc-analysis") {
+            delete sessionData.markersRoc;
+            delete sessionData.statusRoc;
+            delete sessionData.categoryRoc;
+            if (sessionData.advanced === false) {
+                delete sessionData.optimalCutOff;
+                delete sessionData.direction;
+                delete sessionData.confidenceLevel;
+            }
+        }
+        console.log(sessionData);
+        // Tüm key-value çiftlerini bir diziye çevirip paralel olarak kaydet
+        const savePromises = Object.entries(sessionData).map(([key, value]) => {
+            // Değeri null veya undefined olmayanları kaydet
+            if (value !== undefined) {
+                return dbManager.set_setting(key, value);
+            }
+        });
+
+        // Tüm işlemlerin bitmesini bekle
+        await Promise.all(savePromises);
+    }
+
+    $('#btn-save').on('click', async function () {
+        // 1. Loading ekranını başlat (isteğe bağlı)
+        $('#global-loader').show();
+
+        try {
+            // 2. Tüm verileri topla ve IndexedDB'ye yaz
+            await saveCurrentSelectionsToDb();
+
+            // Kullanıcıya bilgi ver (Opsiyonel)
+            window.location.href = "/analysis2";
+        } catch (error) {
+            console.error("Kaydetme hatası:", error);
+        } finally {
+            // 3. Loader'ı kapat
+            $('#global-loader').fadeOut('fast');
         }
     });
 </script>

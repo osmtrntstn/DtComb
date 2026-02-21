@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<div class="col-md-3" xmlns="http://www.w3.org/1999/html">
+<div class="col-md-3 fixed-sidebar">
 
     <!-- Profile Image -->
     <div class="card card-primary card-outline">
@@ -231,12 +231,30 @@
 <script src="./static/js/indexed-db-manager.js"></script>
 
 <script>
+    function fixResponsiveLayout() {
+        const windowWidth = $(window).width();
 
+        // 1. Tüm Select2 kutularını genişliğe zorla
+        $('.select2bs4, .select2').each(function () {
+            $(this).next('.select2-container').css('width', '100%');
+        });
+
+        // 2. Eğer mobildeysek taşan tabloları sarmala
+        if (windowWidth < 992) {
+            $('table').parent().css({
+                'overflow-x': 'auto',
+                'display': 'block',
+                'width': '100%'
+            });
+        }
+    }
+
+    // Hem sayfa açıldığında hem boyut değiştiğinde çalıştır
+    $(window).on('resize load', fixResponsiveLayout);
     $('#collect-data').on('click', async function () {
         // 1. Temel analiz bilgilerini al
         let payload = await collectAllData()
 
-        console.log("R Motoruna gidecek paket:", payload);
         // 4. Backend'e Gönder
         $.ajax({
             url: '/run-analysis',
@@ -247,9 +265,7 @@
                 $('#collect-data').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Analyzing...');
             },
             success: function (response) {
-                console.log(response);
                 if (response.status === "success") {
-
                     // --- 1. GRAFİK VERİSİNİ HAZIRLAMA ---
                     // Marker isimlerine göre datayı grupla
                     const groupedData = {};
@@ -312,6 +328,11 @@
                         window.rocChartInstance.destroy();
                     }
 
+                    // 1. Dark Mode kontrolü yap ve renkleri belirle
+                    const isDarkMode = $('body').hasClass('dark-mode');
+                    const textColor = isDarkMode ? '#ffffff' : '#666666'; // Metin rengi
+                    const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'; // Izgara çizgileri
+
                     window.rocChartInstance = new Chart(ctx, {
                         type: 'scatter',
                         data: {datasets: datasets},
@@ -322,16 +343,37 @@
                                 x: {
                                     type: 'linear',
                                     position: 'bottom',
-                                    title: {display: true, text: '1 - Specificity (False Positive Rate)'},
+                                    grid: {color: gridColor}, // Izgara çizgisi rengi
+                                    ticks: {color: textColor}, // Eksen rakamları rengi
+                                    title: {
+                                        display: true,
+                                        text: '1 - Specificity (False Positive Rate)',
+                                        color: textColor // Eksen başlığı rengi
+                                    },
                                     min: 0, max: 1
                                 },
                                 y: {
-                                    title: {display: true, text: 'Sensitivity (True Positive Rate)'},
+                                    grid: {color: gridColor},
+                                    ticks: {color: textColor},
+                                    title: {
+                                        display: true,
+                                        text: 'Sensitivity (True Positive Rate)',
+                                        color: textColor
+                                    },
                                     min: 0, max: 1
                                 }
                             },
                             plugins: {
+                                legend: {
+                                    labels: {
+                                        color: textColor // Üstteki lejant metinlerinin rengi
+                                    }
+                                },
                                 tooltip: {
+                                    // Tooltip arka planını dark mode'da biraz daha belirgin yapabilirsin
+                                    backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+                                    titleColor: isDarkMode ? '#fff' : '#000',
+                                    bodyColor: isDarkMode ? '#fff' : '#000',
                                     callbacks: {
                                         label: function (context) {
                                             let point = context.raw;
@@ -383,14 +425,46 @@
                 $('#collect-data').prop('disabled', false).text('Go');
             }
         });
-        // 3. Veriyi Backend'e (FastAPI) gönder
-        //sendToAnalysis(payload);
+
     });
+
+
+    function refreshChartTheme() {
+        if (!window.rocChartInstance) return;
+
+        const colors = getChartColors();
+        const options = window.rocChartInstance.options;
+
+        // Eksen renklerini güncelle
+        options.scales.x.grid.color = colors.grid;
+        options.scales.x.ticks.color = colors.text;
+        options.scales.x.title.color = colors.text;
+
+        options.scales.y.grid.color = colors.grid;
+        options.scales.y.ticks.color = colors.text;
+        options.scales.y.title.color = colors.text;
+
+        // Lejant ve Tooltip renklerini güncelle
+        options.plugins.legend.labels.color = colors.text;
+        options.plugins.tooltip.backgroundColor = colors.tooltipBg;
+
+        // Değişiklikleri uygula
+        window.rocChartInstance.update();
+    }
+
+    function getChartColors() {
+        const isDark = $('body').hasClass('dark-mode');
+        return {
+            text: isDark ? '#ffffff' : '#666666',
+            grid: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+            tooltipBg: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)'
+        };
+    }
 
     async function collectAllData() {
         // 1. IndexedDB'den asıl veriyi oku
-        const tableData = await dbManager.get();
-        const delimiter = await dbManager.get_delimiter();
+        const tableData = await dbManager.get_data();
+        const delimiter = await dbManager.get_setting('delimiter');
 
         if (!tableData) {
             Swal.fire('Hata', 'Hafızada veri bulunamadı, lütfen dosyayı tekrar yükleyin.', 'error');
@@ -406,15 +480,14 @@
         };
         const isAdvancedChecked = $('#advancedCheckBox').is(':checked');
 
-        if (isAdvancedChecked) {
-            // Advanced alanları manuel ekle veya bu inputlara da 'data-dynamic' ekleyebilirsin
-            payload['cutoffMethod'] = $('#optimalCutOff').val();
-            payload['direction'] = $('#direction').val();
+        // Advanced alanları manuel ekle veya bu inputlara da 'data-dynamic' ekleyebilirsin
+        payload['cutoffMethod'] = $('#optimalCutOff').val();
+        payload['direction'] = $('#direction').val();
 
-            // Sayısal değerler için güvenli parseFloat
-            let confLevelRaw = $('#confidenceLevel').val();
-            payload['confLevel'] = parseFloat(confLevelRaw.replace(',', '.'));
-        }
+        // Sayısal değerler için güvenli parseFloat
+        let confLevelRaw = $('#confidenceLevel').val();
+        payload['confLevel'] = parseFloat(confLevelRaw.replace(',', '.'));
+
         // Dinamik inputları topla
         $('[data-dynamic]').each(function () {
             const name = $(this).attr('name');

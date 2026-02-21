@@ -1,3 +1,92 @@
+/* Ana sarmalayıcıyı esnetilebilir ama taşmaz yap */
+.row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+
+/* Sol Paneli Sabitle (Boyut değişimine duyarlı) */
+.col-md-3 {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 20px !important; /* Navbar varsa 70px yap */
+    align-self: flex-start !important; /* Yüksekliğin stretch olmasını engeller */
+    height: auto !important;
+    z-index: 1000;
+}
+
+/* Mobilde (Genişlik 992px altı) Sabitlemeyi Kaldır ve Taşmayı Engelle */
+@media (max-width: 991.98px) {
+    .col-md-3 {
+        position: relative !important;
+        top: 0 !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+        padding: 0 15px !important;
+    }
+
+    .col-md-9 {
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+        padding: 0 15px !important;
+    }
+
+    /* Divlerin dışarı taşmasını önle */
+    #parameter-div, #dynamic-method-parameters-container {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+}
+
+
+
+#global-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9); /* Hafif şeffaf beyaz */
+    z-index: 9999; /* En üstte durması için */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.loader-content {
+    text-align: center;
+}
+
+/* Masaüstü görünümde (Yan yana iken) sabitle */
+@media (min-width: 992px) {
+    .fixed-sidebar {
+        position: -webkit-sticky !important;
+        position: sticky !important;
+        top: 70px !important;
+        align-self: flex-start !important;
+        z-index: 1000;
+    }
+}
+
+/* Mobil ve Tablet görünümde (Alt alta geçtiğinde) normal akışa dön */
+@media (max-width: 991.98px) {
+    .fixed-sidebar {
+        position: relative !important; /* Üst üste binmeyi engeller */
+        top: 0 !important;
+        width: 100% !important;
+        margin-bottom: 20px; /* Alttaki tabloyla arasına boşluk koyar */
+        z-index: 1;
+    }
+
+    /* Row marjinlerini sıfırlayarak dışarı taşmayı önle */
+    .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
+
 /* Arama kutusunun olduğu div'i en sağa iter */
 .dataTables_filter {
     float: right !important;

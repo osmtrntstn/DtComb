@@ -24,14 +24,28 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <!-- Theme style -->
     <link rel="stylesheet" href="/static/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="/static//css/style.css">
+    <link rel="stylesheet" href="/static//css/style.css?1">
     {% block head %}{% endblock %}
 </head>
 <body class="hold-transition layout-top-nav layout-navbar-fixed layout-footer-fixed">
+<script>
+    (function () {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    })();
+</script>
+<div id="global-loader" style="display: flex;">
+    <div class="loader-content">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p>Yükleniyor, lütfen bekleyin...</p>
+    </div>
+</div>
 <div class="wrapper">
 
     <!-- Navbar -->
-    <nav class="main-header navbar navbar-expand-md navbar-light navbar-dark">
+    <nav class="main-header navbar navbar-expand-lg navbar-light navbar-dark">
         <div class="container-fluid">
             <a href="/" class="navbar-brand">
                 <img src="/static/img/nav-bar.png" alt="DtComb Logo"
@@ -78,9 +92,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
 
                 <li class="nav-item">
-                    <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-                        <i class="fas fa-th-large"></i>
-                    </a>
+                    <input type="checkbox" id="darkModeSwitch"
+                           style="display: none"
+                           data-bootstrap-switch
+                           data-on-text="DARK" data-off-text="LIGHT" data-on-color="primary" data-off-color="default">
                 </li>
             </ul>
         </div>
@@ -127,6 +142,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="/static/plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap Switch -->
+<script src="/static/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
 <!-- Datatables -->
 <script src="/static/plugins/datatables/datatables.min.js"></script>
 <!-- Select2 -->
@@ -137,8 +154,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- AdminLTE App -->
 <script src="/static/dist/js/adminlte.min.js"></script>
 
-<script src="{{ url_for('static', path='/js/main.js') }}"></script>
-{% block scripts %}{% endblock %}
+<script src="/static/js/main.js?1"></script>
+
+{% block scripts %}
+
+{% endblock %}
 
 </body>
 </html>

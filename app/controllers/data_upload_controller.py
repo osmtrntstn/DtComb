@@ -11,24 +11,13 @@ router = APIRouter()
 templates = Jinja2Templates(directory="app/views")
 
 
-@router.post("/update-session")
-async def update_session(request: Request, data: dict = Body(...)):
-    # Mevcut session verilerini al veya boş sözlük oluştur
-    current_session = request.session.get("user_selections", {})
-
-    # Yeni gelen verilerle session'ı güncelle
-    current_session.update(data)
-
-    # Session'a geri yaz
-    request.session["user_selections"] = current_session
-    return {"status": "success"}
 @router.get("/data-upload")
 async def index(request: Request):
     last_selected = request.session.get("selected_dataset", "laparotomy")
     r_output = get_data({"exampleData": last_selected})
     parsed_data = json.loads(r_output)
     return templates.TemplateResponse("data_upload.html",
-                                      {"request": request, "result": parsed_data, "title": "Hoş Geldiniz"})
+                                      {"request": request, "title": "Hoş Geldiniz"})
 
 
 @router.post("/fetch-example-data")
@@ -42,63 +31,47 @@ async def fetch_example_data(request: Request, data_name: str = Form(...)):
     return json.loads(r_output)
 
 
-@router.post("/data-upload")
-async def data_upload(request: Request):
-    # Yazdığınız fonksiyonu burada kullanın
-    result = get_data({"value": 1.1})
-    # 2. View'a sonuçları gönder
-    return templates.TemplateResponse("data_upload.html", {
-        "request": request,
-        "result": result,
-        "user_val": 1.1
-    })
-
-
-storage = {}  # Kullanıcı verilerini tutan sözlük
-
-
-@router.post("/upload-csv")
-async def upload_csv(request: Request, file: UploadFile = File(...), delimiter: str = Form(...)):
-    # 1. Ayırıcıyı (delimiter) belirle
-    sep = ","
-    if delimiter == "tab":
-        sep = "\t"
-    elif delimiter == "semicolon":
-        sep = ";"
-    elif delimiter == "space":
-        sep = " "
-
-    # 2. Dosya içeriğini oku
-    contents = await file.read()
-
-    # 3. Pandas ile oku (Hata burada oluşuyordu, artık doğru buffer gidiyor)
-    df = pd.read_csv(io.StringIO(contents.decode('utf-8')), sep=sep)
-
-    # 4. NaN (boş) değerleri JSON uyumlu hale getir (None yap)
-    df = df.where(pd.notnull(df), None)
-
-    # 5. Kullanıcı bazlı UUID/Session yönetimi
-    user_id = request.session.get("user_id")
-    if not user_id:
-        user_id = str(uuid.uuid4())
-        request.session["user_id"] = user_id
-
-    # Veriyi bu kullanıcıya özel olarak hafızaya kaydet
-    storage[user_id] = df
-
-    return {
-        "columns": df.columns.tolist(),
-        "data": df.to_dict(orient='records')
-    }
-
-
 @router.post("/get-unique-categories")
-async def get_unique_categories(request: Request, status_col: str = Form(...)):
-    user_id = request.session.get("user_id")
-    df = storage.get(user_id)  # Sadece bu kullanıcının verisi
+async def get_unique_categories(request: Request, status_col: str = Form(...), data: str = Form(...),
+                                delimiter: str = Form(...)):
+    selectedCategory = ""
+    df = None
+    column_names = None
+    try:
+        if data == "example":
+            # 1. R'dan gelen JSON metnini sözlüğe çevir
+            r_output = json.loads(get_data({"exampleData": delimiter}))
 
-    if df is not None and status_col in df.columns:
-        unique_values = df[status_col].dropna().unique().tolist()
-        return {"categories": [str(val) for val in unique_values]}
+            # 2. 'data' anahtarındaki metni DataFrame'e dönüştür
+            # Not: R tarafı CSV formatında string döndürüyorsa StringIO şarttır.
+            csv_data = r_output.get("data", "")
+            column_names = r_output.get("columns", [])  # Kolon listesini al
+            df = pd.DataFrame(csv_data, columns=column_names)
 
-    return {"categories": [], "error": "Veri bulunamadı."}
+            selectedCategory = r_output.get("selectedCategory", "")
+        else:
+            # Kullanıcının yüklediği ham veriyi ayırıcıya göre oku
+            sep = ","
+            if delimiter == "tab":
+                sep = "\t"
+            elif delimiter == "semicolon":
+                sep = ";"
+            elif delimiter == "space":
+                sep = " "
+
+            df = pd.read_csv(io.StringIO(data), sep=sep)
+            column_names = df.columns.tolist()  # Kolon isimlerini al
+
+        # 3. DataFrame kontrolü ve kategori ayıklama
+        if df is not None and status_col in column_names:
+            # NaN değerleri temizle ve benzersiz değerleri listele
+            unique_values = df[status_col].dropna().unique().tolist()
+            return {
+                "categories": [str(val) for val in unique_values],
+                "selectedCategory": str(selectedCategory)
+            }
+
+    except Exception as e:
+        return {"categories": [], "error": f"İşlem sırasında hata oluştu: {str(e)}"}
+
+    return {"categories": [], "error": "Veri veya kolon bulunamadı."}

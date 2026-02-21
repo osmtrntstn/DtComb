@@ -53,4 +53,4 @@ outputList <- list(
   selectedMarker1 = selectedMarker1,
   selectedMarker2 = selectedMarker2
 )
-cat(toJSON(outputList))
+cat(toJSON(outputList,, auto_unbox = TRUE))

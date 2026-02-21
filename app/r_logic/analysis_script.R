@@ -6,7 +6,8 @@ library(jsonlite)
 createROCPlot <- function(input, output = NULL, session = NULL) {
   # Tüm süreci sessizce yönetmek ve hataları yakalamak için tryCatch
   result <- tryCatch({
-
+    temp_plot <- tempfile()
+    png(temp_plot) # Çizimleri geçici bir dosyaya hapseder
     # Giriş verilerini hazırla
     input$event <- "needed"
     data_text <- input$markers
@@ -83,6 +84,7 @@ createROCPlot <- function(input, output = NULL, session = NULL) {
     # Hata durumunda Python tarafına temiz bir hata mesajı fırlat
     stop(e$message)
   })
-
+    dev.off()
+    unlink(temp_plot) # Geçici dosyayı siler
   return(result)
 }
