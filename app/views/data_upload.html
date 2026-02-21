@@ -1020,7 +1020,7 @@
         try {
             // 2. Tüm verileri topla ve IndexedDB'ye yaz
             await saveCurrentSelectionsToDb();
-            const analysis_type = await dbManager.set_setting("analysis_type", "roc-analysis");
+            const analysis_type = await dbManager.get_setting("analysis_type");
             if (analysis_type === "roc-analysis") {
                 // window.location.href = "/roc-analysis";
             } else {

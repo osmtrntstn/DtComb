@@ -10,21 +10,35 @@ createROCPlot <- function(input, output = NULL, session = NULL) {
     png(temp_plot) # Çizimleri geçici bir dosyaya hapseder
     # Giriş verilerini hazırla
     input$event <- "needed"
-    data_text <- input$markers
-    raw_sep <- input$delimiter
-    sep_char <- if(!is.null(raw_sep) && nchar(as.character(raw_sep)) == 1) as.character(raw_sep) else "\t"
 
-    # Veri tablosunu oku
-    df <- read.table(text = data_text, header = TRUE, sep = sep_char, check.names = FALSE)
+    if(input$dataInput == "example"){
+
+        # 3. Veriyi Yükle (Düzeltme: list parametresini kullanmalısınız)
+        # data(dataName) derseniz R "dataName" adlı bir dosya arar.
+        # data(list = dataName) derseniz değişkenin içindeki değeri (örn: "laparotomy") arar.
+        data(list = input$exampleData, package = "dtComb")
+        df <- get(input$exampleData)
+    } else {
+        data_text <- input$markers
+        raw_sep <- input$delimiter
+        sep_char <- if(!is.null(raw_sep) && nchar(as.character(raw_sep)) == 1) as.character(raw_sep) else "\t"
+
+        # Veri tablosunu oku
+        df <- read.table(text = data_text, header = TRUE, sep = sep_char, check.names = FALSE)
+    }
+
 
     if (nrow(df) == 0) stop("Veri tablosu boş!")
+    markers <- data.frame(df[[input$marker1]],df[[input$marker2]])
+    status <- as.factor(df[[input$status]])
+    names(markers) <- c(as.character(input$marker1),as.character(input$marker2))
 
     if (input$`function` == "linComb") {
       # Analiz motorunu çalıştır
       modelFit <- linComb(
-        markers = as.data.frame(df[, -1]),
-        status = as.factor(df[, 1]),
-        event = "needed",
+        markers = markers,
+        status = status,
+        event = as.character(input$category),
         method = as.character(input$method),
         resample = as.character(input$resampling),
         show.plot = FALSE,
@@ -105,17 +119,6 @@ createROCPlot <- function(input, output = NULL, session = NULL) {
       modelFit$coefficients = if(!is.null(modelFit$fit$parameters)) as.list(modelFit$fit$parameters) else list()
       modelFit$markers = df
       return(jsonlite::toJSON(modelFit, pretty = TRUE, auto_unbox = TRUE, force = TRUE))
-
-#       return(jsonlite::toJSON(list(
-#         roc_data = as.data.frame(modelFit$ROC_coordinates),
-#         auc_data = as.data.frame(modelFit$AUC_table, stringsAsFactors=FALSE),
-#         thresholds = list(
-#           marker1 = as.numeric(modelFit$ThresholdMarker1[1]),
-#           marker2 = as.numeric(modelFit$ThresholdMarker2[1]),
-#           combined = as.numeric(modelFit$ThresholdCombined[1])
-#         ),
-#         coefficients = if(!is.null(modelFit$fit$Parameters)) as.list(modelFit$fit$Parameters) else list()
-#       )))
 
     } else {
       stop(paste("Tanımlanmayan fonksiyon tipi:", input$`function`))

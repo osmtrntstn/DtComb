@@ -629,7 +629,6 @@
             },
             success: function (response) {
                 if (response.status === "success") {
-                    console.log(response);
                     drawRocChart(response);
                     fillRocCoordinatesTables(response.roc_data);
                     fillAucStatisticsTable(response.auc_data);
@@ -717,12 +716,12 @@
         let row3 = "Optimal cut-off point";
         let cutPointData = {
             combined: [
-                {name: row1, value: response.cutoff_Method},
+                {name: row1, value: response.cutoff_method},
                 {name: row2, value: response.criterion_data.combined},
                 {name: row3, value: response.thresholds.combined}
             ],
             marker1: [
-                {name: row1, value: response.cutoff_Method},
+                {name: row1, value: response.cutoff_method},
                 {name: row2, value: response.criterion_data.marker1},
                 {name: row3, value: response.thresholds.marker1}
             ],
@@ -1083,18 +1082,26 @@
         // 1. IndexedDB'den asıl veriyi oku
         const tableData = await dbManager.get_data();
         const delimiter = await dbManager.get_setting('delimiter');
+        const dataInputRadio = await dbManager.get_setting('dataInputRadio');
+        const exampleDataRadio = await dbManager.get_setting('exampleDataRadio');
+        const status = await dbManager.get_setting('status');
+        const category = await dbManager.get_setting('category');
+        const marker1 = await dbManager.get_setting('marker1');
+        const marker2 = await dbManager.get_setting('marker2');
 
-        if (!tableData) {
-            Swal.fire('Hata', 'Hafızada veri bulunamadı, lütfen dosyayı tekrar yükleyin.', 'error');
-            return;
-        }
 
         // 2. Parametreleri ve tablo verisini birleştir
         let payload = {
             function: $('#functions').val(),
             method: $('#methods').val(),
             markers: tableData, // Tüm tabloyu buraya ekliyoruz
-            delimiter: delimiter
+            delimiter: delimiter,
+            dataInput: dataInputRadio,
+            exampleData : exampleDataRadio,
+            marker1 : marker1,
+            marker2 : marker2,
+            category : category,
+            status : status,
         };
         const isAdvancedChecked = $('#advancedCheckBox').is(':checked');
 
@@ -1286,10 +1293,7 @@
      * @param {string} labelKey - Grubun olduğu anahtar (örn: "group")
      */
     function drawDensityPlot(data, threshold, valueKey, labelKey = "group", targetDivId = 'densityChartDiv') {
-        console.log(data)
-        console.log(threshold)
-        console.log(valueKey)
-        console.log(labelKey)
+
         const groups = {};
 
         // 1. Veriyi gruplandır (Dinamik anahtarlar kullanarak)
