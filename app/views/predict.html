@@ -11,29 +11,27 @@
 
 
             <div class="card-body" style="padding: 0.25rem !important;">
-
                 <div class="form-group">
-                    <label>Input data</label>
-
-                    <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" id="dataInputRadio1" name="dataInputRadio"
-                               value="upload">
-                        <label for="dataInputRadio1" class="custom-control-label"
+                    <label>Input new data</label>
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="uploadModelSwitch">
+                        <label class="custom-control-label" for="uploadModelSwitch"
                                style="font-weight: 400 !important;">Upload
-                            a file</label>
-                    </div>
-                    <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" id="dataInputRadio2" name="dataInputRadio"
-                               value="example"
-                               checked>
-                        <label for="dataInputRadio2" class="custom-control-label"
-                               style="font-weight: 400 !important;">Load
-                            example data</label>
+                            Model</label>
                     </div>
                 </div>
+                <div class="form-group" id="upload-model" style="display: none;">
+                    <label for="uploadModelFile">Upload Model</label>
+                    <div class="input-group mb-2">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="uploadModelFile">
+                            <label class="custom-file-label" for="uploadModelFile">Choose file</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mt-2">
+                    <label for="exampleInputFile">Upload Data</label>
 
-
-                <div class="form-group" id="delimiterOptions" style="display: none;">
                     <div class="input-group mb-2">
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" id="exampleInputFile">
@@ -43,14 +41,14 @@
                     <label>Delimiter</label>
                     <div class="custom-control custom-radio">
                         <input class="custom-control-input" type="radio" id="delimiterRadio1" name="delimiterRadio"
-                               value="comma" checked>
+                               value="comma">
                         <label for="delimiterRadio1" class="custom-control-label"
                                style="font-weight: 400 !important;">Comma</label>
                     </div>
 
                     <div class="custom-control custom-radio">
                         <input class="custom-control-input" type="radio" id="delimiterRadio2" name="delimiterRadio"
-                               value="tab">
+                               value="tab" checked>
                         <label for="delimiterRadio2" class="custom-control-label"
                                style="font-weight: 400 !important;">Tab</label>
                     </div>
@@ -79,221 +77,13 @@
                         </small>
                     </div>
                 </div>
-                <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="custom-content-below-analysis-tab" data-toggle="pill"
-                           href="#custom-content-below-analysis" role="tab"
-                           aria-controls="custom-content-below-analysis"
-                           aria-selected="true" data-key="analysis">Analysis</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="custom-content-below-roc-analysis-tab" data-toggle="pill"
-                           href="#custom-content-below-roc-analysis" role="tab"
-                           aria-controls="custom-content-below-roc-analysis" aria-selected="false"
-                           data-key="roc-analysis">ROC Analysis for
-                            Single Marker(s)</a>
-                    </li>
-                </ul>
-                <div class="tab-content" id="custom-content-below-tabContent">
-                    <div class="tab-pane fade show active" id="custom-content-below-analysis" role="tabpanel"
-                         aria-labelledby="custom-content-below-analysis-tab">The "Analysis" tab should be used for
-                        analysis to combine two diagnostic
-                        test markers. If you want to evaluate the performance of a single diagnostic test or compare
-                        the performance of more than one diagnostic test, the "ROC Analysis for Single Marker(s)"
-                        tab should be selected.
-                        <!-- /.card-header -->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="marker1">Marker 1</label>
-                                    <select id="marker1" class="form-control select2bs4" style="width: 100%;">
-                                        <option value="" selected disabled>Please select...</option>
 
-                                    </select>
-                                </div>
-
-                                <!-- /.form-group -->
-                                <div class="form-group">
-                                    <label for="marker2">Marker 2</label>
-                                    <select id="marker2" class="form-control select2bs4" style="width: 100%;">
-                                        <option value="" selected disabled>Please select...</option>
-
-
-                                    </select>
-                                </div>
-                                <!-- /.form-group -->
-                                <div class="form-group">
-                                    <label for="status">Status</label>
-                                    <select id="status" class="form-control select2bs4" style="width: 100%;">
-                                        <option value="" selected disabled>Please select...</option>
-
-
-                                    </select>
-                                </div>
-                                <!-- /.form-group -->
-                                <div class="form-group">
-                                    <label for="category">Select category for cases</label>
-                                    <select id="category" class="form-control select2bs4" style="width: 100%;">
-                                        <option value="" selected disabled>Please select...</option>
-
-
-                                    </select>
-                                </div>
-                                <!-- /.form-group -->
-                            </div>
-                            <!-- /.col -->
-                        </div>
-                        <!-- /.row -->
-
-
-                    </div>
-                    <div class="tab-pane fade" id="custom-content-below-roc-analysis" role="tabpanel"
-                         aria-labelledby="custom-content-below-roc-analysis-tab">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label>Select markers (*)</label>
-                                <select name="markersRoc" id="markersRoc" class="select2bs4" multiple="multiple"
-                                        data-placeholder="Please select..."
-                                        style="width: 100%;">
-
-
-                                </select>
-                                <div class="mt-1">
-                                    <small class="text-muted" style="display: block; font-weight: 500;">
-                                        <strong> Note:</strong> A maximum of 8 markers can be selected.
-                                    </small>
-                                </div>
-                            </div>
-                            <!-- /.form-group -->
-
-                            <div class="form-group">
-                                <label for="statusRoc">Status</label>
-                                <select id="statusRoc" class="form-control select2bs4" style="width: 100%;">
-                                    <option value="" selected disabled>Please select...</option>
-
-
-                                </select>
-                            </div>
-                            <!-- /.form-group -->
-                            <div class="form-group">
-                                <label for="categoryRoc">Select category for cases</label>
-                                <select id="categoryRoc" class="form-control select2bs4" style="width: 100%;">
-                                    <option value="" selected disabled>Please select...</option>
-
-
-                                </select>
-                            </div>
-                            <!-- /.form-group -->
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                </div>
-                <div class="form-group" id="datasets">
-                    <label>Datasets:</label><br/>
-                    <label>Examples</label>
-                    <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" id="exampleDataRadio1"
-                               name="exampleDataRadio"
-                               value="laparotomy" checked>
-                        <label for="exampleDataRadio1" class="custom-control-label"
-                               style="font-weight: 400 !important;">Abdominal pain data (n = 225, p = 3)</label>
-                    </div>
-
-                    <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" id="exampleDataRadio2"
-                               name="exampleDataRadio"
-                               value="exampleData2">
-                        <label for="exampleDataRadio2" class="custom-control-label"
-                               style="font-weight: 400 !important;">DMD data (n = 120, p = 5)</label>
-                    </div>
-
-                    <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" id="exampleDataRadio3"
-                               name="exampleDataRadio"
-                               value="exampleData3">
-                        <label for="exampleDataRadio3" class="custom-control-label"
-                               style="font-weight: 400 !important;">Simulation data (n = 500, p = 3)</label>
-                    </div>
-
-
-                    <div class="mt-2">
-                        <small class="text-muted" style="display: block; line-height: 1.4;">
-                            <strong> n:</strong> number of observations
-                        </small>
-                        <small class="text-muted" style="display: block; font-weight: 500;">
-                            <strong> p:</strong> number of variables
-                        </small>
-                    </div>
-                </div>
-
-                <div class="form-group roc-analysis-advanced" style="display: none;">
-                    <div class="custom-control custom-checkbox">
-                        <input class="custom-control-input" type="checkbox" name="advancedCheckBox"
-                               id="advancedCheckBox" value="Advanced">
-                        <label for="advancedCheckBox" class="custom-control-label">Advanced</label>
-                    </div>
-                </div>
-                <!-- /.form-group -->
-                <div class="form-group advancedCheckBox" style="display: none;">
-                    <label for="optimalCutOff">Select a method for optimal cut-off</label>
-                    <select id="optimalCutOff" class="form-control select2bs4" style="width: 100%;">
-                        <option value="Youden" selected>Youden</option>
-                        <option value="CB">CB</option>
-                        <option value="MCT">MCT</option>
-                        <option value="MinValueSp">MinValueSp</option>
-                        <option value="MinValueSe">MinValueSe</option>
-                        <option value="ValueSp">ValueSp</option>
-                        <option value="ValueSe">ValueSe</option>
-                        <option value="MinValueSpSe">MinValueSpSe</option>
-                        <option value="MaxSp">MaxSp</option>
-                        <option value="MaxSe">MaxSe</option>
-                        <option value="MaxSpSe">MaxSpSe</option>
-                        <option value="MaxProdSpSe">MaxProdSpSe</option>
-                        <option value="ROC01">ROC01</option>
-                        <option value="SpEqualSe">SpEqualSe</option>
-                        <option value="MaxEfficiency">MaxEfficiency</option>
-                        <option value="Minimax">Minimax</option>
-                        <option value="MaxDOR">MaxDOR</option>
-                        <option value="MaxKappa">MaxKappa</option>
-                        <option value="MinValueNPV">MinValueNPV</option>
-                        <option value="MinValuePPV">MinValuePPV</option>
-                        <option value="ValueNPV">ValueNPV</option>
-                        <option value="ValuePPV">ValuePPV</option>
-                        <option value="MinValueNPVPPV">MinValueNPVPPV</option>
-                        <option value="PROC01">PROC01</option>
-                        <option value="NPVEqualPPV">NPVEqualPPV</option>
-                        <option value="MaxNPVPPV">MaxNPVPPV</option>
-                        <option value="MaxSumNPVPPV">MaxSumNPVPPV</option>
-                        <option value="MaxProdNPVPPV">MaxProdNPVPPV</option>
-                        <option value="ValueDLR.Negative">ValueDLR.Negative</option>
-                        <option value="ValueDLR.Positive">ValueDLR.Positive</option>
-                        <option value="MinPvalue">MinPvalue</option>
-                        <option value="ObservedPrev">ObservedPrev</option>
-                        <option value="MeanPrev">MeanPrev</option>
-                        <option value="PrevalenceMatching">PrevalenceMatching</option>
-                    </select>
-                </div>
-                <!-- /.form-group -->
-                <div class="form-group advancedCheckBox" style="display: none;">
-                    <label for="direction">Direction</label>
-                    <select id="direction" class="form-control select2bs4" style="width: 100%;">
-                        <option selected="selected">auto</option>
-                        <option><</option>
-                        <option>></option>
-                    </select>
-                </div>
-                <!-- /.form-group -->
-                <div class="form-group advancedCheckBox" style="display: none;">
-                    <label for="confidenceLevel">Confidence Level</label>
-                    <input type="number" id="confidenceLevel" class="form-control" step="0.01" value="0.95"
-                           style="width: 100%;">
-                </div>
                 <!-- /.form-group -->
             </div>
             <!-- /.card-body -->
 
             <div class="form-group row">
-                <button id="btn-save" type="button" class="btn btn-primary">Go</button>
+                <button id="btn-calculate" type="button" class="btn btn-primary">Calculate</button>
             </div>
         </div>
         <!-- /.card-body -->
@@ -303,15 +93,42 @@
 </div>
 <!-- /.col -->
 <div class="overlay-wrapper col-md-9">
-    <div id="data-list">
+    <div id="analysis">
         <div class="card">
+
             <div class="card-body">
-                <table id="analysisTable" class="table table-bordered table-hover">
-                    <thead>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="custom-content-below-data-upload-tab" data-toggle="pill"
+                           href="#custom-content-below-data-upload" role="tab"
+                           aria-controls="custom-content-below-data-upload"
+                           aria-selected="true">Data Upload</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="custom-content-below-result-tab" data-toggle="pill"
+                           href="#custom-content-below-result" role="tab"
+                           aria-controls="custom-content-below-result" aria-selected="false">Result</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="custom-content-below-tabContent">
+                    <div class="tab-pane fade show active" id="custom-content-below-data-upload" role="tabpanel"
+                         aria-labelledby="custom-content-below-data-upload-tab">
+                        <div class="col-12 mt-2 pl-0 pr-0">
+                             <table id="analysisTable" class="table table-bordered table-hover mt-3">
+                            <thead>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        </div>
+
+
+                    </div>
+                    <div class="tab-pane fade" id="custom-content-below-result" role="tabpanel"
+                         aria-labelledby="custom-content-below-result-tab">
+
+                    </div>
+                </div>
             </div><!-- /.card-body -->
         </div>
         <!-- /.card -->
@@ -323,5 +140,155 @@
 
 {% block scripts %}
 <script src="/static/js/indexed-db-manager.js"></script>
+<script>
+    let dataTableSettings = {
+        "responsive": true,
+        "lengthChange": true,
+        "autoWidth": false,
+        "dom": "<'row'<'col-sm-12 col-md-8 d-flex align-items-center'B l><'col-sm-12 col-md-4 text-right'f>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        "buttons": [
+            {
+                extend: 'copy',
+                className: 'btn btn-custom-color btn-sm' // 'btn-custom-color' özel sınıfımız
+            },
+            {extend: 'csv', className: 'btn btn-custom-color btn-sm'},
+            {extend: 'excel', className: 'btn btn-custom-color btn-sm'},
+            {extend: 'pdf', className: 'btn btn-custom-color btn-sm'},
+            {extend: 'print', className: 'btn btn-custom-color btn-sm'}
+        ],
+        "language": {"lengthMenu": "_MENU_", "search": "Search:"}
+    };
+    // upload-model
+    $("#uploadModelSwitch").on("change", function () {
+        if ($(this).is(':checked')) {
+            // Eğer seçiliyse (checked) göster
+            $("#upload-model").fadeIn(400);
+        } else {
+            // Seçili değilse gizle
+            $("#upload-model").fadeOut(400);
+        }
+    })
 
+    // Dosya seçildiğinde tetiklenir
+    $('#exampleInputFile').on('change', async function () {
+        let file = this.files[0];
+        if (!file) return;
+
+        // Arayüzü güncelle
+        $('[for="exampleInputFile"]').html(file.name);
+        let delimiter = $('input[name="delimiterRadio"]:checked').val();
+
+        // 1. DOSYAYI OKU VE INDEXEDDB'YE KAYDET
+        const reader = new FileReader();
+
+        // Okuma işlemi bittiğinde çalışacak olan olay (Event)
+        reader.onload = async function (e) {
+            const rawString = e.target.result; // Dosyanın orijinal metin hali
+
+            try {
+                // Loader'ı göster
+                $('#global-loader').show();
+
+                // Veritabanı işlemlerini yap
+                await dbManager.save_data(rawString);
+                await dbManager.set_setting("predictDelimiter", delimiter);
+                await dbManager.set_setting("predictFileName", file.name); // Dosya adını da saklayalım
+
+                // 2. BACKEND VE TABLO GÜNCELLEME
+                // uploadAndRefreshTable fonksiyonu içerisinden rawString'i
+                // veya doğrudan inputları kullanabilirsin.
+                await uploadAndRefreshTable();
+
+            } catch (error) {
+                console.error("Dosya işleme hatası:", error);
+            } finally {
+                $('#global-loader').fadeOut('fast');
+            }
+        };
+
+        // Dosya okumayı BAŞLAT (Kritik satır!)
+        reader.readAsText(file);
+    });
+
+    async function uploadAndRefreshTable() {
+
+        const storedData = await dbManager.get_data();
+        let delimiter = $('input[name="delimiterRadio"]:checked').val();
+        await dbManager.set_setting("delimiter", delimiter);
+
+        const formatted = await formatDataByDelimiter(storedData);
+        updateTableAndDropdowns(formatted);
+    }
+
+    // Ham veriyi (raw string) sütunlara ayıran fonksiyon
+    async function formatDataByDelimiter(rawContent) {
+        const delimiter = await getDelimiterChar();
+
+        const lines = rawContent.trim().split(/\r?\n/); // Satırlara böl
+        if (lines.length === 0) return null;
+
+        const headers = lines[0].split(delimiter).map(h => h.trim()); // Başlıklar
+        const data = lines.slice(1).map(line => {
+            const values = line.split(delimiter);
+            let row = {};
+            headers.forEach((header, index) => {
+                row[header] = values[index] ? values[index].trim() : "";
+            });
+            return row;
+        });
+
+        return {columns: headers, data: data};
+    }
+
+    // Seçili ayırıcı karakterini döndüren yardımcı fonksiyon
+    async function getDelimiterChar() {
+        const val = $('input[name="delimiterRadio"]:checked').val();
+        await dbManager.set_setting("predictDelimiter", val)
+        switch (val) {
+            case 'tab':
+                return '\t';
+            case 'semicolon':
+                return ';';
+            case 'space':
+                return ' ';
+            case 'comma':
+            default:
+                return ',';
+        }
+    }
+
+    // Hem örnek veri hem de yüklenen veri için ortak güncelleme fonksiyonu
+    function updateTableAndDropdowns(response) {
+        // A. Tabloyu Temizle ve Yeniden Kur
+        if ($.fn.DataTable.isDataTable('#analysisTable')) {
+            $('#analysisTable').DataTable().destroy();
+        }
+        $('#analysisTable').empty();
+
+        let headerRow = '<thead><tr><th>#</th>';
+        response.columns.forEach(col => {
+            headerRow += `<th>${col}</th>`;
+        });
+        headerRow += '</tr></thead>';
+
+        let tbody = "<tbody>";
+        response.data.forEach((row, index) => {
+            let rowHtml = `<tr><td>${index + 1}</td>`;
+            response.columns.forEach(col => {
+                rowHtml += `<td>${row[col] || ''}</td>`;
+            });
+            rowHtml += '</tr>';
+            tbody += rowHtml;
+        });
+        tbody += '</tbody>';
+        $('#analysisTable').append(headerRow + tbody);
+
+        // DataTable'ı başlat (Daha önce belirlediğimiz #175f76 rengiyle)
+        $('#analysisTable').DataTable(dataTableSettings);
+
+    }
+
+</script>
 {% endblock %}
