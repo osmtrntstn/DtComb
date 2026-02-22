@@ -48,12 +48,15 @@ def call_roc_plot_analysis(data):
             markers = parsed_data.get('markers', {})
             marker1 = parsed_data.get('marker1', {})
             marker2 = parsed_data.get('marker2', {})
+            comb_score = parsed_data.get('combScore', {})
             status = parsed_data.get('status', {})
+            status_levels = parsed_data.get('statusLevels', {})
 
         return {
             "status": status,
             "marker1": marker1,
             "marker2": marker2,
+            "comb_score": comb_score,
             "roc_data": roc_data,
             "auc_data": auc_data,
             "mult_comp_data": mult_comp_data,
@@ -63,6 +66,7 @@ def call_roc_plot_analysis(data):
             "cutoff_method": cutoff_method,
             "coefficients": coefficients,
             "markers": markers,
+            "status_levels": status_levels,
         }
 
     except Exception as e:

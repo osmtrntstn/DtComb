@@ -34,7 +34,7 @@ $(document).ready(function () {
         if (typeof refreshChartTheme === 'function') {
             refreshChartTheme();
         }
-        const chartIds = ['densityChartDiv', 'destiny_plot_marker_1', 'destiny_plot_marker_2'];
+        const chartIds = ['densityChartDiv', 'destiny_plot_marker_1', 'destiny_plot_marker_2', 'individual_value_marker_1', 'individual_value_marker_2', 'sens_spec_curve_marker_1', 'sens_spec_curve_marker_2'];
 
         chartIds.forEach(id => {
             if (document.getElementById(id)) {
@@ -43,10 +43,12 @@ $(document).ready(function () {
                         'title.font': {color: state ? '#ffffff' : '#333'},
                         'xaxis.gridcolor': state ? '#878787' : '#eee',
                         'yaxis.gridcolor': state ? '#878787' : '#eee',
-                        'yaxis.linecolor': state ? '#666' : '#ccc',
-                        'xaxis.linecolor': state ? '#666' : '#ccc',
+                        'yaxis.linecolor': state ? '#878787' : '#ccc',
+                        'xaxis.linecolor': state ? '#878787' : '#ccc',
+                        'xaxis.tickfont': {color: state ? '#ffffff' : '#333'},
+                        'yaxis.tickfont': {color: state ? '#ffffff' : '#333'},
                         'legend.font': {color: state ? '#ffffff' : '#333'},
-                        'shapes.line': {color: state ? '#bbb' : 'grey', width: 2, dash: 'dot'},
+                        'shapes[0].line': {color: state ? '#ffffff' : '#878787', width: 2, dash: 'dot'},
                         font: {color: state ? '#ffffff' : '#333'},
 
                     }

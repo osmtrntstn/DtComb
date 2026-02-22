@@ -51,7 +51,8 @@ createROCPlot <- function(input, output = NULL, session = NULL) {
         ndigits = as.integer(input$ndigits),
         conf.level = as.numeric(input$confLevel)
       )
-
+      modelFit$CombScore <- cbind(as.data.frame(modelFit$CombScore),as.data.frame(df[[input$status]]))
+      colnames(modelFit$CombScore) <- c("Combination Score",input$status)
       # Python tarafına gönderilecek tabloları hazırla
       auc_df <- as.data.frame(modelFit$AUC_table)
       auc_df$Marker <- rownames(auc_df)
@@ -121,6 +122,7 @@ createROCPlot <- function(input, output = NULL, session = NULL) {
       modelFit$marker1 <- input$marker1
       modelFit$marker2 <- input$marker2
       modelFit$status <- input$status
+      modelFit$statusLevels <- levels(status)
       return(jsonlite::toJSON(modelFit, pretty = TRUE, auto_unbox = TRUE, force = TRUE))
 
     } else {
