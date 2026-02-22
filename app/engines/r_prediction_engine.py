@@ -1,12 +1,11 @@
+import json  # Sadece standart json modülü yeterli!
+import os
+
+import rpy2.rinterface_lib.callbacks
 import rpy2.robjects as robjects
 from fastapi import HTTPException
-from rpy2 import rinterface
 from rpy2.robjects import default_converter
 from rpy2.robjects.conversion import localconverter
-import uuid
-import os
-import rpy2.rinterface_lib.callbacks
-import json  # Sadece standart json modülü yeterli!
 
 
 def r_console_write(x):
@@ -16,15 +15,15 @@ def r_console_write(x):
 rpy2.rinterface_lib.callbacks.consolewrite_print = r_console_write
 
 
-def call_roc_plot_analysis(data):
+def call_prediction(data):
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    r_script_path = os.path.join(project_root, "app", "r_logic", "roc_analysis_script.R")
+    r_script_path = os.path.join(project_root, "app", "r_logic", "prediction_script.R")
 
     try:
         # R'dan sadece bir metin (JSON string) alacağımız için ekstra converter'lara gerek yok
         with localconverter(default_converter):
             robjects.r.source(r_script_path)
-            analysis_func = robjects.r['createROCPlotRoc']
+            analysis_func = robjects.r['predictData']
 
             # None değerleri NULL'a çevirerek veriyi R'a gönderiyoruz
             r_input = robjects.ListVector({k: (v if v is not None else robjects.NULL) for k, v in data.items()})
@@ -36,26 +35,10 @@ def call_roc_plot_analysis(data):
             # r_output[0] metnin kendisini verir
             parsed_data = json.loads(r_output[0])
 
-            # Verileri güvenle çekiyoruz (JSON içinden liste ve sözlük olarak hazır gelir)
-            roc_data = parsed_data.get('rocCoordinates', [])
-            auc_data = parsed_data.get('aucTable', [])
-            marker_names = parsed_data.get('markerNames', [])
-            mult_comp_data = parsed_data.get('multCompTable', {})
-            diag_stat_data = parsed_data.get('diag_stat_marker_all', {})
-            criterion_list = parsed_data.get('criterion_list', {})
-            threshold_list = parsed_data.get('threshold_list', {})
-            cutoff_method = parsed_data.get('cuttoffMethod', {})
 
 
         return {
-            "roc_data": roc_data,
-            "auc_data": auc_data,
-            "marker_names": marker_names,
-            "mult_comp_data": mult_comp_data,
-            "diag_stat_data": diag_stat_data,
-            "threshold_list": threshold_list,
-            "criterion_list": criterion_list,
-            "cutoff_method": cutoff_method
+            "predict_data": parsed_data
         }
 
     except Exception as e:

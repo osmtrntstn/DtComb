@@ -114,19 +114,26 @@
                     <div class="tab-pane fade show active" id="custom-content-below-data-upload" role="tabpanel"
                          aria-labelledby="custom-content-below-data-upload-tab">
                         <div class="col-12 mt-2 pl-0 pr-0">
-                             <table id="analysisTable" class="table table-bordered table-hover mt-3">
-                            <thead>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                            <table id="analysisTable" class="table table-bordered table-hover mt-3">
+                                <thead>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
                         </div>
 
 
                     </div>
                     <div class="tab-pane fade" id="custom-content-below-result" role="tabpanel"
                          aria-labelledby="custom-content-below-result-tab">
-
+                        <div class="col-12 mt-2 pl-0 pr-0">
+                            <table id="predictTable" class="table table-bordered table-hover mt-3">
+                                <thead>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div><!-- /.card-body -->
@@ -140,6 +147,47 @@
 
 {% block scripts %}
 <script src="/static/js/indexed-db-manager.js"></script>
+<script>
+    $('#btn-calculate').on('click', async function () {
+        // 1. Temel analiz bilgilerini al
+        // 4. Backend'e Gönder
+        let uploadedData = await dbManager.get_data_uploaded()
+        let analysisData = await dbManager.get_data_analysis()
+        let delimiter = await dbManager.get_setting("predictDelimiter")
+        let data = {
+            uploadedData: uploadedData,
+            analysisData: analysisData,
+            delimiter: delimiter
+        }
+
+        console.log(data)
+        $.ajax({
+            url: '/predict-data',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                showLoader('analysis');
+                $('#collect-data').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Analyzing...');
+            },
+            success: async function (response) {
+                fillPredictionTable(response.predict_data)
+                $('#custom-content-below-result-tab').tab('show');
+            },
+            error: function (xhr) {
+                $('#collect-data').prop('disabled', false).text('Go');
+                hideLoader('analysis');
+            },
+            complete: function () {
+                $('#collect-data').prop('disabled', false).text('Go');
+                hideLoader('analysis');
+            }
+        });
+
+    });
+
+
+</script>
 <script>
     let dataTableSettings = {
         "responsive": true,
@@ -192,10 +240,9 @@
                 $('#global-loader').show();
 
                 // Veritabanı işlemlerini yap
-                await dbManager.save_data(rawString);
+                await dbManager.save_data_uploaded(rawString);
                 await dbManager.set_setting("predictDelimiter", delimiter);
                 await dbManager.set_setting("predictFileName", file.name); // Dosya adını da saklayalım
-
                 // 2. BACKEND VE TABLO GÜNCELLEME
                 // uploadAndRefreshTable fonksiyonu içerisinden rawString'i
                 // veya doğrudan inputları kullanabilirsin.
@@ -212,9 +259,43 @@
         reader.readAsText(file);
     });
 
+    // Dosya seçildiğinde tetiklenir
+    $('#uploadModelFile').on('change', async function () {
+        let file = this.files[0];
+        if (!file) return;
+
+        // Arayüzü güncelle
+        $('[for="uploadModelFile"]').html(file.name);
+
+        // 1. DOSYAYI OKU VE INDEXEDDB'YE KAYDET
+        const reader = new FileReader();
+
+        // Okuma işlemi bittiğinde çalışacak olan olay (Event)
+        reader.onload = async function (e) {
+            const rawString = e.target.result; // Dosyanın orijinal metin hali
+
+            try {
+                // Loader'ı göster
+                $('#global-loader').show();
+
+                // Veritabanı işlemlerini yap
+                await dbManager.save_data_analysis(rawString);
+                await dbManager.set_setting("uploadModelFileName", file.name); // Dosya adını da saklayalım
+
+            } catch (error) {
+                console.error("Dosya işleme hatası:", error);
+            } finally {
+                $('#global-loader').fadeOut('fast');
+            }
+        };
+
+        // Dosya okumayı BAŞLAT (Kritik satır!)
+        reader.readAsText(file);
+    });
+
     async function uploadAndRefreshTable() {
 
-        const storedData = await dbManager.get_data();
+        const storedData = await dbManager.get_data_uploaded();
         let delimiter = $('input[name="delimiterRadio"]:checked').val();
         await dbManager.set_setting("delimiter", delimiter);
 
@@ -288,6 +369,43 @@
         // DataTable'ı başlat (Daha önce belirlediğimiz #175f76 rengiyle)
         $('#analysisTable').DataTable(dataTableSettings);
 
+    }
+
+    function fillPredictionTable(predictionData) {
+        const tableId = '#predictTable';
+
+        if ($.fn.DataTable.isDataTable(tableId)) {
+            $(tableId).DataTable().clear().destroy();
+            $(tableId).empty();
+        }
+
+        let settings = Object.assign({}, dataTableSettings, {
+            data: predictionData,
+            order: [[0, 'asc']],
+            columns: [
+                {
+                    title: "#",
+                    data: null,
+                    width: "5%",
+                    className: "text-center", // Hücreyi ortalar
+                    render: (data, type, row, meta) => meta.row + 1
+                },
+                {
+                    title: "Combination Score",
+                    data: "combScore",
+                    className: "text-center", // Hem ortalar hem eğik yapar
+                    render: d => d ? Number(d).toFixed(4) : "-"
+                },
+                {
+                    title: "Label",
+                    data: "label",
+                    className: "text-center", // Hücreyi ortalar
+                    render: d => d
+                }
+            ]
+        });
+
+        $(tableId).DataTable(settings);
     }
 
 </script>

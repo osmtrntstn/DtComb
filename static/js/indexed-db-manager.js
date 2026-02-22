@@ -96,6 +96,20 @@ const dbManager = {
             request.onerror = () => reject(false);
         });
     },
+    save_data_uploaded: async function (dataArray) {
+        const db = await this.open();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(["dataStore"], "readwrite");
+            const store = transaction.objectStore("dataStore");
+
+            // Önce eskisini temizleyip yenisini yazmak veri tutarlılığı sağlar
+            store.delete("current_data");
+            const request = store.put({id: "uploaded_data", content: dataArray});
+
+            request.onsuccess = () => resolve(true);
+            request.onerror = () => reject(false);
+        });
+    },
     // Tüm ayarları tek bir obje olarak toplar (API'ye göndermek için)
     get_data: async function () {
         const db = await this.open();
@@ -114,6 +128,17 @@ const dbManager = {
             const transaction = db.transaction(["dataStore"], "readonly");
             const store = transaction.objectStore("dataStore");
             const request = store.get("analysis_data");
+
+            request.onsuccess = () => resolve(request.result ? request.result.content : null);
+            request.onerror = () => reject(null);
+        });
+    },
+    get_data_uploaded: async function () {
+        const db = await this.open();
+        return new Promise((resolve) => {
+            const transaction = db.transaction(["dataStore"], "readonly");
+            const store = transaction.objectStore("dataStore");
+            const request = store.get("uploaded_data");
 
             request.onsuccess = () => resolve(request.result ? request.result.content : null);
             request.onerror = () => reject(null);

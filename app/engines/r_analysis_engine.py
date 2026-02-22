@@ -51,6 +51,7 @@ def call_plot_analysis(data):
             comb_score = parsed_data.get('combScore', {})
             status = parsed_data.get('status', {})
             status_levels = parsed_data.get('statusLevels', {})
+            predictData = parsed_data.get('predictData', {})
 
         return {
             "status": status,
@@ -67,6 +68,7 @@ def call_plot_analysis(data):
             "coefficients": coefficients,
             "markers": markers,
             "status_levels": status_levels,
+            "predictData": predictData
         }
 
     except Exception as e:

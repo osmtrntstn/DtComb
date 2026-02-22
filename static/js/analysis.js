@@ -13,7 +13,7 @@ $('#collect-data').on('click', async function () {
             $('#collect-data').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Analyzing...');
         },
         success: async function (response) {
-            await dbManager.save_data_analysis(response)
+            await dbManager.save_data_analysis(response.predictData)
             drawRocChart(response);
             fillRocCoordinatesTables(response.roc_data);
             fillAucStatisticsTable(response.auc_data);
@@ -32,7 +32,7 @@ $('#collect-data').on('click', async function () {
             drawSensitivitySpecificityPlot(response.roc_data, response.thresholds.combined, "Combination", "sens_spec_curve_comb_score");
             // Bir indirme butonu oluşturup response'u ona bağlayalım
             $('#download-results-btn').off('click').on('click', function () {
-                downloadJsonResponse(response, `analysis_${Date.now()}.json`);
+                downloadJsonResponse(response.predictData, `analysis_${Date.now()}.json`);
             }).show(); // Butonu görünür yap
         },
         error: function (xhr) {
