@@ -1,3 +1,25 @@
+// LOADER ÖNCESİ (Başlatırken)
+function showLoader(targetDivId) {
+    const isDark = $('body').hasClass('dark-mode');
+    const container = $(`#${targetDivId}`).parent('.overlay-wrapper');
+
+    // Eğer loader zaten varsa tekrar ekleme
+    if (container.find('.overlay-loader').length === 0) {
+        const loaderHtml = `
+            <div class="overlay-loader" id="loader-${targetDivId}">
+                <div class="spinner-border ${isDark ? 'text-light' : 'text-primary'}" role="status"></div>
+            </div>`;
+        container.append(loaderHtml);
+    }
+}
+
+// LOADER SONRASI (Bittiğinde)
+function hideLoader(targetDivId) {
+    $(`#loader-${targetDivId}`).fadeOut(200, function() {
+        $(this).remove(); // Katmanı tamamen temizle
+    });
+}
+
 $(function () {
     $("input[data-bootstrap-switch]").each(function () {
         $(this).bootstrapSwitch('state', $(this).prop('checked'));
@@ -64,20 +86,20 @@ $(window).on('load', function () {
     // Tüm resimler, scriptler ve CSS'ler hazır olduğunda kapat
     $('#global-loader').fadeOut('slow');
 });
-
-// 2. Global AJAX Takibi (jQuery Global Ajax Events)
-$(document).ajaxStart(function () {
-    // Herhangi bir AJAX isteği başladığında göster
-    $('#global-loader').show();
-});
-
-$(document).ajaxStop(function () {
-    // Tüm aktif AJAX istekleri bittiğinde gizle
-    $('#global-loader').fadeOut('fast');
-});
-
-// 3. Hata Durumunda (Opsiyonel)
-$(document).ajaxError(function () {
-    // Bir istek hata alırsa loader takılı kalmasın diye gizle
-    $('#global-loader').hide();
-});
+//
+// // 2. Global AJAX Takibi (jQuery Global Ajax Events)
+// $(document).ajaxStart(function () {
+//     // Herhangi bir AJAX isteği başladığında göster
+//     $('#global-loader').show();
+// });
+//
+// $(document).ajaxStop(function () {
+//     // Tüm aktif AJAX istekleri bittiğinde gizle
+//     $('#global-loader').fadeOut('fast');
+// });
+//
+// // 3. Hata Durumunda (Opsiyonel)
+// $(document).ajaxError(function () {
+//     // Bir istek hata alırsa loader takılı kalmasın diye gizle
+//     $('#global-loader').hide();
+// });

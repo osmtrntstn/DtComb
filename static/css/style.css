@@ -165,3 +165,35 @@
 .main-header.navbar .dropdown-item {
     font-size: 1rem !important;
 }
+
+/* 404 Error Page Ortalama */
+.error-page {
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+.error-content {
+    text-align: center;
+}
+
+.overlay-wrapper {
+    position: relative;
+    display: block;
+}
+
+.overlay-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* Şeffaf karartma */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    border-radius: 4px;
+}

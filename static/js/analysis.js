@@ -9,6 +9,7 @@ $('#collect-data').on('click', async function () {
         contentType: 'application/json',
         data: JSON.stringify(payload),
         beforeSend: function () {
+            showLoader('analysis');
             $('#collect-data').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Analyzing...');
         },
         success: function (response) {
@@ -32,10 +33,11 @@ $('#collect-data').on('click', async function () {
         },
         error: function (xhr) {
             $('#collect-data').prop('disabled', false).text('Go');
-            Swal.fire('Analysis Error', xhr.responseJSON ? xhr.responseJSON.detail : 'Unknown error', 'error');
+            hideLoader('analysis');
         },
         complete: function () {
             $('#collect-data').prop('disabled', false).text('Go');
+            hideLoader('analysis');
         }
     });
 
