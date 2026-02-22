@@ -12,7 +12,8 @@ $('#collect-data').on('click', async function () {
             showLoader('analysis');
             $('#collect-data').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Analyzing...');
         },
-        success: function (response) {
+        success: async function (response) {
+            await dbManager.save_data_analysis(response)
             drawRocChart(response);
             fillRocCoordinatesTables(response.roc_data);
             fillAucStatisticsTable(response.auc_data);
@@ -29,7 +30,10 @@ $('#collect-data').on('click', async function () {
             drawSensitivitySpecificityPlot(response.roc_data, response.thresholds.marker1, response.marker1, "sens_spec_curve_marker_1");
             drawSensitivitySpecificityPlot(response.roc_data, response.thresholds.marker2, response.marker2, "sens_spec_curve_marker_2");
             drawSensitivitySpecificityPlot(response.roc_data, response.thresholds.combined, "Combination", "sens_spec_curve_comb_score");
-
+            // Bir indirme butonu oluşturup response'u ona bağlayalım
+            $('#download-results-btn').off('click').on('click', function () {
+                downloadJsonResponse(response, `analysis_${Date.now()}.json`);
+            }).show(); // Butonu görünür yap
         },
         error: function (xhr) {
             $('#collect-data').prop('disabled', false).text('Go');
@@ -43,6 +47,26 @@ $('#collect-data').on('click', async function () {
 
 });
 
+function downloadJsonResponse(data, fileName = "analysis_results.json") {
+    // Veriyi string formatına çevir (pretty print için 4 boşluk ekledik)
+    const jsonString = JSON.stringify(data, null, 4);
+
+    // Veriyi Blob nesnesine dönüştür
+    const blob = new Blob([jsonString], {type: "application/json"});
+
+    // Geçici bir indirme bağlantısı oluştur
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = fileName;
+
+    // Bağlantıya tıkla ve sonra temizle
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+}
 
 async function collectAllData() {
     // 1. IndexedDB'den asıl veriyi oku
@@ -813,6 +837,7 @@ function fillRocCoordinatesTables(rocData) {
 }
 
 function fillAucStatisticsTable(aucData) {
+    console.log(aucData);
     const tableId = '#table_auc_statistics';
     // Mevcut tabloyu temizle
     if ($.fn.DataTable.isDataTable(tableId)) {
@@ -825,8 +850,7 @@ function fillAucStatisticsTable(aucData) {
         columns: [
             {
                 data: '_row',
-                title: 'Marker',
-                render: d => d === 'Combination' ? `<strong>${d} Score</strong>` : d
+                render: d => d
             },
             {data: 'auc', render: d => d.toFixed(4)},
             {data: 'seAuc', render: d => d},
@@ -843,14 +867,7 @@ function fillAucStatisticsTable(aucData) {
                 data: 'pValue',
                 render: d => d
             }
-        ],
-        // Satır numaralarını otomatik ekle
-        drawCallback: function () {
-            var api = this.api();
-            api.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
-                cell.innerHTML = i + 1;
-            });
-        }
+        ]
     });
 
     $(tableId).DataTable(settings);

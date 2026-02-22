@@ -3,13 +3,11 @@ library(dtComb)
 if (!require("jsonlite")) install.packages("jsonlite")
 library(jsonlite)
 
-createROCPlot <- function(input, output = NULL, session = NULL) {
+createROCPlot <- function(input) {
   # Tüm süreci sessizce yönetmek ve hataları yakalamak için tryCatch
   result <- tryCatch({
     temp_plot <- tempfile()
     png(temp_plot) # Çizimleri geçici bir dosyaya hapseder
-    # Giriş verilerini hazırla
-    input$event <- "needed"
 
     if(input$dataInput == "example"){
 

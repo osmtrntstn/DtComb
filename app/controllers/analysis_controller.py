@@ -1,10 +1,10 @@
 from typing import Dict, Any
 
-from fastapi import APIRouter, Request, Form, HTTPException
+from fastapi import APIRouter, Request, Form
 from fastapi.templating import Jinja2Templates
 from app.db import database
 
-from app.services import r_analysis_engine
+from app.engines import r_analysis_engine
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/views")
@@ -24,7 +24,7 @@ async def index(request: Request):
 async def run_analysis(data: Dict[str, Any]):
     if not data:
         return {"status": "error", "message": "Veri boş geldi!"}
-    return r_analysis_engine.call_roc_plot_analysis(data)
+    return r_analysis_engine.call_plot_analysis(data)
 
 
 @router.post("/get-function-methods")

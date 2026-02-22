@@ -18,7 +18,7 @@ app.include_router(home_controller.router)
 app.include_router(data_upload_controller.router)
 app.include_router(analysis_controller.router)
 app.include_router(admin_controller.router)
-# app.include_router(predict_controller.router)
+app.include_router(predict_controller.router)
 app.include_router(roc_analysis_controller.router)
 
 app.add_exception_handler(StarletteHTTPException, custom_404_handler)

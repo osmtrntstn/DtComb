@@ -2,7 +2,7 @@ import json
 import pandas as pd
 import io
 
-from app.services.r_data_engine import get_data
+from app.engines.r_data_engine import get_data
 
 
 async def fetch_example_data(data_name: str):
