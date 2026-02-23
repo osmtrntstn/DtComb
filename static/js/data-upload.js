@@ -27,7 +27,6 @@ $(function () {
 })
 $(document).ready(async function () {
     try {
-        const storedData = await dbManager.get_data();
         const delimiter = await dbManager.get_setting("delimiter");
         if (delimiter != null) {
             // Kaydedilmiş delimiter'ı radyo butonlarına yansıt
@@ -35,18 +34,6 @@ $(document).ready(async function () {
             else if (delimiter === 'tab') $('#delimiterRadio2').prop('checked', true);
             else if (delimiter === 'semicolon') $('#delimiterRadio3').prop('checked', true);
             else if (delimiter === 'space') $('#delimiterRadio4').prop('checked', true);
-        }
-        if (storedData && storedData.length > 0) {
-            // "Upload a file" modunu aktif et
-            $('#dataInputRadio1').prop('checked', true);
-            $('#delimiterOptions').show();
-            $('#datasets').hide();
-
-            const formatted = await formatDataByDelimiter(storedData);
-            if (formatted) {
-                updateTableAndDropdowns(formatted);
-            }
-
         }
     } catch (error) {
         console.error("IndexedDB okuma hatası:", error);
@@ -143,11 +130,11 @@ function fetchExampleData() {
 
         },
         error: function (xhr) {
-            $('#btn-save').prop('disabled', false).text('Go');
+            $('#btn-save').prop('disabled', false).html('<i class="fa fa-forward"></i> Next');
             hideLoader('data-list');
         },
         complete: function () {
-            $('#btn-save').prop('disabled', false).text('Go');
+            $('#btn-save').prop('disabled', false).html('<i class="fa fa-forward"></i> Next');
             hideLoader('data-list');
         }
     });
@@ -699,7 +686,7 @@ $('#btn-save').on('click', async function () {
     } finally {
         // 3. Loader'ı kapat
         $('#global-loader').fadeOut('fast');
-        $('#btn-save').prop('disabled', false).text('Go');
+        $('#btn-save').prop('disabled', false).html('<i class="fa fa-forward"></i> Next');
 
     }
 });

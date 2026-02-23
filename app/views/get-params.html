@@ -72,13 +72,13 @@
                         <button class="btn btn-xs btn-danger" onclick="deleteParam('${data.Id}')"><i class="fas fa-trash"></i></button>
                     `;
 
-                    // Eğer alt öge ekleyebilecek bir yapıysa (Recursive)
-                    actionButtons += `<button class="btn btn-xs btn-warning" onclick="drillDown('${data.Id}', '${data.ParameterName}')"><i class="fas fa-sitemap"></i> Alt Parametreler</button>`;
-
-                    // Eğer Select tipi ise Değer ekleme butonu
-                    if (data.InputType === 'select' || data.InputType === 'radio') {
-                        actionButtons += `<button class="btn btn-xs btn-success" onclick="window.location.href='/get-params/${data.Id}/${$("#paramName").val() + " -> " + data.ParameterName}'"><i class="fas fa-list"></i> Değerler</button>`;
-                    }
+                    // // Eğer alt öge ekleyebilecek bir yapıysa (Recursive)
+                    // actionButtons += `<button class="btn btn-xs btn-warning" onclick="drillDown('${data.Id}', '${data.ParameterName}')"><i class="fas fa-sitemap"></i> Alt Parametreler</button>`;
+                    //
+                    // // Eğer Select tipi ise Değer ekleme butonu
+                    // if (data.InputType === 'select' || data.InputType === 'radio') {
+                    //     actionButtons += `<button class="btn btn-xs btn-success" onclick="window.location.href='/get-params/${data.Id}/${$("#paramName").val() + " -> " + data.ParameterName}'"><i class="fas fa-list"></i> Değerler</button>`;
+                    // }
 
                     return actionButtons;
                 }
@@ -94,8 +94,10 @@
             data: {parent_id: id},
             success: function (response) {
                 $('#parameter-procces').html(response);
+                $('#global-loader').fadeOut('fast');
             },
             error: function () {
+                $('#global-loader').fadeOut('fast');
                 alert('Parametre formu yüklenirken bir hata oluştu.');
             }
         })
@@ -109,8 +111,10 @@
             method: 'GET',
             success: function (response) {
                 $('#parameter-procces').html(response);
+                $('#global-loader').fadeOut('fast');
             },
             error: function () {
+                $('#global-loader').fadeOut('fast');
                 alert('Parametre formu yüklenirken bir hata oluştu.');
             }
         })

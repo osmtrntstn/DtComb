@@ -15,7 +15,7 @@ function showLoader(targetDivId) {
 
 // LOADER SONRASI (Bittiğinde)
 function hideLoader(targetDivId) {
-    $(`#loader-${targetDivId}`).fadeOut(200, function() {
+    $(`#loader-${targetDivId}`).fadeOut(200, function () {
         $(this).remove(); // Katmanı tamamen temizle
     });
 }
@@ -56,6 +56,14 @@ $(document).ready(function () {
         if (typeof refreshChartTheme === 'function') {
             refreshChartTheme();
         }
+
+        const overlay = document.getElementById('aucOverlay');
+
+        // Panel stilini dark mode'a göre güncelle
+        overlay.style.backgroundColor = state ? 'rgba(52, 58, 64, 0.8)' : 'rgba(255, 255, 255, 0.8)';
+        overlay.style.color = state ? '#fff' : '#333';
+        overlay.style.borderColor = state ? '#4b545c' : '#ddd';
+
         const chartIds = ['densityChartDiv', 'destiny_plot_marker_1', 'destiny_plot_marker_2', 'individual_value_marker_1', 'individual_value_marker_2', 'sens_spec_curve_marker_1', 'sens_spec_curve_marker_2'];
 
         chartIds.forEach(id => {
@@ -93,13 +101,19 @@ $(window).on('load', function () {
 //     $('#global-loader').show();
 // });
 //
-// $(document).ajaxStop(function () {
-//     // Tüm aktif AJAX istekleri bittiğinde gizle
-//     $('#global-loader').fadeOut('fast');
-// });
-//
-// // 3. Hata Durumunda (Opsiyonel)
-// $(document).ajaxError(function () {
-//     // Bir istek hata alırsa loader takılı kalmasın diye gizle
-//     $('#global-loader').hide();
-// });
+$(document).ajaxStop(function () {
+    // Tüm aktif AJAX istekleri bittiğinde gizle
+    $('#global-loader').fadeOut('fast');
+});
+
+// 3. Hata Durumunda (Opsiyonel)
+$(document).ajaxError(function () {
+    // Bir istek hata alırsa loader takılı kalmasın diye gizle
+    $('#global-loader').hide();
+});
+
+// 3. Hata Durumunda (Opsiyonel)
+$(document).ajaxSuccess(function () {
+    // Bir istek hata alırsa loader takılı kalmasın diye gizle
+    $('#global-loader').hide();
+});

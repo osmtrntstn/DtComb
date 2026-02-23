@@ -22,7 +22,7 @@ def get_functions():
     cursor = conn.cursor()
 
     # Tablo adı görseldeki gibi 'Function' (tekil) olmalı
-    cursor.execute("SELECT * FROM Tbl_Function ORDER BY [OrderNumber] ASC")
+    cursor.execute("SELECT * FROM Tbl_Function2 ORDER BY [OrderNumber] ASC")
     functions = cursor.fetchall()
     conn.close()
     return [FunctionSchema.model_validate(dict(f)) for f in functions]
@@ -35,7 +35,7 @@ def get_methods(id: str):
 
     # GÜVENLİ YÖNTEM: ? işareti placeholder (yer tutucu) olarak kullanılır
     # Değişken, sorguya ikinci bir parametre olarak (tuple formatında) gönderilir
-    cursor.execute("SELECT * FROM Tbl_Method WHERE FunctionId = ? ORDER BY [OrderNumber] ASC", (id,))
+    cursor.execute("SELECT * FROM Tbl_Method2 WHERE FunctionId = ? ORDER BY [OrderNumber] ASC", (id,))
 
     methods = cursor.fetchall()
     conn.close()
@@ -66,8 +66,8 @@ def get_parameters(id: str):
                       fp.ValueStep,
                       fpv.[OrderNumber] as ValueOrder,
                       fpv.ExistSubItem  as ValueExistSubItem
-               FROM Tbl_Parameter fp
-                        LEFT JOIN Tbl_ParameterValue fpv
+               FROM Tbl_Parameter2 fp
+                        LEFT JOIN Tbl_ParameterValue2 fpv
                                   on fp.Id = fpv.ParameterId
                where fp.ParentId = ?
                ORDER BY fp.[OrderNumber], fpv.[OrderNumber] ASC """;
@@ -146,8 +146,8 @@ def get_function_parameters(id: str):
                       fpv.ValueName,
                       fpv.[OrderNumber] as ValueOrder,
                       fpv.ExistSubItem  as ValueExistSubItem
-               FROM Tbl_Parameter fp
-                        LEFT JOIN Tbl_ParameterValue fpv
+               FROM Tbl_Parameter2 fp
+                        LEFT JOIN Tbl_ParameterValue2 fpv
                                   on fp.Id = fpv.ParameterId
                where fp.ParentId = ?
                ORDER BY fp.[OrderNumber], fpv.[OrderNumber] ASC """;

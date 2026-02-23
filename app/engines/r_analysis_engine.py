@@ -37,6 +37,13 @@ def call_plot_analysis(data):
             parsed_data = json.loads(r_output[0])
 
             # Verileri güvenle çekiyoruz (JSON içinden liste ve sözlük olarak hazır gelir)
+            statusCode = parsed_data.get('statusCode',"success")
+            if statusCode == "error":
+                errorModel = parsed_data.get('errorModel',"error")
+                return {
+                    "statusCode": statusCode,
+                    "errorModel": errorModel
+                }
             roc_data = parsed_data.get('rocCoordinates', [])
             auc_data = parsed_data.get('aucTable', [])
             mult_comp_data = parsed_data.get('multCompTable', {})

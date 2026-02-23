@@ -84,7 +84,7 @@
                 <!-- /.card-body -->
 
                 <div class="form-group row">
-                    <button id="btn-calculate" type="button" class="btn btn-primary">Calculate</button>
+                    <button id="btn-calculate" type="button" class="btn btn-primary"><i class="fas fa-calculator"></i> Calculate</button>
                 </div>
             </div>
             <!-- /.card-body -->
@@ -170,18 +170,18 @@
             data: JSON.stringify(data),
             beforeSend: function () {
                 showLoader('analysis');
-                $('#collect-data').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Analyzing...');
+                $('#btn-calculate').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Calculating...');
             },
             success: async function (response) {
                 fillPredictionTable(response.predict_data)
                 $('#custom-content-below-result-tab').tab('show');
             },
             error: function (xhr) {
-                $('#collect-data').prop('disabled', false).text('Go');
+                $('#btn-calculate').prop('disabled', false).html('<i class="fas fa-calculator"></i> Calculate');
                 hideLoader('analysis');
             },
             complete: function () {
-                $('#collect-data').prop('disabled', false).text('Go');
+                $('#btn-calculate').prop('disabled', false).html('<i class="fas fa-calculator"></i> Calculate');
                 hideLoader('analysis');
             }
         });

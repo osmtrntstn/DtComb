@@ -10,9 +10,20 @@ $('#collect-data').on('click', async function () {
         data: JSON.stringify(payload),
         beforeSend: function () {
             showLoader('analysis');
+            $('#download-results-btn').hide()
             $('#collect-data').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Analyzing...');
         },
         success: async function (response) {
+
+            if (response.statusCode == "error") {
+                Swal.fire({
+                    title: response.errorModel.title,
+                    text: response.errorModel.text,
+                    icon: response.errorModel.type
+                })
+                return;
+            }
+
             await dbManager.save_data_analysis(response.predictData)
             drawRocChart(response);
             fillRocCoordinatesTables(response.roc_data);
@@ -40,7 +51,7 @@ $('#collect-data').on('click', async function () {
             hideLoader('analysis');
         },
         complete: function () {
-            $('#collect-data').prop('disabled', false).text('Go');
+            $('#collect-data').prop('disabled', false).html('<i class="fas fa-chart-line mr-1"></i> Analyze');
             hideLoader('analysis');
         }
     });
@@ -229,10 +240,11 @@ function renderDynamicParameters(data, targetContainerId = 'dynamic-function-par
                 const isSelected = (opt.ValueKey === param.DefaultValue) ? 'checked' : '';
                 return `
                  <div class="custom-control custom-radio">
-                    <label for="rad_${opt.Id}" class="custom-control-label">${opt.ValueName}</label>
                     <input class="custom-control-input dynamic-radio" type="radio" data-dynamic
-                           id="rad_${opt.Id}" name="${param.ParameterName}" value="${opt.ValueKey}"
+                           id="rad_${opt.Id}" name="${param.ParameterKey}" value="${opt.ValueKey}"
                            data-id="${opt.Id}" data-sub="${opt.ExistSubItem}" data-param-id="${param.Id}" ${isSelected}>
+                    <label for="rad_${opt.Id}" class="custom-control-label">${opt.ValueName}</label>
+
                 </div>`
             }).join('');
 
@@ -346,6 +358,29 @@ function drawRocChart(response) {
 
     // 1. Dark Mode kontrolü yap ve renkleri belirle
     const isDarkMode = $('body').hasClass('dark-mode');
+    const overlay = document.getElementById('aucOverlay');
+
+    // Panel stilini dark mode'a göre güncelle
+    overlay.style.backgroundColor = isDarkMode ? 'rgba(52, 58, 64, 0.8)' : 'rgba(255, 255, 255, 0.8)';
+    overlay.style.color = isDarkMode ? '#fff' : '#333';
+    overlay.style.borderColor = isDarkMode ? '#4b545c' : '#ddd';
+    overlay.style.border = "1px solid #ddd"
+    let aucHtml = `<b style="display:block; margin-bottom:5px; border-bottom:1px solid ${isDarkMode ? '#555' : '#eee'}">AUC Values</b>`;
+
+    response.auc_data.forEach(row => {
+        const color = colors[row._row === "Combination Score" ? "Combination" : row._row] || "#333";
+        const isBold = row._row === 'Combination Score' ? 'font-weight: bold;' : '';
+
+        aucHtml += `
+            <div style="margin-bottom: 3px; ${isBold} display: flex; align-items: center;">
+                <span style="display:inline-block; width:10px; height:10px; background:${color}; margin-right:5px; border-radius:2px;"></span>
+                <span style="flex:1; margin-right:15px;">${row._row}:</span>
+                <span>${row.auc.toFixed(4)}</span>
+            </div>`;
+    });
+
+    overlay.innerHTML = aucHtml;
+
     const textColor = isDarkMode ? '#ffffff' : '#666666'; // Metin rengi
     const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'; // Izgara çizgileri
 
@@ -404,30 +439,7 @@ function drawRocChart(response) {
         }
     });
 
-    // --- 3. FORMÜL VE EŞİK DEĞERLERİNİ YAZDIRMA ---
-    if (response.coefficients) {
-        document.getElementById('eq-intercept').innerText = response.coefficients["(Intercept)"].toFixed(3);
-        document.getElementById('eq-coef1').innerText = response.coefficients["markers[, 1]"].toFixed(3);
-        document.getElementById('eq-coef2').innerText = response.coefficients["markers[, 2]"].toFixed(3);
-    }
-    if (response.thresholds && response.thresholds.combined) {
-        document.getElementById('opt-threshold').innerText = response.thresholds.combined.toFixed(3);
-    }
 
-    // --- 4. AUC TABLOSUNU DOLDURMA ---
-    let tbodyHtml = '';
-    response.auc_data.forEach(row => {
-        // Kombinasyon satırını kalın (bold) yapalım
-        let fw = row._row === 'Combination Score' ? 'font-weight-bold' : '';
-        tbodyHtml += `
-                <tr class="${fw}">
-                    <td>${row._row}</td>
-                    <td>${row.auc.toFixed(4)}</td>
-                    <td>${row.pValue.toExponential(2)}</td>
-                </tr>
-            `;
-    });
-    document.getElementById('auc-table-body').innerHTML = tbodyHtml;
 }
 
 function refreshChartTheme() {

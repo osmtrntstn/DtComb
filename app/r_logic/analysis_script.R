@@ -5,8 +5,8 @@ library(jsonlite)
 
 createROCPlot <- function(input) {
   # Tüm süreci sessizce yönetmek ve hataları yakalamak için tryCatch
+  temp_plot <- tempfile(fileext = ".png")
   result <- tryCatch({
-    temp_plot <- tempfile()
     png(temp_plot) # Çizimleri geçici bir dosyaya hapseder
 
     if(input$dataInput == "example"){
@@ -49,6 +49,118 @@ createROCPlot <- function(input) {
         ndigits = as.integer(input$ndigits),
         conf.level = as.numeric(input$confLevel)
       )
+    }else if (input$`function` == "nonlinComb") {
+      # Analiz motorunu çalıştır
+      event <- as.character(input$category)
+      method <- as.character(input$method)
+      degree1 <- input$degree1
+      degree2 <- input$degree2
+      include.interact <- input$include_of_interaction
+      cutoff.method = as.character(input$cutoffMethod)
+      resample = as.character(input$resampling)
+      direction = as.character(input$direction)
+      conf.level = as.numeric(input$confLevel)
+      standardize = input$standardization
+      df1 = input$degree_freedom1
+      df2 = input$degree_freedom2
+      alpha = as.integer(input$mixing_parameter)
+      nfolds = as.integer(input$nfolds)
+      nrepeats = as.integer(input$nrepeats)
+      niters = as.integer(input$niters)
+
+      modelFit <- nonlinComb(markers = markers,
+                           status = status,
+                           event = event,
+                           method = method,
+                           degree1 = degree1,
+                           degree2 = degree2,
+                           include.interact = include.interact,
+                           cutoff.method = cutoff.method,
+                           resample = resample,
+                           direction = direction,
+                           conf.level = conf.level,
+                           standardize = standardize,
+                           df1 = df1,
+                           df2 = df2,
+                           alpha = alpha,
+                           nfolds = nfolds,
+                           nrepeats = nrepeats,
+                           niters = niters)
+    }else if (input$`function` == "mathComb") {
+      # Analiz motorunu çalıştır
+      event <- as.character(input$category)
+      method <- as.character(input$method)
+      cutoff.method = as.character(input$cutoffMethod)
+      direction = as.character(input$direction)
+      conf.level = as.numeric(input$confLevel)
+      standardize = input$standardization
+      distance <- input$distance
+      transform <-  input$transformation
+
+      modelFit <- mathComb(markers = markers,
+                           status = status,
+                           event = event,
+                           method = method,
+                           distance = distance,
+                           standardize = standardize,
+                           transform = transform,
+                           show.plot = TRUE,
+                           direction = direction,
+                           conf.level = conf.level,
+                           cutoff.method = cutoff.method
+      )
+    }
+    else if (input$`function` == "mlComb") {
+      # Analiz motorunu çalıştır
+        resample <- input$resample
+        if(is.null(resample))
+          resample <- "none"
+        event <- as.character(input$category)
+        method <- input$method
+        cutoff.method = as.character(input$cutoffMethod)
+        direction = as.character(input$direction)
+        nfolds <- input$nfolds
+        nrepeats <- input$nrepats
+        niters <- input$niters
+        preProcess <- input$data_pre_processing
+
+        if(preProcess == "none"){
+          preProcess = NULL
+        }
+
+
+        resampleNotNone <- c("svmLinearWeights", "svmRadialWeights", "svmLinear", "svmPoly", "svmRadial")
+
+        if (method %in% resampleNotNone && resample == "none") {
+              return(jsonlite::toJSON(list(
+                    statusCode = "error",
+                    errorModel = list(
+                     title = "Attention",
+                     text = "The selected method cannot be used with resampling set to 'none'. Please select an appropriate resampling method or choose a different analysis option.",
+                     type = "error"
+                    )
+              ), pretty = TRUE, auto_unbox = TRUE, force = TRUE))
+
+        }else {
+           modelFit <- mlComb(
+                           markers = markers,
+                           status = status,
+                           event = event,
+                           method = method,
+                           resample = resample,
+                           nfolds = nfolds,
+                           nrepeats = nrepeats,
+                           niters = niters,
+                           preProcess = preProcess,
+                           direction = direction,
+                           cutoff.method = cutoff.method)
+        }
+    }
+    else {
+    # ÖNEMLİ: Grafik aygıtını kapat
+      dev.off()
+      stop(paste("Tanımlanmayan fonksiyon tipi:", input$`function`))
+    }
       predictData <- modelFit
       modelFit$CombScore <- cbind(as.data.frame(modelFit$CombScore),as.data.frame(df[[input$status]]))
       colnames(modelFit$CombScore) <- c("Combination Score",input$status)
@@ -123,14 +235,15 @@ createROCPlot <- function(input) {
       modelFit$status <- input$status
       modelFit$statusLevels <- levels(status)
       modelFit$predictData <- predictData
+      modelFit$statusCode = "success"
+      # ÖNEMLİ: Grafik aygıtını kapat
+      dev.off()
       return(jsonlite::toJSON(modelFit, pretty = TRUE, auto_unbox = TRUE, force = TRUE))
-
-    } else {
-      stop(paste("Tanımlanmayan fonksiyon tipi:", input$`function`))
-    }
-
   }, error = function(e) {
+  # Hata durumunda aygıtı kapatmaya çalış
+    if (dev.cur() > 1) dev.off()
     # Hata durumunda Python tarafına temiz bir hata mesajı fırlat
+        e$message <- paste("While training model", e, sep = " ")
     stop(e$message)
   })
     dev.off()

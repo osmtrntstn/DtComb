@@ -121,15 +121,17 @@
                             <!-- /.form-group -->
                         </div>
                         <!-- /.row -->
-                        <div class="form-group row">
-                            <button type="button" id="collect-data" class="btn btn-primary">Go</button>
+                        <div class="row">
+                            <div class="form-group">
+                                <button type="button" id="collect-data" class="btn btn-primary">
+                                    <i class="fas fa-chart-line mr-1"></i> Analyze</button>
+                            </div>
+                            <div class="form-group ml-auto">
+                                <button id="download-results-btn" class="btn btn-outline-info" style="display: none;">
+                                    <i class="fas fa-download"></i> Download Model
+                                </button>
+                            </div>
                         </div>
-                        <div class="form-group row">
-                            <button id="download-results-btn" class="btn btn-outline-info" style="display: none;">
-                                <i class="fas fa-download"></i> Download Model
-                            </button>
-                        </div>
-
                     </form>
                 </div>
                 <!-- /.card-body -->
@@ -396,49 +398,18 @@
                         <div class="tab-pane fade show active" id="custom-content-below-plots" role="tabpanel"
                              aria-labelledby="custom-content-below-plots-tab">
                             <div class="row justify-content-center">
-                                <div class="col-md-8">
-                                    <div class="card mt-2">
-                                        <div class="card-header">
+                                <div class="col-md-12">
+                                    <div class="card mt-2 mx-auto" style="max-width: 500px !important;">
+                                        <div class="card-header mx-auto">
                                             <h3 class="card-title">
                                                 ROC Curves for Combination Diagnostic Test</h3>
                                         </div>
                                         <div class="card-body">
                                             <canvas id="rocChart"
                                                     style="min-height: 450px; height: 450px; max-width: 100%;"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card card-success">
-                                        <div class="card-header">
-                                            <h3 class="card-title">Kombinasyon Formülü (Scoring)</h3>
-                                        </div>
-                                        <div class="card-body">
-                                            <p><strong>Y = </strong> <span id="eq-intercept"></span>
-                                                <strong>+</strong> (<span id="eq-coef1"></span> &times; Marker 1)
-                                                <strong>+</strong> (<span id="eq-coef2"></span> &times; Marker 2)</p>
-                                            <hr>
-                                            <p class="mb-0"><strong>Optimal Kesme Noktası (Combined):</strong> <span
-                                                    id="opt-threshold"></span></p>
-                                        </div>
-                                    </div>
-
-                                    <div class="card card-info mt-3">
-                                        <div class="card-header">
-                                            <h3 class="card-title">Eğri Altında Kalan Alan (AUC)</h3>
-                                        </div>
-                                        <div class="card-body table-responsive p-0">
-                                            <table class="table table-hover table-sm text-nowrap">
-                                                <thead>
-                                                <tr>
-                                                    <th>Marker</th>
-                                                    <th>AUC</th>
-                                                    <th>p-value</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody id="auc-table-body">
-                                                </tbody>
-                                            </table>
+                                            <div id="aucOverlay"
+                                                 style="position: absolute; top: 350px; right: 40px;   padding: 10px; border-radius: 5px; pointer-events: none; font-size: 12px; z-index: 10;">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

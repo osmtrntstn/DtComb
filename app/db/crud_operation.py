@@ -64,7 +64,7 @@ def get_functions():
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
-    query = "SELECT * FROM Tbl_Function ORDER BY OrderNumber ASC"
+    query = "SELECT * FROM Tbl_Function2 ORDER BY OrderNumber ASC"
     # Tablo adı görseldeki gibi 'Function' (tekil) olmalı
     cursor.execute(query)
     functions = cursor.fetchall()
@@ -83,7 +83,7 @@ def save_function(data):
         cursor = conn.cursor()
 
         query = """
-                INSERT OR REPLACE INTO Tbl_Function (Id, FunctionKey, FunctionName, OrderNumber)
+                INSERT OR REPLACE INTO Tbl_Function2 (Id, FunctionKey, FunctionName, OrderNumber)
                 VALUES (:Id, :FunctionKey, :FunctionName, :OrderNumber)
             """
 
@@ -112,7 +112,7 @@ def delete_function(id):
     cursor = conn.cursor()
 
     # Tablo adı görseldeki gibi 'Function' (tekil) olmalı
-    cursor.execute("DELETE FROM Tbl_Function WHERE Id = ?", (id,))
+    cursor.execute("DELETE FROM Tbl_Function2 WHERE Id = ?", (id,))
     conn.commit()
     conn.close()
     return
@@ -130,8 +130,8 @@ def get_methods():
                    m.OrderNumber,
                    m.FunctionId,
                    f.FunctionName
-            FROM Tbl_Method m
-                     LEFT JOIN Tbl_Function f ON m.FunctionId = f.Id
+            FROM Tbl_Method2 m
+                     LEFT JOIN Tbl_Function2 f ON m.FunctionId = f.Id
             ORDER BY m.OrderNumber ASC \
             """
     cursor.execute(query)
@@ -147,7 +147,7 @@ def save_method(data):
     try:
         cursor = conn.cursor()
         query = """
-            INSERT OR REPLACE INTO Tbl_Method (Id, FunctionId, MethodKey, MethodName, OrderNumber)
+            INSERT OR REPLACE INTO Tbl_Method2 (Id, FunctionId, MethodKey, MethodName, OrderNumber)
             VALUES (:Id, :FunctionId, :MethodKey, :MethodName, :OrderNumber)
         """
         cursor.execute(query, data.dict())
@@ -166,7 +166,7 @@ def delete_method(id):
     try:
         cursor = conn.cursor()
 
-        cursor.execute("DELETE FROM Tbl_Method WHERE Id = ?", (id,))
+        cursor.execute("DELETE FROM Tbl_Method2 WHERE Id = ?", (id,))
         conn.commit()
         return {"status": "success"}
     except Exception as e:
@@ -183,7 +183,7 @@ def get_parameters_by_parent(parent_id):
     cursor = conn.cursor()
     query = """
             SELECT p.*
-            FROM Tbl_Parameter p
+            FROM Tbl_Parameter2 p
             WHERE p.ParentId = ?
             ORDER BY p.OrderNumber ASC \
             """
@@ -199,7 +199,7 @@ def get_parameters_by_id(id):
     cursor = conn.cursor()
     query = """
             SELECT p.*
-            FROM Tbl_Parameter p
+            FROM Tbl_Parameter2 p
             WHERE p.Id = ?
             ORDER BY p.OrderNumber ASC \
             """
@@ -214,20 +214,20 @@ def save_parameter_bulk(data: ParameterSchema):
     if not data.Id:
         data.Id = str(uuid.uuid4())
     try:
-        # 1. Ana Parametreyi Kaydet (Tbl_Parameter)
+        # 1. Ana Parametreyi Kaydet (Tbl_Parameter2)
         cursor.execute("""
-            INSERT OR REPLACE INTO Tbl_Parameter 
+            INSERT OR REPLACE INTO Tbl_Parameter2 
             (Id, ParentId, ParameterKey, ParameterName, InputType, DefaultValue, MinValue, MaxValue, OrderNumber, ExistSubItem, ValueStep)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (data.Id, data.ParentId, data.ParameterKey, data.ParameterName, data.InputType,
               data.DefaultValue, data.MinValue, data.MaxValue, data.OrderNumber, data.ExistSubItem, data.ValueStep))
 
-        # 2. Yeni Değerleri (Values Listesi) Kaydet (Tbl_ParameterValue)
+        # 2. Yeni Değerleri (Values Listesi) Kaydet (Tbl_ParameterValue2)
         for val in data.Values:
             if not val.Id:
                 val.Id = str(uuid.uuid4())
             cursor.execute("""
-                           INSERT OR REPLACE INTO Tbl_ParameterValue
+                           INSERT OR REPLACE INTO Tbl_ParameterValue2
                                (Id, ParameterId, ValueKey, ValueName, ExistSubItem, OrderNumber)
                            VALUES (?, ?, ?, ?, ?, ?)
                            """, (val.Id, data.Id, val.ValueKey, val.ValueName, val.ExistSubItem, val.OrderNumber))
@@ -249,8 +249,8 @@ def delete_parameter(id):
     try:
         cursor = conn.cursor()
 
-        cursor.execute("DELETE FROM Tbl_ParameterValue WHERE ParameterId = ?", (id,))
-        cursor.execute("DELETE FROM Tbl_Parameter WHERE Id = ?", (id,))
+        cursor.execute("DELETE FROM Tbl_ParameterValue2 WHERE ParameterId = ?", (id,))
+        cursor.execute("DELETE FROM Tbl_Parameter2 WHERE Id = ?", (id,))
         conn.commit()
         return {"status": "success"}
     except Exception as e:
@@ -265,8 +265,8 @@ def delete_parameter_value(id):
     try:
         cursor = conn.cursor()
 
-        cursor.execute("DELETE FROM Tbl_ParameterValue WHERE Id = ?", (id,))
-        cursor.execute("DELETE FROM Tbl_Parameter WHERE ParentId = ?", (id,))
+        cursor.execute("DELETE FROM Tbl_ParameterValue2 WHERE Id = ?", (id,))
+        cursor.execute("DELETE FROM Tbl_Parameter2 WHERE ParentId = ?", (id,))
         conn.commit()
         return {"status": "success"}
     except Exception as e:
@@ -281,7 +281,7 @@ def get_parameter_values(parameter_id: str):
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     try:
-        query = "SELECT * FROM Tbl_ParameterValue WHERE ParameterId = ? ORDER BY OrderNumber ASC"
+        query = "SELECT * FROM Tbl_ParameterValue2 WHERE ParameterId = ? ORDER BY OrderNumber ASC"
         cursor.execute(query, (parameter_id,))
         rows = cursor.fetchall()
         return rows

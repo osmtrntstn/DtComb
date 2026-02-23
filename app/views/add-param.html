@@ -1,5 +1,3 @@
-{% extends "layout.html" %}
-
 {% block title %}Analiz Sayfası - {{ title }}{% endblock %}
 {% block pageTitle %}Analysis{{ pageTitle }}{% endblock %}
 
@@ -144,6 +142,7 @@
         // 3. Varsa sayfadaki global seçimleri veya ID'leri sıfırlayabilirsiniz
         // currentParamId = null;
     }
+
     $('#paramForm').on('submit', function (e) {
         e.preventDefault();
         const paramData = {
@@ -190,13 +189,13 @@
             }
         });
     });
+
     function addNewValueRow(data = null, table = '#valueTableBody') {
         const rowId = 'val_' + Math.random().toString(36).substr(2, 9);
         let addParamHtml = ""
         if (data) {
-            addParamHtml = `<button type="button" class="btn btn-xs btn-primary" onclick="window.location.href='/get-params/${data.Id}/${$('#paramName').val() + '->' + data.ValueName}'">
-                    <i class="fas fa-plus"></i> Alt Parametre Ekle
-                </button>`;
+            addParamHtml = `<button type="button" class="btn btn-xs btn-primary" title="Add Param" onclick="window.location.href='/get-params/${data.Id}/${$('#paramName').val() + '->' + data.ValueName}'">
+                    <i class="fas fa-plus"></i>                 </button>`;
         }
         const html = `
         <tr id="${rowId}" class="value-row">
@@ -209,7 +208,7 @@
             <td><select class="form-control form-control-sm val-exist-subitem">
                 <option value="0" ${data && data.ExistSubItem === 0 ? 'selected' : ''}>Yok</option>
                 <option value="1" ${data && data.ExistSubItem === 1 ? 'selected' : ''}>Var</option></select></td>
-            <td>
+            <td style="width: 100px;">
                 <button type="button" class="btn btn-xs btn-danger" onclick="removeValueRow('${rowId}','${data ? data.Id : ''}')">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -262,8 +261,12 @@
                     response.forEach(function (value) {
                         addNewValueRow(value, '#valueTableBody');
                     });
+
+                    $('#global-loader').fadeOut('fast');
+
                 },
                 error: function () {
+                    $('#global-loader').fadeOut('fast');
                     alert('Parametre değerleri yüklenirken bir hata oluştu.');
                 }
             });
@@ -280,19 +283,19 @@
 
         $('#paramForm').submit(function (e) {
             e.preventDefault();
-            var formData = $(this).serializeArray();
-            // $.ajax({
-            //     url: '/save-param',
-            //     method: 'POST',
-            //     data: formData,
-            //     success: function (response) {
-            //         alert('Parametre başarıyla kaydedildi.');
-            //         window.location.href = '/get-params/{{ parent_id }}';
-            //     },
-            //     error: function () {
-            //         alert('Parametre kaydedilirken bir hata oluştu.');
-            //     }
-            // });
+            let formData = $(this).serializeArray();
+            console.log(formData)
+            $.ajax({
+                url: '/parameters/save',
+                method: 'POST',
+                data: formData,
+                success: function (response) {
+                    alert('Parametre başarıyla kaydedildi.');
+                },
+                error: function () {
+                    alert('Parametre kaydedilirken bir hata oluştu.');
+                }
+            });
         });
     });
 
