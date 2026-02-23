@@ -5,589 +5,605 @@
 
 {% block content %}
 
-<div class="col-md-3 fixed-sidebar">
+<div class="row">
+    <div class="col-md-3 fixed-sidebar">
 
-    <!-- Profile Image -->
-    <div class="card card-primary card-outline">
-        <div class="card-body box-profile">
-            <div class="card-body" style="padding: 0.25rem !important;">
-                <form id="analysisForm">
-                    <div class="row">
-                        <div class="form-group" style="width: 100%;">
-                            <label for="functions">Combination approach</label>
-                            <select id="functions" class="form-control select2bs4" style="width: 100%;">
-                                {% for col in functions %}
-                                <option value="{{ col.FunctionKey }}" data-id="{{ col.Id }}" {% if loop.first
-                                        %}selected{%
-                                        endif
-                                        %}>
-                                    {{ col.FunctionName }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <!-- /.form-group -->
-                        <div class="form-group" style="width: 100%;">
-                            <label for="methods">Combination Method</label>
-                            <select id="methods" class="form-control select2bs4" style="width: 100%;">
-                                {% for col in methods %}
-                                <option value="{{ col.MethodKey }}" data-id="{{ col.Id }}" {% if loop.first %}selected{%
-                                        endif
-                                        %}>
-                                    {{ col.MethodName }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <!-- /.form-group -->
-                    </div>
-                    <div id="parameter-div">
-
-                    </div>
-                    <div id="dynamic-method-parameters-container" class="row" style="display: none;">
-                    </div>
-                    <div id="dynamic-function-parameters-container" class="row" style="display: none;">
-                    </div>
-
-
-                    <div class="row">
-                        <div class="form-group">
-                            <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" name="advancedCheckBox"
-                                       id="advancedCheckBox" value="Advanced">
-                                <label for="advancedCheckBox" class="custom-control-label">Advanced</label>
+        <!-- Profile Image -->
+        <div class="card card-primary card-outline">
+            <div class="card-body box-profile">
+                <div class="card-body" style="padding: 0.25rem !important;">
+                    <form id="analysisForm">
+                        <div class="row">
+                            <div class="form-group" style="width: 100%;">
+                                <label for="functions">Combination approach</label>
+                                <select id="functions" class="form-control select2bs4" style="width: 100%;">
+                                    {% for col in functions %}
+                                    <option value="{{ col.FunctionKey }}" data-id="{{ col.Id }}" {% if loop.first
+                                            %}selected{%
+                                            endif
+                                            %}>
+                                        {{ col.FunctionName }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
                             </div>
+                            <!-- /.form-group -->
+                            <div class="form-group" style="width: 100%;">
+                                <label for="methods">Combination Method</label>
+                                <select id="methods" class="form-control select2bs4" style="width: 100%;">
+                                    {% for col in methods %}
+                                    <option value="{{ col.MethodKey }}" data-id="{{ col.Id }}" {% if loop.first
+                                            %}selected{%
+                                            endif
+                                            %}>
+                                        {{ col.MethodName }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
                         </div>
-                        <!-- /.form-group -->
-                    </div>
+                        <div id="parameter-div">
 
-                    <div class="row">
-                        <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
-                            <label for="optimalCutOff">Select a method for optimal cut-off</label>
-                            <select id="optimalCutOff" class="form-control select2bs4" style="width: 100%;">
-                                <option value="Youden" selected>Youden</option>
-                                <option value="CB">CB</option>
-                                <option value="MCT">MCT</option>
-                                <option value="MinValueSp">MinValueSp</option>
-                                <option value="MinValueSe">MinValueSe</option>
-                                <option value="ValueSp">ValueSp</option>
-                                <option value="ValueSe">ValueSe</option>
-                                <option value="MinValueSpSe">MinValueSpSe</option>
-                                <option value="MaxSp">MaxSp</option>
-                                <option value="MaxSe">MaxSe</option>
-                                <option value="MaxSpSe">MaxSpSe</option>
-                                <option value="MaxProdSpSe">MaxProdSpSe</option>
-                                <option value="ROC01">ROC01</option>
-                                <option value="SpEqualSe">SpEqualSe</option>
-                                <option value="MaxEfficiency">MaxEfficiency</option>
-                                <option value="Minimax">Minimax</option>
-                                <option value="MaxDOR">MaxDOR</option>
-                                <option value="MaxKappa">MaxKappa</option>
-                                <option value="MinValueNPV">MinValueNPV</option>
-                                <option value="MinValuePPV">MinValuePPV</option>
-                                <option value="ValueNPV">ValueNPV</option>
-                                <option value="ValuePPV">ValuePPV</option>
-                                <option value="MinValueNPVPPV">MinValueNPVPPV</option>
-                                <option value="PROC01">PROC01</option>
-                                <option value="NPVEqualPPV">NPVEqualPPV</option>
-                                <option value="MaxNPVPPV">MaxNPVPPV</option>
-                                <option value="MaxSumNPVPPV">MaxSumNPVPPV</option>
-                                <option value="MaxProdNPVPPV">MaxProdNPVPPV</option>
-                                <option value="ValueDLR.Negative">ValueDLR.Negative</option>
-                                <option value="ValueDLR.Positive">ValueDLR.Positive</option>
-                                <option value="MinPvalue">MinPvalue</option>
-                                <option value="ObservedPrev">ObservedPrev</option>
-                                <option value="MeanPrev">MeanPrev</option>
-                                <option value="PrevalenceMatching">PrevalenceMatching</option>
-                            </select>
                         </div>
-                        <!-- /.form-group -->
-                        <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
-                            <label for="direction">Direction</label>
-                            <select id="direction" class="form-control select2bs4" style="width: 100%;">
-                                <option selected="selected">auto</option>
-                                <option><</option>
-                                <option>></option>
-                            </select>
+                        <div id="dynamic-method-parameters-container" class="row" style="display: none;">
                         </div>
-                        <!-- /.form-group -->
-                        <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
-                            <label for="confidenceLevel">Confidence Level</label>
-                            <input type="number" id="confidenceLevel" class="form-control" step="0.01" value="0.95"
-                                   style="width: 100%;">
+                        <div id="dynamic-function-parameters-container" class="row" style="display: none;">
                         </div>
-                        <!-- /.form-group -->
-                    </div>
-                    <!-- /.row -->
-                    <div class="form-group row">
-                        <button type="button" id="collect-data" class="btn btn-primary">Go</button>
-                    </div>
-                    <div class="form-group row">
-                        <button id="download-results-btn" class="btn btn-outline-info" style="display: none;">
-                            <i class="fas fa-download"></i> Download Model
-                        </button>
-                    </div>
 
-                </form>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" type="checkbox" name="advancedCheckBox"
+                                           id="advancedCheckBox" value="Advanced">
+                                    <label for="advancedCheckBox" class="custom-control-label">Advanced</label>
+                                </div>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
+                                <label for="optimalCutOff">Select a method for optimal cut-off</label>
+                                <select id="optimalCutOff" class="form-control select2bs4" style="width: 100%;">
+                                    <option value="Youden" selected>Youden</option>
+                                    <option value="CB">CB</option>
+                                    <option value="MCT">MCT</option>
+                                    <option value="MinValueSp">MinValueSp</option>
+                                    <option value="MinValueSe">MinValueSe</option>
+                                    <option value="ValueSp">ValueSp</option>
+                                    <option value="ValueSe">ValueSe</option>
+                                    <option value="MinValueSpSe">MinValueSpSe</option>
+                                    <option value="MaxSp">MaxSp</option>
+                                    <option value="MaxSe">MaxSe</option>
+                                    <option value="MaxSpSe">MaxSpSe</option>
+                                    <option value="MaxProdSpSe">MaxProdSpSe</option>
+                                    <option value="ROC01">ROC01</option>
+                                    <option value="SpEqualSe">SpEqualSe</option>
+                                    <option value="MaxEfficiency">MaxEfficiency</option>
+                                    <option value="Minimax">Minimax</option>
+                                    <option value="MaxDOR">MaxDOR</option>
+                                    <option value="MaxKappa">MaxKappa</option>
+                                    <option value="MinValueNPV">MinValueNPV</option>
+                                    <option value="MinValuePPV">MinValuePPV</option>
+                                    <option value="ValueNPV">ValueNPV</option>
+                                    <option value="ValuePPV">ValuePPV</option>
+                                    <option value="MinValueNPVPPV">MinValueNPVPPV</option>
+                                    <option value="PROC01">PROC01</option>
+                                    <option value="NPVEqualPPV">NPVEqualPPV</option>
+                                    <option value="MaxNPVPPV">MaxNPVPPV</option>
+                                    <option value="MaxSumNPVPPV">MaxSumNPVPPV</option>
+                                    <option value="MaxProdNPVPPV">MaxProdNPVPPV</option>
+                                    <option value="ValueDLR.Negative">ValueDLR.Negative</option>
+                                    <option value="ValueDLR.Positive">ValueDLR.Positive</option>
+                                    <option value="MinPvalue">MinPvalue</option>
+                                    <option value="ObservedPrev">ObservedPrev</option>
+                                    <option value="MeanPrev">MeanPrev</option>
+                                    <option value="PrevalenceMatching">PrevalenceMatching</option>
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                            <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
+                                <label for="direction">Direction</label>
+                                <select id="direction" class="form-control select2bs4" style="width: 100%;">
+                                    <option selected="selected">auto</option>
+                                    <option><</option>
+                                    <option>></option>
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                            <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
+                                <label for="confidenceLevel">Confidence Level</label>
+                                <input type="number" id="confidenceLevel" class="form-control" step="0.01" value="0.95"
+                                       style="width: 100%;">
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <!-- /.row -->
+                        <div class="form-group row">
+                            <button type="button" id="collect-data" class="btn btn-primary">Go</button>
+                        </div>
+                        <div class="form-group row">
+                            <button id="download-results-btn" class="btn btn-outline-info" style="display: none;">
+                                <i class="fas fa-download"></i> Download Model
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+                <!-- /.card-body -->
+
+
             </div>
             <!-- /.card-body -->
-
-
-        </div>
-        <!-- /.card-body -->
-    </div>
-    <!-- /.card -->
-
-</div>
-<!-- /.col -->
-<div class="overlay-wrapper col-md-9">
-    <div id="analysis">
-        <div class="card">
-
-            <div class="card-body">
-                <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link" id="custom-content-below-results-tab" data-toggle="pill"
-                           href="#custom-content-below-results" role="tab"
-                           aria-controls="custom-content-below-results"
-                           aria-selected="true">Results</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" id="custom-content-below-plots-tab" data-toggle="pill"
-                           href="#custom-content-below-plots" role="tab"
-                           aria-controls="custom-content-below-plots" aria-selected="false">Plots</a>
-                    </li>
-                </ul>
-                <div class="tab-content" id="custom-content-below-tabContent">
-                    <div class="tab-pane fade" id="custom-content-below-results" role="tabpanel"
-                         aria-labelledby="custom-content-below-results-tab">
-                        <!-- Custom Tabs -->
-                        <div class="card mt-2">
-                            <div class="card-header d-flex p-0">
-                                <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
-                                                                              href="javascript:openThisTabPane('_roc_coordinates', '.table-pane')">ROC
-                                    Coordinates</a></h3>
-                                <ul id="ul_roc_coordinates" class="nav nav-pills ml-auto p-2 table-pane"
-                                    style="display: none">
-                                    <li class="nav-item"><a class="nav-link active"
-                                                            href="#tab_roc_coordinates_comb_score"
-                                                            data-toggle="tab">Combination Score</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#tab_roc_coordinates_marker_1"
-                                                            data-toggle="tab">Marker 1</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#tab_roc_coordinates_marker_2"
-                                                            data-toggle="tab">Marker 2</a></li>
-
-                                </ul>
-                            </div><!-- /.card-header -->
-                            <div id="card_roc_coordinates" class="card-body table-pane" style="display: none">
-                                <div class="tab-content">
-                                    <div class="tab-pane active" id="tab_roc_coordinates_comb_score">
-                                        <table id="table_roc_coordinates_comb_score"
-                                               class="table table-bordered table-hover dataTable">
-                                            <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Marker</th>
-                                                <th>Threshold</th>
-                                                <th>Specificity</th>
-                                                <th>Sensitivity</th>
-                                            </tr>
-                                            </thead>
-                                        </table>
-                                    </div>
-                                    <!-- /.tab-pane -->
-                                    <div class="tab-pane" id="tab_roc_coordinates_marker_1">
-                                        <table id="table_roc_coordinates_marker_1"
-                                               class="table table-bordered table-hover dataTable">
-                                            <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Marker</th>
-                                                <th>Threshold</th>
-                                                <th>Specificity</th>
-                                                <th>Sensitivity</th>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                    <!-- /.tab-pane -->
-                                    <div class="tab-pane" id="tab_roc_coordinates_marker_2">
-                                        <table id="table_roc_coordinates_marker_2"
-                                               class="table table-bordered table-hover dataTable">
-                                            <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Marker</th>
-                                                <th>Threshold</th>
-                                                <th>Specificity</th>
-                                                <th>Sensitivity</th>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                    <!-- /.tab-pane -->
-                                </div>
-                                <!-- /.tab-content -->
-                            </div><!-- /.card-body -->
-                        </div>
-                        <!-- ./card -->
-                        <div class="card mt-2">
-                            <div class="card-header d-flex p-0">
-                                <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
-                                                                              href="javascript:openThisTabPane('_auc_table', '.table-pane')">AUC
-                                    Table</a></h3>
-                                <ul class="nav nav-pills mr-auto p-2" style="display: none">
-                                    <li class="nav-item"><a class="nav-link" href="#tab_auc_table" data-toggle="tab">AUC
-                                        Table</a></li>
-                                </ul>
-                            </div><!-- /.card-header -->
-                            <div id="card_auc_table" class="card-body table-pane">
-                                <div class="tab-content">
-                                    <div class="tab-pane active" id="tab_auc_table">
-                                        <table id="table_auc_statistics"
-                                               class="table table-bordered table-hover dataTable">
-                                            <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th>AUC</th>
-                                                <th>SE.AUC</th>
-                                                <th>LowerLimit</th>
-                                                <th>UpperLimit</th>
-                                                <th>z</th>
-                                                <th>p-value</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody></tbody>
-                                        </table>
-                                    </div>
-                                    <!-- /.tab-pane -->
-                                </div>
-                                <!-- /.tab-content -->
-                            </div><!-- /.card-body -->
-                        </div>
-                        <!-- ./card -->
-                        <div class="card mt-2">
-                            <div class="card-header d-flex p-0">
-                                <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
-                                                                              href="javascript:openThisTabPane('_multiple_comparison_table', '.table-pane')">Multiple
-                                    Comparison Table</a></h3>
-                                <ul class="nav nav-pills ml-auto p-2" style="display: none">
-                                    <li class="nav-item"><a class="nav-link" href="#tab_multiple_comparison_table"
-                                                            data-toggle="tab">Multiple Comparison Table</a></li>
-                                </ul>
-                            </div><!-- /.card-header -->
-                            <div id="card_multiple_comparison_table" class="card-body table-pane" style="display: none">
-                                <div class="tab-content">
-                                    <div class="tab-pane active" id="tab_multiple_comparison_table">
-                                        <table id="table_multiple_comparison"
-                                               class="table table-bordered table-hover dataTable">
-                                            <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Marker1 (A)</th>
-                                                <th>Marker2 (B)</th>
-                                                <th>AUC (A)</th>
-                                                <th>AUC (B)</th>
-                                                <th>|A-B|</th>
-                                                <th>SE(|A-B|)</th>
-                                                <th>z</th>
-                                                <th>p-value</th>
-                                            </tr>
-                                            </thead>
-                                        </table>
-                                    </div>
-                                    <!-- /.tab-pane -->
-                                </div>
-                                <!-- /.tab-content -->
-                            </div><!-- /.card-body -->
-                        </div>
-                        <!-- ./card -->
-                        <div class="card mt-2">
-                            <div class="card-header d-flex p-0">
-                                <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
-                                                                              href="javascript:openThisTabPane('_cutpoint', '.table-pane')">Cut
-                                    Points</a></h3>
-                                <ul id="ul_cutpoint" class="nav nav-pills ml-auto p-2 table-pane" style="display: none">
-                                    <li class="nav-item"><a class="nav-link active" href="#tab_cutpoint_comb_score"
-                                                            data-toggle="tab">Combination Score</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#tab_cutpoint_marker_1"
-                                                            data-toggle="tab">Marker 1</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#tab_cutpoint_marker_2"
-                                                            data-toggle="tab">Marker 2</a></li>
-
-                                </ul>
-                            </div><!-- /.card-header -->
-                            <div id="card_cutpoint" class="card-body table-pane" style="display: none">
-                                <div class="tab-content">
-                                    <div class="tab-pane active" id="tab_cutpoint_comb_score">
-                                        <table id="table_cut_combined" class="table table-sm w-100"></table>
-                                    </div>
-                                    <!-- /.tab-pane -->
-                                    <div class="tab-pane" id="tab_cutpoint_marker_1">
-                                        <table id="table_cut_marker1" class="table table-sm w-100"></table>
-                                    </div>
-                                    <!-- /.tab-pane -->
-                                    <div class="tab-pane" id="tab_cutpoint_marker_2">
-                                        <table id="table_cut_marker2" class="table table-sm w-100"></table>
-                                    </div>
-                                    <!-- /.tab-pane -->
-                                </div>
-                                <!-- /.tab-content -->
-                            </div><!-- /.card-body -->
-                        </div>
-                        <!-- ./card -->
-                        <div class="card mt-2">
-                            <div class="card-header d-flex p-0">
-                                <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
-                                                                              href="javascript:openThisTabPane('_performance_measures', '.table-pane')">Performance
-                                    Measures</a></h3>
-                                <ul id="ul_performance_measures" class="nav nav-pills ml-auto p-2 table-pane"
-                                    style="display: none">
-                                    <li class="nav-item"><a class="nav-link active"
-                                                            href="#tab_performance_measures_comb_score"
-                                                            data-toggle="tab">Combination Score</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#tab_performance_measures_marker_1"
-                                                            data-toggle="tab">Marker 1</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#tab_performance_measures_marker_2"
-                                                            data-toggle="tab">Marker 2</a></li>
-
-                                </ul>
-                            </div><!-- /.card-header -->
-                            <div id="card_performance_measures" class="card-body table-pane" style="display: none">
-                                <div class="tab-content">
-                                    <div class="tab-pane active" id="tab_performance_measures_comb_score">
-                                        <h5>Confusion Matrix</h5>
-                                        <table id="table_conf_combined"
-                                               class="table table-sm table-bordered mb-4"></table>
-                                        <h5 class="mt-4">Diagnostic Statistics</h5>
-                                        <table id="table_stat_combined" class="table table-sm table-bordered"></table>
-                                    </div>
-                                    <!-- /.tab-pane -->
-                                    <div class="tab-pane" id="tab_performance_measures_marker_1">
-                                        <h5>Confusion Matrix</h5>
-                                        <table id="table_conf_marker1"
-                                               class="table table-sm table-bordered mb-4"></table>
-                                        <h5 class="mt-4">Diagnostic Statistics</h5>
-                                        <table id="table_stat_marker1" class="table table-sm table-bordered"></table>
-                                    </div>
-                                    <!-- /.tab-pane -->
-                                    <div class="tab-pane" id="tab_performance_measures_marker_2">
-                                        <h5>Confusion Matrix</h5>
-                                        <table id="table_conf_marker2"
-                                               class="table table-sm table-bordered mb-4"></table>
-                                        <h5 class="mt-4">Diagnostic Statistics</h5>
-                                        <table id="table_stat_marker2" class="table table-sm table-bordered"></table>
-                                    </div>
-                                    <!-- /.tab-pane -->
-                                </div>
-                                <!-- /.tab-content -->
-                            </div><!-- /.card-body -->
-                        </div>
-                        <!-- ./card -->
-                    </div>
-                    <div class="tab-pane fade show active" id="custom-content-below-plots" role="tabpanel"
-                         aria-labelledby="custom-content-below-plots-tab">
-                        <div class="row justify-content-center">
-                            <div class="col-md-8">
-                                <div class="card mt-2">
-                                    <div class="card-header">
-                                        <h3 class="card-title">
-                                            ROC Curves for Combination Diagnostic Test</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        <canvas id="rocChart"
-                                                style="min-height: 450px; height: 450px; max-width: 100%;"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card card-success">
-                                    <div class="card-header">
-                                        <h3 class="card-title">Kombinasyon Formülü (Scoring)</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        <p><strong>Y = </strong> <span id="eq-intercept"></span>
-                                            <strong>+</strong> (<span id="eq-coef1"></span> &times; Marker 1)
-                                            <strong>+</strong> (<span id="eq-coef2"></span> &times; Marker 2)</p>
-                                        <hr>
-                                        <p class="mb-0"><strong>Optimal Kesme Noktası (Combined):</strong> <span
-                                                id="opt-threshold"></span></p>
-                                    </div>
-                                </div>
-
-                                <div class="card card-info mt-3">
-                                    <div class="card-header">
-                                        <h3 class="card-title">Eğri Altında Kalan Alan (AUC)</h3>
-                                    </div>
-                                    <div class="card-body table-responsive p-0">
-                                        <table class="table table-hover table-sm text-nowrap">
-                                            <thead>
-                                            <tr>
-                                                <th>Marker</th>
-                                                <th>AUC</th>
-                                                <th>p-value</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody id="auc-table-body">
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row justify-content-center">
-                            <div class="card mt-2 col-12">
-                                <div class="card-header d-flex p-0">
-                                    <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
-                                                                                  href="javascript:openThisTabPane('_destiny_chart_plot','.plot-tab')">Kernel
-                                        density graphs</a></h3>
-                                    <ul id="ul_destiny_chart_plot" class="nav nav-pills ml-auto p-2 plot-tab"
-                                        style="display: none;">
-                                        <li class="nav-item"><a class="nav-link active"
-                                                                href="#tab_destiny_chart_plot_comb_score"
-                                                                data-toggle="tab">Combination Score</a></li>
-                                        <li class="nav-item"><a class="nav-link"
-                                                                href="#tab_destiny_chart_plot_marker_1"
-                                                                data-toggle="tab">Marker 1</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="#tab_destiny_chart_plot_marker_2"
-                                                                data-toggle="tab">Marker 2</a></li>
-
-                                    </ul>
-                                </div><!-- /.card-header -->
-                                <div id="card_destiny_chart_plot" class="card-body ml-auto mr-auto plot-tab"
-                                     style="display: none;">
-                                    <div class="tab-content">
-                                        <div class="tab-pane justify-content-center active"
-                                             id="tab_destiny_chart_plot_comb_score">
-                                            <div id="destiny_plot_comb_score"
-                                                 style="height: 450px; width: 100%; overflow: hidden;"></div>
-
-                                        </div>
-                                        <!-- /.tab-pane -->
-                                        <div class="tab-pane justify-content-center"
-                                             id="tab_destiny_chart_plot_marker_1">
-                                            <div id="destiny_plot_marker_1" class="density-chart"
-                                                 style="height: 450px; width: 100%; overflow: hidden;"></div>
-
-                                        </div>
-                                        <!-- /.tab-pane -->
-                                        <div class="tab-pane justify-content-center"
-                                             id="tab_destiny_chart_plot_marker_2">
-                                            <div id="destiny_plot_marker_2" class="density-chart"
-                                                 style="height: 450px; width: 100%; overflow: hidden;"></div>
-
-                                        </div>
-                                        <!-- /.tab-pane -->
-                                    </div>
-                                    <!-- /.tab-content -->
-                                </div><!-- /.card-body -->
-                            </div>
-                            <!-- ./card -->
-                        </div>
-
-                        <div class="row justify-content-center">
-                            <div class="card mt-2 col-12">
-                                <div class="card-header d-flex p-0">
-                                    <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
-                                                                                  href="javascript:openThisTabPane('_individual_value','.plot-tab')">Individual-value
-                                        Graphs</a></h3>
-                                    <ul id="ul_individual_value" class="nav nav-pills ml-auto p-2 plot-tab"
-                                        style="display: none;">
-                                        <li class="nav-item"><a class="nav-link active"
-                                                                href="#tab_individual_value_comb_score"
-                                                                data-toggle="tab">Combination Score</a></li>
-                                        <li class="nav-item"><a class="nav-link"
-                                                                href="#tab_individual_value_marker_1"
-                                                                data-toggle="tab">Marker 1</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="#tab_individual_value_marker_2"
-                                                                data-toggle="tab">Marker 2</a></li>
-
-                                    </ul>
-                                </div><!-- /.card-header -->
-                                <div id="card_individual_value" class="card-body ml-auto mr-auto plot-tab"
-                                     style="display: none;">
-                                    <div class="tab-content">
-                                        <div class="tab-pane justify-content-center active"
-                                             id="tab_individual_value_comb_score">
-                                            <div id="individual_value_comb_score"
-                                                 style="min-height: 450px; height: 450px; max-width: 100%;"></div>
-
-                                        </div>
-                                        <!-- /.tab-pane -->
-                                        <div class="tab-pane justify-content-center"
-                                             id="tab_individual_value_marker_1">
-                                            <div id="individual_value_marker_1"
-                                                 style="min-height: 450px; height: 450px; max-width: 100%;"></div>
-
-                                        </div>
-                                        <!-- /.tab-pane -->
-                                        <div class="tab-pane justify-content-center" id="tab_individual_value_marker_2">
-                                            <div id="individual_value_marker_2"
-                                                 style="min-height: 450px; height: 450px; max-width: 100%;"></div>
-
-                                        </div>
-                                        <!-- /.tab-pane -->
-                                    </div>
-                                    <!-- /.tab-content -->
-                                </div><!-- /.card-body -->
-                            </div>
-                            <!-- ./card -->
-                        </div>
-
-                        <div class="row justify-content-center">
-                            <div class="card mt-2 col-12">
-                                <div class="card-header d-flex p-0">
-                                    <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
-                                                                                  href="javascript:openThisTabPane('_sens_spec_curve','.plot-tab')">Sens.
-                                        & Spec. Curve</a></h3>
-                                    <ul id="ul_sens_spec_curve" class="nav nav-pills ml-auto p-2 plot-tab"
-                                        style="display: none;">
-                                        <li class="nav-item"><a class="nav-link active"
-                                                                href="#tab_sens_spec_curve_comb_score"
-                                                                data-toggle="tab">Combination Score</a></li>
-                                        <li class="nav-item"><a class="nav-link"
-                                                                href="#tab_sens_spec_curve_marker_1"
-                                                                data-toggle="tab">Marker 1</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="#tab_sens_spec_curve_marker_2"
-                                                                data-toggle="tab">Marker 2</a></li>
-
-                                    </ul>
-                                </div><!-- /.card-header -->
-                                <div id="card_sens_spec_curve" class="card-body ml-auto mr-auto plot-tab"
-                                     style="display: none;">
-                                    <div class="tab-content">
-                                        <div class="tab-pane justify-content-center active"
-                                             id="tab_sens_spec_curve_comb_score">
-                                            <div id="sens_spec_curve_comb_score"
-                                                 style="min-height: 450px; height: 450px; max-width: 100%;"></div>
-
-                                        </div>
-                                        <!-- /.tab-pane -->
-                                        <div class="tab-pane justify-content-center"
-                                             id="tab_sens_spec_curve_marker_1">
-                                            <div id="sens_spec_curve_marker_1"
-                                                 style="min-height: 450px; height: 450px; max-width: 100%;"></div>
-
-                                        </div>
-                                        <!-- /.tab-pane -->
-                                        <div class="tab-pane justify-content-center" id="tab_sens_spec_curve_marker_2">
-                                            <div id="sens_spec_curve_marker_2"
-                                                 style="min-height: 450px; height: 450px; max-width: 100%;"></div>
-
-                                        </div>
-                                        <!-- /.tab-pane -->
-                                    </div>
-                                    <!-- /.tab-content -->
-                                </div><!-- /.card-body -->
-                            </div>
-                            <!-- ./card -->
-                        </div>
-
-                    </div>
-                </div>
-            </div><!-- /.card-body -->
         </div>
         <!-- /.card -->
+
     </div>
     <!-- /.col -->
+    <div class="overlay-wrapper col-md-9">
+        <div id="analysis">
+            <div class="card">
+
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link" id="custom-content-below-results-tab" data-toggle="pill"
+                               href="#custom-content-below-results" role="tab"
+                               aria-controls="custom-content-below-results"
+                               aria-selected="true">Results</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" id="custom-content-below-plots-tab" data-toggle="pill"
+                               href="#custom-content-below-plots" role="tab"
+                               aria-controls="custom-content-below-plots" aria-selected="false">Plots</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="custom-content-below-tabContent">
+                        <div class="tab-pane fade" id="custom-content-below-results" role="tabpanel"
+                             aria-labelledby="custom-content-below-results-tab">
+                            <!-- Custom Tabs -->
+                            <div class="card mt-2">
+                                <div class="card-header d-flex p-0">
+                                    <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                                  href="javascript:openThisTabPane('_roc_coordinates', '.table-pane')">ROC
+                                        Coordinates</a></h3>
+                                    <ul id="ul_roc_coordinates" class="nav nav-pills ml-auto p-2 table-pane"
+                                        style="display: none">
+                                        <li class="nav-item"><a class="nav-link active"
+                                                                href="#tab_roc_coordinates_comb_score"
+                                                                data-toggle="tab">Combination Score</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="#tab_roc_coordinates_marker_1"
+                                                                data-toggle="tab">Marker 1</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="#tab_roc_coordinates_marker_2"
+                                                                data-toggle="tab">Marker 2</a></li>
+
+                                    </ul>
+                                </div><!-- /.card-header -->
+                                <div id="card_roc_coordinates" class="card-body table-pane" style="display: none">
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="tab_roc_coordinates_comb_score">
+                                            <table id="table_roc_coordinates_comb_score"
+                                                   class="table table-bordered table-hover dataTable">
+                                                <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Marker</th>
+                                                    <th>Threshold</th>
+                                                    <th>Specificity</th>
+                                                    <th>Sensitivity</th>
+                                                </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                        <!-- /.tab-pane -->
+                                        <div class="tab-pane" id="tab_roc_coordinates_marker_1">
+                                            <table id="table_roc_coordinates_marker_1"
+                                                   class="table table-bordered table-hover dataTable">
+                                                <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Marker</th>
+                                                    <th>Threshold</th>
+                                                    <th>Specificity</th>
+                                                    <th>Sensitivity</th>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <!-- /.tab-pane -->
+                                        <div class="tab-pane" id="tab_roc_coordinates_marker_2">
+                                            <table id="table_roc_coordinates_marker_2"
+                                                   class="table table-bordered table-hover dataTable">
+                                                <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Marker</th>
+                                                    <th>Threshold</th>
+                                                    <th>Specificity</th>
+                                                    <th>Sensitivity</th>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <!-- /.tab-pane -->
+                                    </div>
+                                    <!-- /.tab-content -->
+                                </div><!-- /.card-body -->
+                            </div>
+                            <!-- ./card -->
+                            <div class="card mt-2">
+                                <div class="card-header d-flex p-0">
+                                    <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                                  href="javascript:openThisTabPane('_auc_table', '.table-pane')">AUC
+                                        Table</a></h3>
+                                    <ul class="nav nav-pills mr-auto p-2" style="display: none">
+                                        <li class="nav-item"><a class="nav-link" href="#tab_auc_table"
+                                                                data-toggle="tab">AUC
+                                            Table</a></li>
+                                    </ul>
+                                </div><!-- /.card-header -->
+                                <div id="card_auc_table" class="card-body table-pane">
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="tab_auc_table">
+                                            <table id="table_auc_statistics"
+                                                   class="table table-bordered table-hover dataTable">
+                                                <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>AUC</th>
+                                                    <th>SE.AUC</th>
+                                                    <th>LowerLimit</th>
+                                                    <th>UpperLimit</th>
+                                                    <th>z</th>
+                                                    <th>p-value</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                        <!-- /.tab-pane -->
+                                    </div>
+                                    <!-- /.tab-content -->
+                                </div><!-- /.card-body -->
+                            </div>
+                            <!-- ./card -->
+                            <div class="card mt-2">
+                                <div class="card-header d-flex p-0">
+                                    <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                                  href="javascript:openThisTabPane('_multiple_comparison_table', '.table-pane')">Multiple
+                                        Comparison Table</a></h3>
+                                    <ul class="nav nav-pills ml-auto p-2" style="display: none">
+                                        <li class="nav-item"><a class="nav-link" href="#tab_multiple_comparison_table"
+                                                                data-toggle="tab">Multiple Comparison Table</a></li>
+                                    </ul>
+                                </div><!-- /.card-header -->
+                                <div id="card_multiple_comparison_table" class="card-body table-pane"
+                                     style="display: none">
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="tab_multiple_comparison_table">
+                                            <table id="table_multiple_comparison"
+                                                   class="table table-bordered table-hover dataTable">
+                                                <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Marker1 (A)</th>
+                                                    <th>Marker2 (B)</th>
+                                                    <th>AUC (A)</th>
+                                                    <th>AUC (B)</th>
+                                                    <th>|A-B|</th>
+                                                    <th>SE(|A-B|)</th>
+                                                    <th>z</th>
+                                                    <th>p-value</th>
+                                                </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                        <!-- /.tab-pane -->
+                                    </div>
+                                    <!-- /.tab-content -->
+                                </div><!-- /.card-body -->
+                            </div>
+                            <!-- ./card -->
+                            <div class="card mt-2">
+                                <div class="card-header d-flex p-0">
+                                    <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                                  href="javascript:openThisTabPane('_cutpoint', '.table-pane')">Cut
+                                        Points</a></h3>
+                                    <ul id="ul_cutpoint" class="nav nav-pills ml-auto p-2 table-pane"
+                                        style="display: none">
+                                        <li class="nav-item"><a class="nav-link active" href="#tab_cutpoint_comb_score"
+                                                                data-toggle="tab">Combination Score</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="#tab_cutpoint_marker_1"
+                                                                data-toggle="tab">Marker 1</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="#tab_cutpoint_marker_2"
+                                                                data-toggle="tab">Marker 2</a></li>
+
+                                    </ul>
+                                </div><!-- /.card-header -->
+                                <div id="card_cutpoint" class="card-body table-pane" style="display: none">
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="tab_cutpoint_comb_score">
+                                            <table id="table_cut_combined" class="table table-sm w-100"></table>
+                                        </div>
+                                        <!-- /.tab-pane -->
+                                        <div class="tab-pane" id="tab_cutpoint_marker_1">
+                                            <table id="table_cut_marker1" class="table table-sm w-100"></table>
+                                        </div>
+                                        <!-- /.tab-pane -->
+                                        <div class="tab-pane" id="tab_cutpoint_marker_2">
+                                            <table id="table_cut_marker2" class="table table-sm w-100"></table>
+                                        </div>
+                                        <!-- /.tab-pane -->
+                                    </div>
+                                    <!-- /.tab-content -->
+                                </div><!-- /.card-body -->
+                            </div>
+                            <!-- ./card -->
+                            <div class="card mt-2">
+                                <div class="card-header d-flex p-0">
+                                    <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                                  href="javascript:openThisTabPane('_performance_measures', '.table-pane')">Performance
+                                        Measures</a></h3>
+                                    <ul id="ul_performance_measures" class="nav nav-pills ml-auto p-2 table-pane"
+                                        style="display: none">
+                                        <li class="nav-item"><a class="nav-link active"
+                                                                href="#tab_performance_measures_comb_score"
+                                                                data-toggle="tab">Combination Score</a></li>
+                                        <li class="nav-item"><a class="nav-link"
+                                                                href="#tab_performance_measures_marker_1"
+                                                                data-toggle="tab">Marker 1</a></li>
+                                        <li class="nav-item"><a class="nav-link"
+                                                                href="#tab_performance_measures_marker_2"
+                                                                data-toggle="tab">Marker 2</a></li>
+
+                                    </ul>
+                                </div><!-- /.card-header -->
+                                <div id="card_performance_measures" class="card-body table-pane" style="display: none">
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="tab_performance_measures_comb_score">
+                                            <h5>Confusion Matrix</h5>
+                                            <table id="table_conf_combined"
+                                                   class="table table-sm table-bordered mb-4"></table>
+                                            <h5 class="mt-4">Diagnostic Statistics</h5>
+                                            <table id="table_stat_combined"
+                                                   class="table table-sm table-bordered"></table>
+                                        </div>
+                                        <!-- /.tab-pane -->
+                                        <div class="tab-pane" id="tab_performance_measures_marker_1">
+                                            <h5>Confusion Matrix</h5>
+                                            <table id="table_conf_marker1"
+                                                   class="table table-sm table-bordered mb-4"></table>
+                                            <h5 class="mt-4">Diagnostic Statistics</h5>
+                                            <table id="table_stat_marker1"
+                                                   class="table table-sm table-bordered"></table>
+                                        </div>
+                                        <!-- /.tab-pane -->
+                                        <div class="tab-pane" id="tab_performance_measures_marker_2">
+                                            <h5>Confusion Matrix</h5>
+                                            <table id="table_conf_marker2"
+                                                   class="table table-sm table-bordered mb-4"></table>
+                                            <h5 class="mt-4">Diagnostic Statistics</h5>
+                                            <table id="table_stat_marker2"
+                                                   class="table table-sm table-bordered"></table>
+                                        </div>
+                                        <!-- /.tab-pane -->
+                                    </div>
+                                    <!-- /.tab-content -->
+                                </div><!-- /.card-body -->
+                            </div>
+                            <!-- ./card -->
+                        </div>
+                        <div class="tab-pane fade show active" id="custom-content-below-plots" role="tabpanel"
+                             aria-labelledby="custom-content-below-plots-tab">
+                            <div class="row justify-content-center">
+                                <div class="col-md-8">
+                                    <div class="card mt-2">
+                                        <div class="card-header">
+                                            <h3 class="card-title">
+                                                ROC Curves for Combination Diagnostic Test</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="rocChart"
+                                                    style="min-height: 450px; height: 450px; max-width: 100%;"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card card-success">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Kombinasyon Formülü (Scoring)</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <p><strong>Y = </strong> <span id="eq-intercept"></span>
+                                                <strong>+</strong> (<span id="eq-coef1"></span> &times; Marker 1)
+                                                <strong>+</strong> (<span id="eq-coef2"></span> &times; Marker 2)</p>
+                                            <hr>
+                                            <p class="mb-0"><strong>Optimal Kesme Noktası (Combined):</strong> <span
+                                                    id="opt-threshold"></span></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="card card-info mt-3">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Eğri Altında Kalan Alan (AUC)</h3>
+                                        </div>
+                                        <div class="card-body table-responsive p-0">
+                                            <table class="table table-hover table-sm text-nowrap">
+                                                <thead>
+                                                <tr>
+                                                    <th>Marker</th>
+                                                    <th>AUC</th>
+                                                    <th>p-value</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="auc-table-body">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="card mt-2 col-12">
+                                    <div class="card-header d-flex p-0">
+                                        <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                                      href="javascript:openThisTabPane('_destiny_chart_plot','.plot-tab')">Kernel
+                                            density graphs</a></h3>
+                                        <ul id="ul_destiny_chart_plot" class="nav nav-pills ml-auto p-2 plot-tab"
+                                            style="display: none;">
+                                            <li class="nav-item"><a class="nav-link active"
+                                                                    href="#tab_destiny_chart_plot_comb_score"
+                                                                    data-toggle="tab">Combination Score</a></li>
+                                            <li class="nav-item"><a class="nav-link"
+                                                                    href="#tab_destiny_chart_plot_marker_1"
+                                                                    data-toggle="tab">Marker 1</a></li>
+                                            <li class="nav-item"><a class="nav-link"
+                                                                    href="#tab_destiny_chart_plot_marker_2"
+                                                                    data-toggle="tab">Marker 2</a></li>
+
+                                        </ul>
+                                    </div><!-- /.card-header -->
+                                    <div id="card_destiny_chart_plot" class="card-body ml-auto mr-auto plot-tab"
+                                         style="display: none;">
+                                        <div class="tab-content">
+                                            <div class="tab-pane justify-content-center active"
+                                                 id="tab_destiny_chart_plot_comb_score">
+                                                <div id="destiny_plot_comb_score"
+                                                     style="height: 450px; width: 100%; overflow: hidden;"></div>
+
+                                            </div>
+                                            <!-- /.tab-pane -->
+                                            <div class="tab-pane justify-content-center"
+                                                 id="tab_destiny_chart_plot_marker_1">
+                                                <div id="destiny_plot_marker_1" class="density-chart"
+                                                     style="height: 450px; width: 100%; overflow: hidden;"></div>
+
+                                            </div>
+                                            <!-- /.tab-pane -->
+                                            <div class="tab-pane justify-content-center"
+                                                 id="tab_destiny_chart_plot_marker_2">
+                                                <div id="destiny_plot_marker_2" class="density-chart"
+                                                     style="height: 450px; width: 100%; overflow: hidden;"></div>
+
+                                            </div>
+                                            <!-- /.tab-pane -->
+                                        </div>
+                                        <!-- /.tab-content -->
+                                    </div><!-- /.card-body -->
+                                </div>
+                                <!-- ./card -->
+                            </div>
+
+                            <div class="row justify-content-center">
+                                <div class="card mt-2 col-12">
+                                    <div class="card-header d-flex p-0">
+                                        <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                                      href="javascript:openThisTabPane('_individual_value','.plot-tab')">Individual-value
+                                            Graphs</a></h3>
+                                        <ul id="ul_individual_value" class="nav nav-pills ml-auto p-2 plot-tab"
+                                            style="display: none;">
+                                            <li class="nav-item"><a class="nav-link active"
+                                                                    href="#tab_individual_value_comb_score"
+                                                                    data-toggle="tab">Combination Score</a></li>
+                                            <li class="nav-item"><a class="nav-link"
+                                                                    href="#tab_individual_value_marker_1"
+                                                                    data-toggle="tab">Marker 1</a></li>
+                                            <li class="nav-item"><a class="nav-link"
+                                                                    href="#tab_individual_value_marker_2"
+                                                                    data-toggle="tab">Marker 2</a></li>
+
+                                        </ul>
+                                    </div><!-- /.card-header -->
+                                    <div id="card_individual_value" class="card-body ml-auto mr-auto plot-tab"
+                                         style="display: none;">
+                                        <div class="tab-content">
+                                            <div class="tab-pane justify-content-center active"
+                                                 id="tab_individual_value_comb_score">
+                                                <div id="individual_value_comb_score"
+                                                     style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                            </div>
+                                            <!-- /.tab-pane -->
+                                            <div class="tab-pane justify-content-center"
+                                                 id="tab_individual_value_marker_1">
+                                                <div id="individual_value_marker_1"
+                                                     style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                            </div>
+                                            <!-- /.tab-pane -->
+                                            <div class="tab-pane justify-content-center"
+                                                 id="tab_individual_value_marker_2">
+                                                <div id="individual_value_marker_2"
+                                                     style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                            </div>
+                                            <!-- /.tab-pane -->
+                                        </div>
+                                        <!-- /.tab-content -->
+                                    </div><!-- /.card-body -->
+                                </div>
+                                <!-- ./card -->
+                            </div>
+
+                            <div class="row justify-content-center">
+                                <div class="card mt-2 col-12">
+                                    <div class="card-header d-flex p-0">
+                                        <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
+                                                                                      href="javascript:openThisTabPane('_sens_spec_curve','.plot-tab')">Sens.
+                                            & Spec. Curve</a></h3>
+                                        <ul id="ul_sens_spec_curve" class="nav nav-pills ml-auto p-2 plot-tab"
+                                            style="display: none;">
+                                            <li class="nav-item"><a class="nav-link active"
+                                                                    href="#tab_sens_spec_curve_comb_score"
+                                                                    data-toggle="tab">Combination Score</a></li>
+                                            <li class="nav-item"><a class="nav-link"
+                                                                    href="#tab_sens_spec_curve_marker_1"
+                                                                    data-toggle="tab">Marker 1</a></li>
+                                            <li class="nav-item"><a class="nav-link"
+                                                                    href="#tab_sens_spec_curve_marker_2"
+                                                                    data-toggle="tab">Marker 2</a></li>
+
+                                        </ul>
+                                    </div><!-- /.card-header -->
+                                    <div id="card_sens_spec_curve" class="card-body ml-auto mr-auto plot-tab"
+                                         style="display: none;">
+                                        <div class="tab-content">
+                                            <div class="tab-pane justify-content-center active"
+                                                 id="tab_sens_spec_curve_comb_score">
+                                                <div id="sens_spec_curve_comb_score"
+                                                     style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                            </div>
+                                            <!-- /.tab-pane -->
+                                            <div class="tab-pane justify-content-center"
+                                                 id="tab_sens_spec_curve_marker_1">
+                                                <div id="sens_spec_curve_marker_1"
+                                                     style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                            </div>
+                                            <!-- /.tab-pane -->
+                                            <div class="tab-pane justify-content-center"
+                                                 id="tab_sens_spec_curve_marker_2">
+                                                <div id="sens_spec_curve_marker_2"
+                                                     style="min-height: 450px; height: 450px; max-width: 100%;"></div>
+
+                                            </div>
+                                            <!-- /.tab-pane -->
+                                        </div>
+                                        <!-- /.tab-content -->
+                                    </div><!-- /.card-body -->
+                                </div>
+                                <!-- ./card -->
+                            </div>
+
+                        </div>
+                    </div>
+                </div><!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+    </div>
 </div>
 {% endblock %}
 
