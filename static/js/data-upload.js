@@ -213,9 +213,15 @@ $(document).on('shown.bs.tab', 'a[data-toggle="pill"]', async function (e) {
     // Eğer tıklanan tab "ROC Analysis" tabı ise göster, değilse gizle
     if (targetId === 'custom-content-below-roc-analysis-tab') {
         await dbManager.set_setting("analysis_type", "roc-analysis");
+        $("#li-analysis").fadeOut();
+        $("#li-predict").fadeOut();
+        $("#li-roc-analysis").fadeIn();
 
         advancedDiv.fadeIn(); // Şık bir geçişle göster
     } else {
+        $("#li-roc-analysis").fadeOut();
+        $("#li-analysis").fadeIn();
+        $("#li-predict").fadeIn();
         // await dbManager.set_analysis_type("analysis"); // Analysis tabına geçildiğinde session'daki analysis_type'ı güncelle
         await dbManager.set_setting("analysis_type", "analysis");
         advancedDiv.hide(); // Diğer tablarda gizle
