@@ -2,9 +2,19 @@
 
 {% block title %}Analiz Sayfası - {{ title }}{% endblock %}
 {% block pageTitle %}Analysis{{ pageTitle }}{% endblock %}
-
+{% block head %}
+<!-- CodeMirror -->
+<link rel="stylesheet" href="/static/plugins/codemirror/codemirror.css">
+<link rel="stylesheet" href="/static/plugins/codemirror/theme/monokai.css">
+{% endblock %}
 {% block content %}
+<div class="row">
 
+    <div class="col-12">
+        <a href="/logout" class="btn btn-primary btn-block">Logout</a>
+    </div>
+    <!-- /.col -->
+</div>
 <div class="card col-12">
     <div class="card-header">
         <h3 class="card-title">Analiz Metotları</h3>
@@ -72,7 +82,39 @@
         </table>
     </div>
 </div>
+<div class="col-md-12">
+    <div class="card card-outline card-info">
+        <div class="card-header">
+            <h3 class="card-title">
+                CodeMirror
+            </h3>
+            <button class="btn btn-primary float-right" onclick="getAllData()">Tüm verileri getir</button>
 
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body p-0">
+            <textarea id="allData" class="p-3"></textarea>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12" style="display: none">
+    <div class="card card-outline card-info">
+        <div class="card-header">
+            <h3 class="card-title">
+                CodeMirror
+            </h3>
+            <button class="btn btn-primary float-right" onclick="runSql()" style="display: none" disabled>Çalıştır
+            </button>
+
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body p-0">
+            <textarea id="sqlQueryArea" class="p-3"></textarea>
+        </div>
+    </div>
+</div>
+<!-- /.col-->
 <div class="modal fade" id="methodModal">
     <div class="modal-dialog">
         <form id="methodForm">
@@ -305,6 +347,53 @@
 
 
 {% block scripts %}
+<!-- CodeMirror -->
+<script src="/static/plugins/codemirror/codemirror.js"></script>
+<script src="/static/plugins/codemirror/mode/css/css.js"></script>
+<script src="/static/plugins/codemirror/mode/sql/sql.js"></script>
+<script>
+
+    // CodeMirror
+    const sqlEditor = CodeMirror.fromTextArea(document.getElementById("allData"), {
+        mode: "sql",
+        theme: "monokai",
+        lineNumbers: true // Genelde SQL için kullanışlıdır
+    });
+
+    const sqlQueryArea = CodeMirror.fromTextArea(document.getElementById("sqlQueryArea"), {
+        mode: "sql",
+        theme: "monokai",
+        lineNumbers: true // Genelde SQL için kullanışlıdır
+    });
+
+    function getAllData() {
+        $.ajax({
+            url: '/get-all-data',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                sqlEditor.setValue(response);
+            },
+            error: function (xhr) {
+                Swal.fire('Hata', 'Kayıt sırasında bir sorun oluştu: ' + xhr.responseText, 'error');
+            }
+        });
+    }
+
+    function runSql() {
+        $.ajax({
+            url: '/run-sql',
+            type: 'POST',
+            data: {data: sqlQueryArea.getValue()}, // jQuery bunu otomatik form-urlencoded yapar
+            success: function (response) {
+                Swal.fire('Başarılı', 'Sorgu çalıştırıldı', 'success');
+            },
+            error: function (xhr) {
+                Swal.fire('Hata', 'Kayıt sırasında bir sorun oluştu: ' + xhr.statusText, 'error');
+            }
+        });
+    }
+</script>
 <script>
     // DataTable nesnesini global veya kapsam içinde bir değişkene atayın
     let functionTable;
@@ -440,8 +529,7 @@
             FunctionName: $(this).find('input[name="FunctionName"]').val(),
             OrderNumber: parseInt($(this).find('input[name="OrderNumber"]').val()) || 0
         };
-        console.log(formData)
-        console.log(JSON.stringify(formData))
+
         $.ajax({
             url: '/functions/save',
             type: 'POST',

@@ -1,14 +1,17 @@
 from typing import Optional
 
-from fastapi import APIRouter, Request, Form, HTTPException
+from fastapi import APIRouter, Request, Form, HTTPException, Depends
 from fastapi.templating import Jinja2Templates
 
 from app.db import crud_operation
 from app.db.db_models.function_schema import FunctionSchema
 from app.db.db_models.method_schema import MethodSchema
 from app.db.db_models.parameter_schema import ParameterSchema
+from app.injections.sesion_control import check_session
 
-router = APIRouter()
+# router = APIRouter()
+# router = APIRouter() yerine bunu kullan:
+router = APIRouter(dependencies=[Depends(check_session)])
 templates = Jinja2Templates(directory="app/views")
 
 
@@ -105,7 +108,18 @@ async def get_parameter_values(parameter_id: str):
     return crud_operation.get_parameter_values(parameter_id)
 
 
+@router.get("/get-all-data")
+async def get_parameter_values():
+    return crud_operation.generate_insert_scripts()
+
+
 @router.delete("/delete-param-value/{id}")
 async def delete_parameter_value(id: str):
     crud_operation.delete_parameter_value(id)
     return {"status": "deleted"}
+
+
+@router.post("/run-sql")
+async def run_sql(data: str = Form(...)):
+    crud_operation.run_sql(data)
+    return {"status": "ok"}

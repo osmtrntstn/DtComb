@@ -1,7 +1,7 @@
 import sqlite3, os
 from typing import List, Optional
 import uuid
-
+import re
 from fastapi import HTTPException
 
 from app.db.db_models.parameter_schema import ParameterSchema
@@ -15,6 +15,47 @@ def get_db_connection():
     conn = sqlite3.connect(db_path, check_same_thread=False)
     return conn
 
+
+def generate_insert_scripts():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # 1. Tüm tablo isimlerini al
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = [row[0] for row in cursor.fetchall()]
+
+    all_inserts = ""
+
+    for table in tables:
+        all_inserts += f"\n-- Table: {table} --\n"
+
+        # 2. Kolon isimlerini al
+        cursor.execute(f"PRAGMA table_info({table})")
+        columns = [info[1] for info in cursor.fetchall()]
+        col_names = ", ".join(columns)
+
+        # 3. Verileri al
+        cursor.execute(f"SELECT * FROM {table}")
+        rows = cursor.fetchall()
+
+        for row in rows:
+            # Verileri SQL formatına uygun hale getir (None -> NULL, String -> 'text')
+            formatted_values = []
+            for val in row:
+                if val is None:
+                    formatted_values.append("NULL")
+                elif isinstance(val, str):
+                    # Tek tırnakları escape et (kaçış karakteri ekle)
+                    safe_val = val.replace("'", "''")
+                    formatted_values.append(f"'{safe_val}'")
+                else:
+                    formatted_values.append(str(val))
+
+            vals_str = ", ".join(formatted_values)
+            all_inserts += f"INSERT INTO {table} ({col_names}) VALUES ({vals_str});\n"
+
+    conn.close()
+    return all_inserts
 
 def get_functions():
     conn = get_db_connection()
@@ -245,3 +286,36 @@ def get_parameter_values(parameter_id: str):
         return rows
     finally:
         conn.close()
+
+def run_sql(data: str):
+    # Boşlukları temizle ve küçük harfe çevirerek kontrol et
+    clean_query = data.strip().upper()
+
+    # Sadece INSERT veya UPDATE ile başlayıp başlamadığını kontrol et
+    # ^(INSERT|UPDATE)\b  --> Satır başı INSERT veya UPDATE olmalı, devamında kelime sınırı olmalı
+    if not re.match(r"^(INSERT|UPDATE)\b", clean_query):
+        raise HTTPException(
+            status_code=403,
+            detail="Güvenlik ihlali: Sadece INSERT ve UPDATE işlemlerine izin verilir!"
+        )
+
+    # İkinci bir bariyer: Tehlikeli anahtar kelimeler sorgu içinde geçiyor mu?
+    forbidden_words = ["DELETE", "DROP", "ALTER", "CREATE", "TRUNCATE", "REPLACE", "ATTACH", "DETACH"]
+    if any(word in clean_query for word in forbidden_words):
+        raise HTTPException(
+            status_code=403,
+            detail="Sorgu yasaklı anahtar kelimeler içeriyor!"
+        )
+
+    conn = get_db_connection()
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    try:
+        query = data
+        cursor.execute(query, )
+        conn.commit()
+        return {"status": "success"}
+    finally:
+        conn.close()
+
+
