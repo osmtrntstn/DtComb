@@ -12,128 +12,126 @@
         <div class="card card-primary card-outline">
             <div class="card-body box-profile">
                 <div class="card-body" style="padding: 0.25rem !important;">
-                    <form id="analysisForm">
-                        <div class="row">
-                            <div class="form-group" style="width: 100%;">
-                                <label for="functions">Combination approach</label>
-                                <select id="functions" class="form-control select2bs4" style="width: 100%;">
-                                    {% for col in functions %}
-                                    <option value="{{ col.FunctionKey }}" data-id="{{ col.Id }}" {% if loop.first
-                                            %}selected{%
-                                            endif
-                                            %}>
-                                        {{ col.FunctionName }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <!-- /.form-group -->
-                            <div class="form-group" style="width: 100%;">
-                                <label for="methods">Combination Method</label>
-                                <select id="methods" class="form-control select2bs4" style="width: 100%;">
-                                    {% for col in methods %}
-                                    <option value="{{ col.MethodKey }}" data-id="{{ col.Id }}" {% if loop.first
-                                            %}selected{%
-                                            endif
-                                            %}>
-                                        {{ col.MethodName }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <!-- /.form-group -->
+                    <div class="row">
+                        <div class="form-group" style="width: 100%;">
+                            <label for="functions">Combination approach</label>
+                            <select id="functions" class="form-control select2bs4" style="width: 100%;">
+                                {% for col in functions %}
+                                <option value="{{ col.FunctionKey }}" data-id="{{ col.Id }}" {% if loop.first
+                                        %}selected{%
+                                        endif
+                                        %}>
+                                    {{ col.FunctionName }}
+                                </option>
+                                {% endfor %}
+                            </select>
                         </div>
-                        <div id="parameter-div">
+                        <!-- /.form-group -->
+                        <div class="form-group" style="width: 100%;">
+                            <label for="methods">Combination Method</label>
+                            <select id="methods" class="form-control select2bs4" style="width: 100%;">
+                                {% for col in methods %}
+                                <option value="{{ col.MethodKey }}" data-id="{{ col.Id }}" {% if loop.first
+                                        %}selected{%
+                                        endif
+                                        %}>
+                                    {{ col.MethodName }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- /.form-group -->
+                    </div>
+                    <div id="parameter-div">
 
-                        </div>
-                        <div id="dynamic-method-parameters-container" class="row" style="display: none;">
-                        </div>
-                        <div id="dynamic-function-parameters-container" class="row" style="display: none;">
-                        </div>
+                    </div>
+                    <div id="dynamic-method-parameters-container" class="row" style="display: none;">
+                    </div>
+                    <div id="dynamic-function-parameters-container" class="row" style="display: none;">
+                    </div>
 
 
-                        <div class="row">
-                            <div class="form-group">
-                                <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" type="checkbox" name="advancedCheckBox"
-                                           id="advancedCheckBox" value="Advanced">
-                                    <label for="advancedCheckBox" class="custom-control-label">Advanced</label>
-                                </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input class="custom-control-input" type="checkbox" name="advancedCheckBox"
+                                       id="advancedCheckBox" value="Advanced">
+                                <label for="advancedCheckBox" class="custom-control-label">Advanced</label>
                             </div>
-                            <!-- /.form-group -->
                         </div>
+                        <!-- /.form-group -->
+                    </div>
 
-                        <div class="row">
-                            <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
-                                <label for="optimalCutOff">Select a method for optimal cut-off</label>
-                                <select id="optimalCutOff" class="form-control select2bs4" style="width: 100%;">
-                                    <option value="Youden" selected>Youden</option>
-                                    <option value="CB">CB</option>
-                                    <option value="MCT">MCT</option>
-                                    <option value="MinValueSp">MinValueSp</option>
-                                    <option value="MinValueSe">MinValueSe</option>
-                                    <option value="ValueSp">ValueSp</option>
-                                    <option value="ValueSe">ValueSe</option>
-                                    <option value="MinValueSpSe">MinValueSpSe</option>
-                                    <option value="MaxSp">MaxSp</option>
-                                    <option value="MaxSe">MaxSe</option>
-                                    <option value="MaxSpSe">MaxSpSe</option>
-                                    <option value="MaxProdSpSe">MaxProdSpSe</option>
-                                    <option value="ROC01">ROC01</option>
-                                    <option value="SpEqualSe">SpEqualSe</option>
-                                    <option value="MaxEfficiency">MaxEfficiency</option>
-                                    <option value="Minimax">Minimax</option>
-                                    <option value="MaxDOR">MaxDOR</option>
-                                    <option value="MaxKappa">MaxKappa</option>
-                                    <option value="MinValueNPV">MinValueNPV</option>
-                                    <option value="MinValuePPV">MinValuePPV</option>
-                                    <option value="ValueNPV">ValueNPV</option>
-                                    <option value="ValuePPV">ValuePPV</option>
-                                    <option value="MinValueNPVPPV">MinValueNPVPPV</option>
-                                    <option value="PROC01">PROC01</option>
-                                    <option value="NPVEqualPPV">NPVEqualPPV</option>
-                                    <option value="MaxNPVPPV">MaxNPVPPV</option>
-                                    <option value="MaxSumNPVPPV">MaxSumNPVPPV</option>
-                                    <option value="MaxProdNPVPPV">MaxProdNPVPPV</option>
-                                    <option value="ValueDLR.Negative">ValueDLR.Negative</option>
-                                    <option value="ValueDLR.Positive">ValueDLR.Positive</option>
-                                    <option value="MinPvalue">MinPvalue</option>
-                                    <option value="ObservedPrev">ObservedPrev</option>
-                                    <option value="MeanPrev">MeanPrev</option>
-                                    <option value="PrevalenceMatching">PrevalenceMatching</option>
-                                </select>
-                            </div>
-                            <!-- /.form-group -->
-                            <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
-                                <label for="direction">Direction</label>
-                                <select id="direction" class="form-control select2bs4" style="width: 100%;">
-                                    <option selected="selected">auto</option>
-                                    <option><</option>
-                                    <option>></option>
-                                </select>
-                            </div>
-                            <!-- /.form-group -->
-                            <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
-                                <label for="confidenceLevel">Confidence Level</label>
-                                <input type="number" id="confidenceLevel" class="form-control" step="0.01" value="0.95"
-                                       style="width: 100%;">
-                            </div>
-                            <!-- /.form-group -->
+                    <div class="row">
+                        <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
+                            <label for="optimalCutOff">Select a method for optimal cut-off</label>
+                            <select id="optimalCutOff" class="form-control select2bs4" style="width: 100%;">
+                                <option value="Youden" selected>Youden</option>
+                                <option value="CB">CB</option>
+                                <option value="MCT">MCT</option>
+                                <option value="MinValueSp">MinValueSp</option>
+                                <option value="MinValueSe">MinValueSe</option>
+                                <option value="ValueSp">ValueSp</option>
+                                <option value="ValueSe">ValueSe</option>
+                                <option value="MinValueSpSe">MinValueSpSe</option>
+                                <option value="MaxSp">MaxSp</option>
+                                <option value="MaxSe">MaxSe</option>
+                                <option value="MaxSpSe">MaxSpSe</option>
+                                <option value="MaxProdSpSe">MaxProdSpSe</option>
+                                <option value="ROC01">ROC01</option>
+                                <option value="SpEqualSe">SpEqualSe</option>
+                                <option value="MaxEfficiency">MaxEfficiency</option>
+                                <option value="Minimax">Minimax</option>
+                                <option value="MaxDOR">MaxDOR</option>
+                                <option value="MaxKappa">MaxKappa</option>
+                                <option value="MinValueNPV">MinValueNPV</option>
+                                <option value="MinValuePPV">MinValuePPV</option>
+                                <option value="ValueNPV">ValueNPV</option>
+                                <option value="ValuePPV">ValuePPV</option>
+                                <option value="MinValueNPVPPV">MinValueNPVPPV</option>
+                                <option value="PROC01">PROC01</option>
+                                <option value="NPVEqualPPV">NPVEqualPPV</option>
+                                <option value="MaxNPVPPV">MaxNPVPPV</option>
+                                <option value="MaxSumNPVPPV">MaxSumNPVPPV</option>
+                                <option value="MaxProdNPVPPV">MaxProdNPVPPV</option>
+                                <option value="ValueDLR.Negative">ValueDLR.Negative</option>
+                                <option value="ValueDLR.Positive">ValueDLR.Positive</option>
+                                <option value="MinPvalue">MinPvalue</option>
+                                <option value="ObservedPrev">ObservedPrev</option>
+                                <option value="MeanPrev">MeanPrev</option>
+                                <option value="PrevalenceMatching">PrevalenceMatching</option>
+                            </select>
                         </div>
-                        <!-- /.row -->
-                        <div class="row">
-                            <div class="form-group">
-                                <button type="button" id="collect-data" class="btn btn-primary">
-                                    <i class="fas fa-chart-line mr-1"></i> Analyze
-                                </button>
-                            </div>
-                            <div class="form-group ml-auto">
-                                <button id="download-results-btn" class="btn btn-outline-info" style="display: none;">
-                                    <i class="fas fa-download"></i> Download Model
-                                </button>
-                            </div>
+                        <!-- /.form-group -->
+                        <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
+                            <label for="direction">Direction</label>
+                            <select id="direction" class="form-control select2bs4" style="width: 100%;">
+                                <option selected="selected">auto</option>
+                                <option><</option>
+                                <option>></option>
+                            </select>
                         </div>
-                    </form>
+                        <!-- /.form-group -->
+                        <div class="form-group advancedCheckBox" style="width: 100%;display: none;">
+                            <label for="confidenceLevel">Confidence Level</label>
+                            <input type="number" id="confidenceLevel" class="form-control" step="0.01" value="0.95"
+                                   style="width: 100%;">
+                        </div>
+                        <!-- /.form-group -->
+                    </div>
+                    <!-- /.row -->
+                    <div class="row">
+                        <div class="form-group">
+                            <button type="button" id="collect-data" class="btn btn-primary">
+                                <i class="fas fa-chart-line mr-1"></i> Analyze
+                            </button>
+                        </div>
+                        <div class="form-group ml-auto">
+                            <button id="download-results-btn" class="btn btn-outline-info" style="display: none;">
+                                <i class="fas fa-download"></i> Download Model
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.card-body -->
 

@@ -68,15 +68,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <a href="/data-upload"
                            class="nav-link {% if request.url.path == '/data-upload' %}active{% endif %}">Data Upload</a>
                     </li>
-                    <li id="li-analysis" class="nav-item">
+                    <li id="li-analysis" class="nav-item" {% if request.url.path == '/roc-analysis' %}style="display: none;"{% endif %}>
                         <a href="/analysis"
                            class="nav-link {% if request.url.path == '/analysis' %}active{% endif %}">Analysis</a>
                     </li>
-                    <li id="li-roc-analysis" class="nav-item" style="display: none !important;">
+                    <li id="li-roc-analysis" class="nav-item"  style="display: none !important;">
                         <a href="/roc-analysis"
                            class="nav-link {% if request.url.path == '/roc-analysis' %}active{% endif %}">Roc</a>
                     </li>
-                    <li id="li-predict" class="nav-item">
+                    <li id="li-predict" class="nav-item" {% if request.url.path == '/roc-analysis' %}style="display: none;"{% endif %}>
                         <a href="/predict"
                            class="nav-link {% if request.url.path == '/predict' %}active{% endif %}">Predict</a>
                     </li>
@@ -84,6 +84,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <a href="/manuel"
                            class="nav-link {% if request.url.path == '/manuel' %}active{% endif %}">Manuel</a>
                     </li>
+
                 </ul>
 
             </div>

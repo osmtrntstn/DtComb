@@ -25,6 +25,23 @@
                 <div class="tab-content" id="custom-content-below-tabContent">
                     <div class="tab-pane fade" id="custom-content-below-results" role="tabpanel"
                          aria-labelledby="custom-content-below-results-tab">
+                        <div class="row justify-content-center">
+                            <div class="col-md-12">
+                                <div class="card mt-2 mx-auto" style="max-width: 500px !important;">
+                                    <div class="card-header mx-auto">
+                                        <h3 class="card-title">
+                                            ROC Curves for Combination Diagnostic Test</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="rocChart"
+                                                style="min-height: 450px; height: 450px; max-width: 100%;"></canvas>
+                                        <div id="aucOverlay"
+                                             style="position: absolute; top: 350px; right: 40px;   padding: 10px; border-radius: 5px; pointer-events: none; font-size: 12px; z-index: 10;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Custom Tabs -->
                         <div class="card mt-2">
                             <div class="card-header d-flex p-0">
@@ -108,7 +125,8 @@
                                                                               href="javascript:openThisTabPane('_auc_table', '.table-pane')">AUC
                                     Table</a></h3>
                                 <ul class="nav nav-pills mr-auto p-2" style="display: none">
-                                    <li class="nav-item"><a class="nav-link" href="#tab_auc_table" data-toggle="tab">AUC
+                                    <li class="nav-item"><a class="nav-link" href="#tab_auc_table"
+                                                            data-toggle="tab">AUC
                                         Table</a></li>
                                 </ul>
                             </div><!-- /.card-header -->
@@ -150,7 +168,8 @@
                                                             data-toggle="tab">Multiple Comparison Table</a></li>
                                 </ul>
                             </div><!-- /.card-header -->
-                            <div id="card_multiple_comparison_table" class="card-body table-pane" style="display: none">
+                            <div id="card_multiple_comparison_table" class="card-body table-pane"
+                                 style="display: none">
                                 <div class="tab-content">
                                     <div class="tab-pane active" id="tab_multiple_comparison_table">
                                         <div class="table-responsive">
@@ -183,7 +202,8 @@
                                 <h3 class="card-title p-3 tab-card-header"><a class="tab-card-header-a"
                                                                               href="javascript:openThisTabPane('_cutpoint', '.table-pane')">Cut
                                     Points</a></h3>
-                                <ul id="ul_cutpoint" class="nav nav-pills ml-auto p-2 table-pane" style="display: none">
+                                <ul id="ul_cutpoint" class="nav nav-pills ml-auto p-2 table-pane"
+                                    style="display: none">
                                     <li class="nav-item"><a class="nav-link active" href="#tab_cutpoint_comb_score"
                                                             data-toggle="tab">Combination Score</a></li>
                                     <li class="nav-item"><a class="nav-link" href="#tab_cutpoint_marker_1"
@@ -229,9 +249,11 @@
                                     <li class="nav-item"><a class="nav-link active"
                                                             href="#tab_performance_measures_comb_score"
                                                             data-toggle="tab">Combination Score</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#tab_performance_measures_marker_1"
+                                    <li class="nav-item"><a class="nav-link"
+                                                            href="#tab_performance_measures_marker_1"
                                                             data-toggle="tab">Marker 1</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#tab_performance_measures_marker_2"
+                                    <li class="nav-item"><a class="nav-link"
+                                                            href="#tab_performance_measures_marker_2"
                                                             data-toggle="tab">Marker 2</a></li>
 
                                 </ul>
@@ -282,14 +304,17 @@
                          aria-labelledby="custom-content-below-plots-tab">
                         <div class="row justify-content-center">
                             <div class="col-md-12">
-                                <div class="card mt-2">
-                                    <div class="card-header">
+                                <div class="card mt-2 mx-auto" style="max-width: 500px !important;">
+                                    <div class="card-header mx-auto">
                                         <h3 class="card-title">
                                             ROC Curves for Combination Diagnostic Test</h3>
                                     </div>
                                     <div class="card-body">
-                                        <canvas id="rocChart"
+                                        <canvas id="rocChart2"
                                                 style="min-height: 450px; height: 450px; max-width: 100%;"></canvas>
+                                        <div id="aucOverlay2"
+                                             style="position: absolute; top: 350px; right: 40px;   padding: 10px; border-radius: 5px; pointer-events: none; font-size: 12px; z-index: 10;">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -311,6 +336,12 @@
 <script src="/static/js/indexed-db-manager.js"></script>
 <script>
     $(document).ready(async function () {
+        $("#li-roc-analysis").show();
+        let analysis_type = await dbManager.get_setting("analysis_type") || "analysis"; // Hangi tabda olduğumuzu bilmek için
+        if(analysis_type !== "roc-analysis"){
+          window.location.href = "/data-upload";
+        }
+
         let payload = await collectAllData()
         // 4. Backend'e Gönder
         $.ajax({
@@ -324,6 +355,7 @@
             },
             success: function (response) {
                 drawRocChart(response)
+                //drawRocChart2(response)
                 fillMultipleComparisonTable(response.mult_comp_data)
                 fillAucStatisticsTable(response.auc_data);
                 fillRocCoordinatesTables(response.roc_data);
@@ -757,8 +789,9 @@
 
 </script>
 <script>
+
     // graph codes
-    function drawRocChart(response) {
+    function drawRocChart222(response) {
         // --- 1. GRAFİK VERİSİNİ HAZIRLAMA ---
         // Marker isimlerine göre datayı grupla
         const groupedData = {};
@@ -889,6 +922,225 @@
         });
 
 
+    }
+
+    function drawRocChart(response) {
+        // --- 1. GRAFİK VERİSİNİ HAZIRLAMA ---
+        // Marker isimlerine göre datayı grupla
+        const groupedData = {};
+
+        response.roc_data.forEach(row => {
+            if (!groupedData[row.marker]) {
+                groupedData[row.marker] = [];
+            }
+            // X ekseni (1 - Specificity)
+            // Y ekseni (Sensitivity)
+            groupedData[row.marker].push({
+                x: 1 - row.specificity,
+                y: row.sensitivity,
+                threshold: row.threshold // Hover (tooltip) için saklıyoruz
+            });
+        });
+
+        // Çizgilerin zikzak yapmaması için X eksenine göre sırala
+        Object.keys(groupedData).forEach(key => {
+            groupedData[key].sort((a, b) => a.x - b.x);
+        });
+        const rawMarkers = response.marker_names;
+        const markerArray = Array.isArray(rawMarkers) ? rawMarkers : [rawMarkers];
+        const colorCodes = ["#c10c20", "#3098cb", "#75dd85", "#258205", "#3f0a71", "#9bf4d5", "#9baddd", "#e5129b"]
+
+
+        // 2. Dinamik renk objesini oluştur
+        const colors = {};
+
+        markerArray.forEach((markerName, index) => {
+            // Sadece geçerli (null olmayan) marker isimlerini işle
+            if (markerName) {
+                colors[markerName] = colorCodes[index % colorCodes.length];
+            }
+        });
+
+        const datasets = Object.keys(groupedData).map(marker => {
+            return {
+                label: marker, // İsimlendirme
+                data: groupedData[marker],
+                borderColor: colors[marker] || "#333333",
+                backgroundColor: 'transparent',
+                borderWidth: 3,
+                showLine: true,
+                pointRadius: 0, // Noktaları gizle
+                pointHoverRadius: 6 // Üzerine gelince noktalar görünsün
+            };
+        });
+
+        // Köşegen Referans Çizgisi (Rastgele Şans)
+        datasets.push({
+            label: 'Reference Line',
+            data: [{x: 0, y: 0}, {x: 1, y: 1}],
+            borderColor: '#999999',
+            borderWidth: 2,
+            borderDash: [5, 5],
+            showLine: true,
+            pointRadius: 0,
+            pointHoverRadius: 0
+        });
+
+        // --- 2. GRAFİĞİ ÇİZDİRME (CHART.JS) ---
+        const ctx = document.getElementById('rocChart').getContext('2d');
+
+        // Varsa eski grafiği yok et
+        if (window.rocChartInstance) {
+            window.rocChartInstance.destroy();
+        }
+
+        // 1. Dark Mode kontrolü yap ve renkleri belirle
+        const isDarkMode = $('body').hasClass('dark-mode');
+
+        const overlay = document.getElementById('aucOverlay');
+        const overlay2 = document.getElementById('aucOverlay2');
+
+        // Panel stilini dark mode'a göre güncelle
+        overlay.style.backgroundColor = isDarkMode ? 'rgba(52, 58, 64, 0.8)' : 'rgba(255, 255, 255, 0.8)';
+        overlay.style.color = isDarkMode ? '#fff' : '#333';
+        overlay.style.borderColor = isDarkMode ? '#4b545c' : '#ddd';
+        overlay.style.border = "1px solid #ddd"
+        overlay2.style.backgroundColor = isDarkMode ? 'rgba(52, 58, 64, 0.8)' : 'rgba(255, 255, 255, 0.8)';
+        overlay2.style.color = isDarkMode ? '#fff' : '#333';
+        overlay2.style.borderColor = isDarkMode ? '#4b545c' : '#ddd';
+        overlay2.style.border = "1px solid #ddd"
+        let aucHtml = `<b style="display:block; margin-bottom:5px; border-bottom:1px solid ${isDarkMode ? '#555' : '#eee'}">AUC Values</b>`;
+        console.log(response.auc_data)
+        response.auc_data.forEach(row => {
+            const color = colors[row.marker] || "#333";
+            const isBold = 'font-weight: bold;';
+
+            aucHtml += `
+            <div style="margin-bottom: 3px; ${isBold} display: flex; align-items: center;">
+                <span style="display:inline-block; width:10px; height:10px; background:${color}; margin-right:5px; border-radius:2px;"></span>
+                <span style="flex:1; margin-right:15px;">${row.marker}:</span>
+                <span>${row.auc.toFixed(4)}</span>
+            </div>`;
+        });
+
+        overlay.innerHTML = aucHtml;
+        overlay2.innerHTML = aucHtml;
+
+
+        const textColor = isDarkMode ? '#ffffff' : '#666666'; // Metin rengi
+        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'; // Izgara çizgileri
+
+        window.rocChartInstance = new Chart(ctx, {
+            type: 'scatter',
+            data: {datasets: datasets},
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        grid: {color: gridColor}, // Izgara çizgisi rengi
+                        ticks: {color: textColor}, // Eksen rakamları rengi
+                        title: {
+                            display: true,
+                            text: '1 - Specificity (False Positive Rate)',
+                            color: textColor // Eksen başlığı rengi
+                        },
+                        min: 0, max: 1
+                    },
+                    y: {
+                        grid: {color: gridColor},
+                        ticks: {color: textColor},
+                        title: {
+                            display: true,
+                            text: 'Sensitivity (True Positive Rate)',
+                            color: textColor
+                        },
+                        min: 0, max: 1
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: textColor // Üstteki lejant metinlerinin rengi
+                        }
+                    },
+                    tooltip: {
+                        // Tooltip arka planını dark mode'da biraz daha belirgin yapabilirsin
+                        backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+                        titleColor: isDarkMode ? '#fff' : '#000',
+                        bodyColor: isDarkMode ? '#fff' : '#000',
+                        callbacks: {
+                            label: function (context) {
+                                let point = context.raw;
+                                let lbl = context.dataset.label;
+                                if (lbl === 'Reference Line') return '';
+                                let threshStr = point.threshold !== undefined ? point.threshold.toFixed(3) : 'N/A';
+                                return `${lbl} | Cutoff: ${threshStr} | Sen: ${point.y.toFixed(2)} | 1-Spe: ${point.x.toFixed(2)}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        const ctx2 = document.getElementById('rocChart2').getContext('2d');
+
+        window.rocChartInstance = new Chart(ctx2, {
+            type: 'scatter',
+            data: {datasets: datasets},
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        grid: {color: gridColor}, // Izgara çizgisi rengi
+                        ticks: {color: textColor}, // Eksen rakamları rengi
+                        title: {
+                            display: true,
+                            text: '1 - Specificity (False Positive Rate)',
+                            color: textColor // Eksen başlığı rengi
+                        },
+                        min: 0, max: 1
+                    },
+                    y: {
+                        grid: {color: gridColor},
+                        ticks: {color: textColor},
+                        title: {
+                            display: true,
+                            text: 'Sensitivity (True Positive Rate)',
+                            color: textColor
+                        },
+                        min: 0, max: 1
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: textColor // Üstteki lejant metinlerinin rengi
+                        }
+                    },
+                    tooltip: {
+                        // Tooltip arka planını dark mode'da biraz daha belirgin yapabilirsin
+                        backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+                        titleColor: isDarkMode ? '#fff' : '#000',
+                        bodyColor: isDarkMode ? '#fff' : '#000',
+                        callbacks: {
+                            label: function (context) {
+                                let point = context.raw;
+                                let lbl = context.dataset.label;
+                                if (lbl === 'Reference Line') return '';
+                                let threshStr = point.threshold !== undefined ? point.threshold.toFixed(3) : 'N/A';
+                                return `${lbl} | Cutoff: ${threshStr} | Sen: ${point.y.toFixed(2)} | 1-Spe: ${point.x.toFixed(2)}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     function refreshChartTheme() {
