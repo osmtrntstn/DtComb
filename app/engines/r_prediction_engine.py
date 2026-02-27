@@ -22,28 +22,20 @@ rpy2.rinterface_lib.callbacks.consolewrite_print = r_console_write
 def call_prediction(data):
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     r_script_path = os.path.join(project_root, "app", "r_logic", "prediction_script.R")
-
+    if isinstance(data.get("analysisData"), str):
+        try:
+            data["analysisData"] = json.loads(data["analysisData"])
+        except Exception as e:
+            print(f"JSON Parse Hatası: {e}")
     try:
         with localconverter(default_converter):
             robjects.r.source(r_script_path)
             analysis_func = robjects.r['predictData']
 
-            # Hata Buradaydı: ListVector'e gönderilen değerleri R objelerine çeviriyoruz
-            # Özellikle 'dict' tipindeki verileri R'ın anlayacağı ListVector'e zorluyoruz
-            converted_items = {}
-            for k, v in data.items():
-                if v is None:
-                    converted_items[k] = robjects.NULL
-                elif isinstance(v, (list, tuple)):
-                    # Liste ise Float veya Int vektöre çevir
-                    converted_items[k] = robjects.FloatVector(v) if any(
-                        isinstance(i, float) for i in v) else robjects.IntVector(v)
-                elif isinstance(v, str):
-                    converted_items[k] = robjects.StrVector([v])
-                else:
-                    converted_items[k] = v
+            # KRİTİK DÜZELTME: Veriyi rekürsif olarak çeviriyoruz
+            r_input = python_to_r(data)
 
-            r_input = robjects.ListVector(converted_items)
+            # r_input = robjects.ListVector(converted_items)
             r_output = analysis_func(r_input)
 
             # R'dan gelen veri bazen StrVector formatında olabilir
@@ -54,3 +46,32 @@ def call_prediction(data):
     except Exception as e:
         print(f"R Analysis Error: {str(e)} | type: {type(e)}")
         raise HTTPException(status_code=500, detail=f"R Prediction Error: {str(e)}")
+
+
+# İç içe geçmiş Python nesnelerini R nesnelerine çeviren fonksiyon
+def python_to_r(obj):
+    if obj is None:
+        return robjects.NULL
+    elif isinstance(obj, dict):
+        # Sözlük içindeki her şeyi tek tek R'a çevir
+        return robjects.ListVector({k: python_to_r(v) for k, v in obj.items()})
+    elif isinstance(obj, list):
+        # Liste boşsa boş vektör döndür
+        if not obj:
+            return robjects.BoolVector([])
+        # Listenin ilk elemanına bakarak tip belirle (veya genel FloatVector kullan)
+        try:
+            if isinstance(obj[0], bool):
+                return robjects.BoolVector(obj)
+            elif isinstance(obj[0], int):
+                return robjects.IntVector(obj)
+            elif isinstance(obj[0], float):
+                return robjects.FloatVector(obj)
+            else:
+                return robjects.StrVector([str(i) for i in obj])
+        except:
+            return robjects.StrVector([str(i) for i in obj])
+    elif isinstance(obj, (int, float, str, bool)):
+        return obj  # Temel tipleri rpy2 zaten halleder
+    else:
+        return str(obj)

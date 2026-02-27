@@ -12,8 +12,14 @@ predictData <- function(input) {
     # Veri tablosunu oku
     df <- read.table(text = data_text, header = TRUE, sep = sep_char, check.names = FALSE)
 
+    # 1. Önce metin içindeki [ ve ] karakterlerini sil
+    cleaned_scores <- gsub("\\[|\\]", "", as.character(input$analysisData$CombScore))
 
-    modelFit <- fromJSON(input$analysisData, simplifyVector = TRUE)
+    # 2. Şimdi sayıya çevir ve vektör yap
+    input$analysisData$CombScore <- as.numeric(cleaned_scores)
+
+    modelFit <- input$analysisData
+#     modelFit <- fromJSON(input$analysisData, simplifyVector = TRUE)
     class(modelFit) <- "dtComb"
     predict_result <- predict(modelFit,df)
     colnames(predict_result) <- c("combScore","label")

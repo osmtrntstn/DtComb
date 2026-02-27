@@ -86,4 +86,3 @@ def call_plot_analysis(data):
     except Exception as e:
         log_error(f"R Analysis Error: {str(e)}", e)
         raise HTTPException(status_code=500, detail=f"{str(e)} | type: {type(e)}")
-
