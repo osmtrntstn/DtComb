@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+
 # C extensions
 *.so
 
@@ -179,3 +184,21 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# Project specific
+logs/
+*.log
+data/
+*.db
+*.sqbpro
+Rplots.pdf
+temp_*.png
+temp_*.csv
+
+# IDE
+.vscode/
+.idea/
+
+# Docker volumes
+docker-volumes/
+

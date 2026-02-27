@@ -124,9 +124,6 @@ function fetchExampleData() {
                 tbody += rowHtml;
             })
             tbody += '</tbody>';
-            // $('#analysisTable').append(headerRow + tbody);
-
-            // table = $('#analysisTable').DataTable(dataTableSettings);
 
         },
         error: function (xhr) {
@@ -314,17 +311,17 @@ function updateTableAndDropdowns(response) {
     }
     $('#analysisTable').empty();
 
-    let headerRow = '<thead><tr><th>#</th>';
+    let headerRow = '<thead><tr><th class="text-center">#</th>';
     response.columns.forEach(col => {
-        headerRow += `<th>${col}</th>`;
+        headerRow += `<th class="text-center">${col}</th>`;
     });
     headerRow += '</tr></thead>';
 
     let tbody = "<tbody>";
     response.data.forEach((row, index) => {
-        let rowHtml = `<tr><td>${index + 1}</td>`;
+        let rowHtml = `<tr><td class="text-center">${index + 1}</td>`;
         response.columns.forEach(col => {
-            rowHtml += `<td>${row[col] || ''}</td>`;
+            rowHtml += `<td class="text-center">${row[col] || ''}</td>`;
         });
         rowHtml += '</tr>';
         tbody += rowHtml;
@@ -658,6 +655,22 @@ async function saveCurrentSelectionsToDb() {
             delete sessionData.confidenceLevel;
         }
     }
+
+    if (sessionData.analysis_type === "roc-analysis" && (!sessionData.markersRoc || !sessionData.statusRoc || !sessionData.categoryRoc)) {
+        Swal.fire({
+            title: "No Marker/Status/Category Selected",
+            text: "Please select at least one marker/status/category to perform ROC analysis.",
+            icon: "warning"
+        });
+        return false;
+    } else if (sessionData.analysis_type === "analysis" && (!sessionData.marker1 || !sessionData.marker2 || !sessionData.status || !sessionData.category)) {
+        Swal.fire({
+            title: "No Marker/Status/Category Selected",
+            text: "Please select at least one marker/status/category to perform Analysis.",
+            icon: "warning"
+        });
+        return false;
+    }
     // Tüm key-value çiftlerini bir diziye çevirip paralel olarak kaydet
     const savePromises = Object.entries(sessionData).map(([key, value]) => {
         // Değeri null veya undefined olmayanları kaydet
@@ -668,6 +681,8 @@ async function saveCurrentSelectionsToDb() {
 
     // Tüm işlemlerin bitmesini bekle
     await Promise.all(savePromises);
+
+    return true;
 }
 
 $('#btn-save').on('click', async function () {
@@ -677,11 +692,25 @@ $('#btn-save').on('click', async function () {
     try {
         $('#btn-save').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Collecting data...');
         // 2. Tüm verileri topla ve IndexedDB'ye yaz
-        await saveCurrentSelectionsToDb();
+        const saveResponse = await saveCurrentSelectionsToDb();
+        if(!saveResponse) {
+            return;
+        }
         const activeDataKey = $('#custom-content-below-tab').find('li a.active').attr('data-key');
         await dbManager.set_setting("analysis_type", activeDataKey);
+        await dbManager.set_setting("btn-save-click", true);
 
         if (activeDataKey === "roc-analysis") {
+
+            const markerList = await dbManager.get_setting('markersRoc');
+            if (markerList && markerList.length == 0) {
+                Swal.fire({
+                    title: "No Markers Selected",
+                    text: "Please select at least one marker to perform ROC analysis.",
+                    icon: "warning"
+                });
+                return;
+            }
             window.location.href = "/roc-analysis";
         } else {
             window.location.href = "/analysis";

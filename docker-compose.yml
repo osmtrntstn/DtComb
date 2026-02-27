@@ -5,11 +5,20 @@ services:
     build: .
     container_name: dtcomb_app
     ports:
-      - "8000:8000"
+      - "${PORT:-8000}:8000"
     volumes:
       - .:/app
       - ./data:/app/data  # SQLite veritabanı burada saklanacak
+      - ./logs:/app/logs  # Log dosyaları burada saklanacak
+    env_file:
+      - .env
     environment:
       - R_HOME=/usr/lib/R
       - LD_LIBRARY_PATH=/usr/lib/R/lib:/usr/lib/x86_64-linux-gnu
     restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

@@ -1,3 +1,80 @@
+function printRocChart() {
+    if (!window.rocChartInstance) {
+        alert("Yazdırılacak aktif bir grafik bulunamadı.");
+        return;
+    }
+
+    const chartImage = window.rocChartInstance.toBase64Image();
+    const aucOverlayContent = document.getElementById('aucOverlay').innerHTML;
+
+    const printWindow = window.open('', '_blank');
+
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>ROC Analiz Raporu</title>
+                <style>
+                    body { font-family: sans-serif; padding: 20px; text-align: center; }
+                    
+                    /* Grafiği ve Overlay'i bir arada tutan ana kapsayıcı */
+                    .report-container {
+                        position: relative;
+                        display: inline-block;
+                        margin-top: 20px;
+                        border: 1px solid #f0f0f0;
+                        padding: 10px;
+                    }
+
+                    .main-chart {
+                        max-width: 800px; /* Çıktı boyutu kontrolü */
+                        height: auto;
+                        display: block;
+                    }
+
+                    /* AUC panelini tam olarak görseldeki yerine konumlandırıyoruz */
+                    .auc-panel-print {
+                        position: absolute;
+                        bottom: 65px;   /* Alt eksenden uzaklık */
+                        right: 30px;    /* Sağ eksenden uzaklık */
+                        background: rgba(255, 255, 255, 0.9);
+                        border: 1px solid #ccc;
+                        border-radius: 8px;
+                        padding: 10px;
+                        min-width: 180px;
+                        text-align: left;
+                        font-size: 13px;
+                        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                    }
+
+                    /* Renk kutucuklarının basılması için kritik ayar */
+                    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                    
+                    h2 { color: #333; margin-bottom: 5px; }
+                </style>
+            </head>
+            <body>
+                <h2>ROC Curves for Combination Diagnostic Test</h2>
+                <div class="report-container">
+                    <img src="${chartImage}" class="main-chart" />
+                    
+                    <div class="auc-panel-print">
+                        ${aucOverlayContent}
+                    </div>
+                </div>
+
+                <script>
+                    window.onload = function() {
+                        window.print();
+                        window.onafterprint = function() { window.close(); };
+                    };
+                </script>
+            </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+}
+
 // LOADER ÖNCESİ (Başlatırken)
 function showLoader(targetDivId) {
     const isDark = $('body').hasClass('dark-mode');

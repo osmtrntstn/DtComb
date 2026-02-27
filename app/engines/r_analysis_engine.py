@@ -7,6 +7,7 @@ import uuid
 import os
 import rpy2.rinterface_lib.callbacks
 import json  # Sadece standart json modülü yeterli!
+from app.utils.logger import log_info, log_error, log_debug
 
 
 def r_console_write(x):
@@ -17,6 +18,9 @@ rpy2.rinterface_lib.callbacks.consolewrite_print = r_console_write
 
 
 def call_plot_analysis(data):
+    log_info("Starting R analysis engine")
+    log_debug(f"Analysis parameters: function={data.get('function')}, method={data.get('method')}")
+
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     r_script_path = os.path.join(project_root, "app", "r_logic", "analysis_script.R")
 
@@ -60,6 +64,7 @@ def call_plot_analysis(data):
             status_levels = parsed_data.get('statusLevels', {})
             predictData = parsed_data.get('predictData', {})
 
+        log_info("R analysis completed successfully")
         return {
             "status": status,
             "marker1": marker1,
@@ -79,6 +84,6 @@ def call_plot_analysis(data):
         }
 
     except Exception as e:
-        print(f"R Analysis Error: {str(e)} | type: {type(e)}")
+        log_error(f"R Analysis Error: {str(e)}", e)
         raise HTTPException(status_code=500, detail=f"{str(e)} | type: {type(e)}")
 

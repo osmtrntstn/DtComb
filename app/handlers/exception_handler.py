@@ -1,12 +1,24 @@
-from fastapi import Request,status
-from fastapi.responses import HTMLResponse,RedirectResponse
+from fastapi import Request
+from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-from starlette.exceptions import HTTPException as StarletteHTTPException
+from app.utils.logger import log_error, log_warning, log_info
 
 templates = Jinja2Templates(directory="app/views")  # HTML dosyalarının olduğu klasör
 
 async def custom_exception_handler(request: Request, exc: Exception):
-    if exc.status_code == 401:
+    status_code = getattr(exc, "status_code", 500)
+    error_detail = getattr(exc, "detail", "No details provided")
+
+    # Log the error based on severity
+    if status_code >= 500:
+        log_error(f"Server Error {status_code} at {request.url.path}: {error_detail}", exc)
+    elif status_code >= 400:
+        log_warning(f"Client Error {status_code} at {request.url.path}: {error_detail}")
+    else:
+        log_info(f"HTTP {status_code} at {request.url.path}")
+
+    if status_code == 401:
+        log_info(f"Unauthorized access attempt to {request.url.path}")
         return RedirectResponse(url="/login", status_code=303)
     # if exc.status_code == 404:
     #     return templates.TemplateResponse("error.html", {"request": request}, status_code=404)
