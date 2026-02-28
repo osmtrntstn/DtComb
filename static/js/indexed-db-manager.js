@@ -65,7 +65,24 @@ const dbManager = {
             request.onerror = () => resolve(null);
         });
     },
+    delete_data: async function (id) { // Genellikle sadece id yeterlidir
+        const db = await this.open();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(["dataStore"], "readwrite");
+            const store = transaction.objectStore("dataStore");
 
+            // IndexedDB'de silme işlemi sadece anahtar (key) ile yapılır
+            const request = store.delete(id);
+
+            request.onsuccess = () => {
+                resolve(true);
+            };
+            request.onerror = () => {
+                console.error(`${id} silinirken hata oluştu.`);
+                reject(false);
+            };
+        });
+    },
     // Ham veriyi (current_data) dataStore tablosuna kaydeder
     save_data: async function (dataArray) {
         const db = await this.open();
@@ -81,7 +98,7 @@ const dbManager = {
             request.onerror = () => reject(false);
         });
     },
-    save_data_analysis: async function (dataArray,dataName = "analysis_data") {
+    save_data_analysis: async function (dataArray, dataName = "analysis_data") {
         const db = await this.open();
         return new Promise((resolve, reject) => {
             const transaction = db.transaction(["dataStore"], "readwrite");
@@ -95,7 +112,7 @@ const dbManager = {
             request.onerror = () => reject(false);
         });
     },
-    save_data_uploaded: async function (dataArray,dataName = "uploaded_data") {
+    save_data_uploaded: async function (dataArray, dataName = "uploaded_data") {
         const db = await this.open();
         return new Promise((resolve, reject) => {
             const transaction = db.transaction(["dataStore"], "readwrite");
@@ -103,7 +120,7 @@ const dbManager = {
 
             // Önce eskisini temizleyip yenisini yazmak veri tutarlılığı sağlar
             store.delete("current_data");
-            const request = store.put({id: "uploaded_data", content: dataArray});
+            const request = store.put({id: dataName, content: dataArray});
 
             request.onsuccess = () => resolve(true);
             request.onerror = () => reject(false);
@@ -137,7 +154,7 @@ const dbManager = {
         return new Promise((resolve) => {
             const transaction = db.transaction(["dataStore"], "readonly");
             const store = transaction.objectStore("dataStore");
-            const request = store.get("uploaded_data");
+            const request = store.get(dataName);
 
             request.onsuccess = () => resolve(request.result ? request.result.content : null);
             request.onerror = () => reject(null);

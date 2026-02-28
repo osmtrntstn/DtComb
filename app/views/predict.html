@@ -84,7 +84,9 @@
                 <!-- /.card-body -->
 
                 <div class="form-group row">
-                    <button id="btn-calculate" type="button" class="btn btn-primary"><i class="fas fa-calculator"></i> Calculate</button>
+                    <button id="btn-calculate" type="button" class="btn btn-primary"><i class="fas fa-calculator"></i>
+                        Calculate
+                    </button>
                 </div>
             </div>
             <!-- /.card-body -->
@@ -151,13 +153,17 @@
 <script src="/static/js/indexed-db-manager.js"></script>
 <script>
     $('#btn-calculate').on('click', async function () {
-        // 1. Temel analiz bilgilerini al
-        // 4. Backend'e Gönder
+        console.log($('#exampleInputFile')[0]);
+        let file = $('#exampleInputFile')[0].files[0];
+        if (!file) await dbManager.delete_data("predict_uploaded_data");
+        // Backend'e Gönder
         let uploadedData = await dbManager.get_data_uploaded("predict_uploaded_data")
         let analysisData;
-        if($("#uploadModelSwitch").is(':checked')){
+
+        const isModelUploadChecked = $("#uploadModelSwitch").is(':checked');
+        if (isModelUploadChecked) {
             analysisData = await dbManager.get_data_analysis("loaded_model_data")
-        }else{
+        } else {
             analysisData = await dbManager.get_data_analysis()
         }
 
@@ -167,7 +173,30 @@
             analysisData: analysisData,
             delimiter: delimiter
         }
-
+        if (data.uploadedData == null) {
+            Swal.fire({
+                title: "Warning",
+                text: "Data upload is mandatory. Please select a file.",
+                icon: "warning"
+            });
+            return;
+        }
+        if (isModelUploadChecked && data.analysisData == null) {
+            Swal.fire({
+                title: "Warning",
+                text: "Model upload is mandatory when the switch is on. Please upload a model file.",
+                icon: "warning"
+            });
+            return;
+        } else if (!isModelUploadChecked && data.analysisData == null) {
+            // Durum B: Switch Kapalı ama hafızada analiz verisi yok (İstediğiniz yeni kontrol)
+            Swal.fire({
+                title: "Warning",
+                text: "You need to perform an analysis or upload a model.",
+                icon: "warning"
+            });
+            return;
+        }
         $.ajax({
             url: '/predict-data',
             type: 'POST',
@@ -181,10 +210,16 @@
                 fillPredictionTable(response.predict_data)
                 $('#custom-content-below-result-tab').tab('show');
             },
-            error: function (xhr) {
-                $('#btn-calculate').prop('disabled', false).html('<i class="fas fa-calculator"></i> Calculate');
-                hideLoader('analysis');
-            },
+            // error: function (xhr) {
+            //     $('#btn-calculate').prop('disabled', false).html('<i class="fas fa-calculator"></i> Calculate');
+            //     hideLoader('analysis');
+            //      // Durum B: Switch Kapalı ama hafızada analiz verisi yok (İstediğiniz yeni kontrol)
+            //     Swal.fire({
+            //         title: "Error",
+            //         text: "Something went wrong. Please check your data and try again.",
+            //         icon: "error"
+            //     });
+            // },
             complete: function () {
                 $('#btn-calculate').prop('disabled', false).html('<i class="fas fa-calculator"></i> Calculate');
                 hideLoader('analysis');
@@ -247,7 +282,7 @@
                 $('#global-loader').show();
 
                 // Veritabanı işlemlerini yap
-                await dbManager.save_data_uploaded(rawString,"predict_uploaded_data");
+                await dbManager.save_data_uploaded(rawString, "predict_uploaded_data");
                 await dbManager.set_setting("predictDelimiter", delimiter);
                 await dbManager.set_setting("predictFileName", file.name); // Dosya adını da saklayalım
                 // 2. BACKEND VE TABLO GÜNCELLEME
@@ -286,7 +321,7 @@
                 $('#global-loader').show();
 
                 // Veritabanı işlemlerini yap
-                await dbManager.save_data_analysis(rawString,"loaded_model_data");
+                await dbManager.save_data_analysis(rawString, "loaded_model_data");
                 await dbManager.set_setting("uploadModelFileName", file.name); // Dosya adını da saklayalım
 
             } catch (error) {

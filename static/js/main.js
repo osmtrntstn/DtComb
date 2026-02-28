@@ -184,9 +184,14 @@ $(document).ajaxStop(function () {
 });
 
 // 3. Hata Durumunda (Opsiyonel)
-$(document).ajaxError(function () {
+$(document).ajaxError(function (xhr, error) {
     // Bir istek hata alırsa loader takılı kalmasın diye gizle
     $('#global-loader').hide();
+    Swal.fire({
+        title: "Error",
+        text: "Something went wrong. Please check your data and try again.",
+        icon: error.responseJSON.icon
+    });
 });
 
 // 3. Hata Durumunda (Opsiyonel)
