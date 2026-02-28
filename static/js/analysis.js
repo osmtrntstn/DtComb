@@ -107,8 +107,8 @@ $('#collect-data').on('click', async function () {
 
         },
         error: function (xhr) {
-            //$('#collect-data').prop('disabled', false).text('<i class="fas fa-chart-line mr-1"></i> Analyze');
-            //hideLoader('analysis');
+            $('#collect-data').prop('disabled', false).text('<i class="fas fa-chart-line mr-1"></i> Analyze');
+            hideLoader('analysis');
         },
         complete: function () {
             //$('#collect-data').prop('disabled', false).html('<i class="fas fa-chart-line mr-1"></i> Analyze');
