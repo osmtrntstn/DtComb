@@ -476,7 +476,6 @@
         // Sayfadaki '.modal' sınıfına sahip tüm elemanları dinle
         $('.modal').on('hidden.bs.modal', function () {
             $('.modal').modal('hide');
-            console.log("Bir modal kapandı: ", this.id);
 
             // 1. Modal içindeki tüm formları bul ve resetle
             $(this).find('form').each(function () {
@@ -539,7 +538,6 @@
                 $('#functionModal').modal('hide');
                 if (functionTable) {
                     functionTable.ajax.reload(null, false);
-                    console.log("Tablo yenilendi.");
                 }
             },
             error: function (xhr) {
@@ -692,7 +690,6 @@
     }
 
     function openParamModal(data = null) {
-        console.log(data);
         const $form = $('#paramForm');
         const $modal = $('#paramModal');
         const $valueTableBody = $('#valueTableBody');
@@ -871,7 +868,6 @@
                 paramData.Values.push(valueRow);
             }
         });
-        console.log(paramData);
         $.ajax({
             url: '/parameters/save',
             type: 'POST',

@@ -8,7 +8,7 @@ templates = Jinja2Templates(directory="app/views")
 
 
 @router.get("/data-upload")
-async def index(request: Request):
+def index(request: Request):
     return templates.TemplateResponse("data_upload.html",
                                       {"request": request, "title": "Hoş Geldiniz"})
 

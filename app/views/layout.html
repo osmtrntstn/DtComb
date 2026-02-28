@@ -21,7 +21,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Select2 -->
     <link rel="stylesheet" href="/static/plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="/static/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
-
+    <!-- Toastr -->
+    <link rel="stylesheet" href="/static/plugins/toastr/toastr.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/static/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="/static/css/style.css?2">
@@ -68,17 +69,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <a href="/data-upload"
                            class="nav-link {% if request.url.path == '/data-upload' %}active{% endif %}">Data Upload</a>
                     </li>
-                    <li id="li-analysis" class="nav-item" {% if request.url.path == '/roc-analysis' %}style="display: none;"{% endif %}>
-                        <a href="/analysis"
-                           class="nav-link {% if request.url.path == '/analysis' %}active{% endif %}">Analysis</a>
+                    <li id="li-analysis" class="nav-item" {% if request.url.path==
+                    '/roc-analysis' %}style="display: none;"{% endif %}>
+                    <a href="/analysis"
+                       class="nav-link {% if request.url.path == '/analysis' %}active{% endif %}"
+                       {% if request.url.path== '/roc-analysis' %}style="display:none;"{% endif %}>Analysis</a>
                     </li>
-                    <li id="li-roc-analysis" class="nav-item"  style="display: none !important;">
+                    <li id="li-roc-analysis" class="nav-item" style="display: none !important;">
                         <a href="/roc-analysis"
-                           class="nav-link {% if request.url.path == '/roc-analysis' %}active{% endif %}">Roc</a>
+                           class="nav-link {% if request.url.path == '/roc-analysis' %}active{% endif %}">ROC
+                            Analysis</a>
                     </li>
-                    <li id="li-predict" class="nav-item" {% if request.url.path == '/roc-analysis' %}style="display: none;"{% endif %}>
-                        <a href="/predict"
-                           class="nav-link {% if request.url.path == '/predict' %}active{% endif %}">Predict</a>
+                    <li id="li-predict" class="nav-item" {% if request.url.path==
+                    '/roc-analysis' %}style="display: none;"{% endif %}>
+                    <a href="/predict"
+                       class="nav-link {% if request.url.path == '/predict' %}active{% endif %}"
+                       {% if request.url.path== '/roc-analysis' %}style="display:none;"{% endif %}>Predict</a>
                     </li>
                     <li class="nav-item">
                         <a href="/manuel"
@@ -150,7 +156,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="/static/plugins/select2/js/select2.full.min.js"></script>
 <!-- SweetAlert2 -->
 <script src="/static/plugins/sweetalert2/sweetalert.min.js"></script>
-
+<!-- Toastr -->
+<script src="/static/plugins/toastr/toastr.min.js"></script>
 <!-- AdminLTE App -->
 <script src="/static/dist/js/adminlte.min.js"></script>
 

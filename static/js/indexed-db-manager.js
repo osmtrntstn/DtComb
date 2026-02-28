@@ -45,7 +45,6 @@ const dbManager = {
             const request = store.delete(id);
 
             request.onsuccess = () => {
-                console.log(`${id} başarıyla silindi.`);
                 resolve(true);
             };
             request.onerror = () => {
@@ -82,7 +81,7 @@ const dbManager = {
             request.onerror = () => reject(false);
         });
     },
-    save_data_analysis: async function (dataArray) {
+    save_data_analysis: async function (dataArray,dataName = "analysis_data") {
         const db = await this.open();
         return new Promise((resolve, reject) => {
             const transaction = db.transaction(["dataStore"], "readwrite");
@@ -96,7 +95,7 @@ const dbManager = {
             request.onerror = () => reject(false);
         });
     },
-    save_data_uploaded: async function (dataArray) {
+    save_data_uploaded: async function (dataArray,dataName = "uploaded_data") {
         const db = await this.open();
         return new Promise((resolve, reject) => {
             const transaction = db.transaction(["dataStore"], "readwrite");
@@ -122,7 +121,7 @@ const dbManager = {
             request.onerror = () => reject(null);
         });
     },
-    get_data_analysis: async function () {
+    get_data_analysis: async function (dataName = "analysis_data") {
         const db = await this.open();
         return new Promise((resolve) => {
             const transaction = db.transaction(["dataStore"], "readonly");
@@ -133,7 +132,7 @@ const dbManager = {
             request.onerror = () => reject(null);
         });
     },
-    get_data_uploaded: async function () {
+    get_data_uploaded: async function (dataName = "uploaded_data") {
         const db = await this.open();
         return new Promise((resolve) => {
             const transaction = db.transaction(["dataStore"], "readonly");

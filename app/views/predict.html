@@ -153,8 +153,14 @@
     $('#btn-calculate').on('click', async function () {
         // 1. Temel analiz bilgilerini al
         // 4. Backend'e Gönder
-        let uploadedData = await dbManager.get_data_uploaded()
-        let analysisData = await dbManager.get_data_analysis()
+        let uploadedData = await dbManager.get_data_uploaded("predict_uploaded_data")
+        let analysisData;
+        if($("#uploadModelSwitch").is(':checked')){
+            analysisData = await dbManager.get_data_analysis("loaded_model_data")
+        }else{
+            analysisData = await dbManager.get_data_analysis()
+        }
+
         let delimiter = await dbManager.get_setting("predictDelimiter")
         let data = {
             uploadedData: uploadedData,
@@ -162,7 +168,6 @@
             delimiter: delimiter
         }
 
-        console.log(data)
         $.ajax({
             url: '/predict-data',
             type: 'POST',
@@ -242,7 +247,7 @@
                 $('#global-loader').show();
 
                 // Veritabanı işlemlerini yap
-                await dbManager.save_data_uploaded(rawString);
+                await dbManager.save_data_uploaded(rawString,"predict_uploaded_data");
                 await dbManager.set_setting("predictDelimiter", delimiter);
                 await dbManager.set_setting("predictFileName", file.name); // Dosya adını da saklayalım
                 // 2. BACKEND VE TABLO GÜNCELLEME
@@ -281,7 +286,7 @@
                 $('#global-loader').show();
 
                 // Veritabanı işlemlerini yap
-                await dbManager.save_data_analysis(rawString);
+                await dbManager.save_data_analysis(rawString,"loaded_model_data");
                 await dbManager.set_setting("uploadModelFileName", file.name); // Dosya adını da saklayalım
 
             } catch (error) {
@@ -297,7 +302,7 @@
 
     async function uploadAndRefreshTable() {
 
-        const storedData = await dbManager.get_data_uploaded();
+        const storedData = await dbManager.get_data_uploaded("predict_uploaded_data");
         let delimiter = $('input[name="delimiterRadio"]:checked').val();
         await dbManager.set_setting("delimiter", delimiter);
 

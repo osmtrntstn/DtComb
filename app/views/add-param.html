@@ -175,7 +175,6 @@
                 paramData.Values.push(valueRow);
             }
         });
-        console.log(paramData);
         $.ajax({
             url: '/parameters/save',
             type: 'POST',
@@ -284,7 +283,6 @@
         $('#paramForm').submit(function (e) {
             e.preventDefault();
             let formData = $(this).serializeArray();
-            console.log(formData)
             $.ajax({
                 url: '/parameters/save',
                 method: 'POST',

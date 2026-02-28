@@ -154,6 +154,7 @@ createROCPlot <- function(input) {
                            preProcess = preProcess,
                            direction = direction,
                            cutoff.method = cutoff.method)
+
         }
     }
     else {
@@ -216,9 +217,11 @@ createROCPlot <- function(input) {
       modelFit$criterionM1 <- NULL
       modelFit$criterionM2 <- NULL
       modelFit$criterionC <- NULL
-
-      names(modelFit$fit) <- c("combType", "method", "parameters", "stdModel", "classification", "standardize" )
-
+       if(input$`function` == "mlComb"){
+          names(modelFit$fit) <- c("combType", "model" )
+       }else {
+          names(modelFit$fit) <- c("combType", "method", "parameters", "stdModel", "classification", "standardize" )
+      }
       modelFit$thresholds = list(
            marker1 = as.numeric(modelFit$thresholdMarker1[1]),
            marker2 = as.numeric(modelFit$thresholdMarker2[1]),
