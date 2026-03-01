@@ -70,8 +70,8 @@ jobs:
 
     - name: Test Docker image
       run: |
-        docker run -d -p 8000:8000 --name test_container dtcomb:latest
+        docker run -d -p 3838:3838 --name test_container dtcomb-python:latest
         sleep 30
-        curl -f http://localhost:8000/health || exit 1
+        curl -f http://localhost:3838/health || exit 1
         docker stop test_container
 
