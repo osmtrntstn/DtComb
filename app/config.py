@@ -23,11 +23,11 @@ class Settings(BaseSettings):
 
     # Server Configuration
     HOST: str = "0.0.0.0"
-    PORT: int = 8000
+    PORT: int = 3838
     DEBUG: bool = False
 
     # CORS
-    CORS_ORIGINS: list = ["http://localhost:8000"]
+    CORS_ORIGINS: list = ["http://localhost:3838"]
 
     # Celery
     REDIS_URL: str = "redis://localhost:6379/0"

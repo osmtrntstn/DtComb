@@ -115,7 +115,7 @@ $health_ok = $false
 
 while ($retry_count -lt $max_retries -and -not $health_ok) {
     try {
-        $response = Invoke-WebRequest -Uri "http://localhost:8000/health" -UseBasicParsing -TimeoutSec 5
+        $response = Invoke-WebRequest -Uri "http://localhost:3838/health" -UseBasicParsing -TimeoutSec 5
         if ($response.StatusCode -eq 200) {
             $health_ok = $true
             Write-Host "   ✓ Uygulama çalışıyor!" -ForegroundColor Green
@@ -147,15 +147,15 @@ Write-Host "     ✓ DtComb BAŞARIYLA BAŞLATILDI!" -ForegroundColor Green
 Write-Host "================================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "🌐 Web Arayüzü:" -ForegroundColor Cyan
-Write-Host "   http://localhost:8000" -ForegroundColor White
+Write-Host "   http://localhost:3838" -ForegroundColor White
 Write-Host ""
 Write-Host "🔐 Admin Paneli:" -ForegroundColor Cyan
-Write-Host "   http://localhost:8000/admin" -ForegroundColor White
+Write-Host "   http://localhost:3838/admin" -ForegroundColor White
 Write-Host "   Kullanıcı: admin" -ForegroundColor White
 Write-Host "   Şifre: (.env dosyasındaki ADMIN_PASSWORD)" -ForegroundColor White
 Write-Host ""
 Write-Host "📊 API Dokümantasyonu (DEBUG modunda):" -ForegroundColor Cyan
-Write-Host "   http://localhost:8000/docs" -ForegroundColor White
+Write-Host "   http://localhost:3838/docs" -ForegroundColor White
 Write-Host ""
 Write-Host "Yararlı komutlar:" -ForegroundColor Yellow
 Write-Host ""
@@ -180,6 +180,6 @@ Write-Host ""
 # Tarayıcıda aç?
 $open_browser = Read-Host "Tarayıcıda açmak ister misiniz? (Y/N)"
 if ($open_browser -eq 'Y' -or $open_browser -eq 'y') {
-    Start-Process "http://localhost:8000"
+    Start-Process "http://localhost:3838"
 }
 
