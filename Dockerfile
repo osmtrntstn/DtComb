@@ -87,5 +87,5 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 ENV LD_LIBRARY_PATH="${R_HOME}/lib:/usr/lib/x86_64-linux-gnu"
 
-EXPOSE 8000
+EXPOSE 3838
 CMD ["/usr/bin/supervisord"]
