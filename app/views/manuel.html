@@ -146,7 +146,7 @@
         <ul>
             <li><p> First row must be a header which indicates the variable names.</p></li>
         </ul>
-        <div style=""><img src="/static/img/manual/dataUpload.png" width="400/"><img src="/static/img/manual/dataUpload2.png"
+        <div style=""><img src="{{ url_for('static', filename='img/manual/dataUpload.png') }}" width="400/"><img src="{{ url_for('static', filename='img/manual/dataUpload2.png') }}"
                                                                                      width="840/"></div>
         <br>
         <h4 id="combAppro">Combination Approach</h4>
@@ -165,7 +165,7 @@
                 selected. </p>
             </li>
         </ul>
-        <div style=""><img src="/static/img/manual/CombinationApp.png" width="400/"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/CombinationApp.png') }}" width="400/"></div>
         <b id="linComb">Linear Combination Methods</b>
         <ul>
             <li><p><i> Scoring </i></p></li>
@@ -214,7 +214,7 @@
         <ul>Todor and Saplacan's method uses trigonometric functions to calculate the combination score. The combination
             score is obtained by the <b> <i>t</i> value</b> that optimizes the corresponding AUC.
         </ul>
-        <div style=""><img src="/static/img/manual/linComb.png" width="400/"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/linComb.png') }}" width="400/"></div>
         <b id="nonlinComb">Nonlinear Combination Methods</b>
         <ul>
             <li><p><i> Polynomial Regression </i></p></li>
@@ -255,8 +255,7 @@
         <ul>
             <li><p><i> Elastic-Net Regression </i></p></li>
         </ul>
-        <ul> Elastic Net regression is obtained by combining the penalties of Ridge and Lasso regression to get the best
-            of
+        <ul> Elastic Net regression is obtained by combining the penalties of Ridge and Lasso regression to get the best of
             both models. The model again includes a tuning parameter <b> α </b> as well as a <b> mixing parameter λ </b>
             taken form the user which takes a value between 0 (ridge) and 1 (lasso) to determine the weights of the loss
             functions of Ridge and Lasso regressions. It is implemented with <b>degrees</b> of the fitted polynomials
@@ -289,7 +288,7 @@
                                                target="_blank"> gam</a> library in R. It is implemented with <font
                     face="consolas">degrees of freedom</font> taken from the user.
         </ul>
-        <div style=""><img src="/static/img/manual/nonlin.png" width="400/"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/nonlin.png') }}" width="400/"></div>
         <b id="mathComb">Mathematical Operators</b>
         <ul>
             <li><p><i> Arithmetic Operators: </i></p></li>
@@ -315,7 +314,7 @@
             <sup>markers<sub>2</sub></sup>) and <font face="consolas">expinbase</font> (markers<sub>2</sub>
             <sup>markers<sub>1</sub></sup>).
         </ul>
-        <div style=""><img src="/static/img/manual/mathComb.png" width="400/"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/mathComb.png') }}" width="400/"></div>
         <b id="mlComb">Machine-Learning Algorithms</b>
         <ul>
             <li><p> 113 machine learning algorithms available in the <a
@@ -328,7 +327,7 @@
                 further information about the methods used in this methods. All resampling and Preprocessing methods
                 included in the Caret package can also be used in dtComb while content is ML algorithms.</p></li>
         </ul>
-        <div style=""><img src="/static/img/manual/mlComb.png" width="400/"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/mlComb.png') }}" width="400/"></div>
         <br>
         <h4 id="resampling">Resampling methods</h4>
         <ul>
@@ -343,7 +342,7 @@
             <li><p><b> Bootstrap</b> performs with the <font face="consolas">number of resampling iterations</font>.</p>
             </li>
         </ul>
-        <div style=""><img src="/static/img/manual/resample.png" width="400/"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/resample.png') }}" width="400/"></div>
         <br>
         <h4 id="standardiza">Standardization methods</h4>
         <ul>
@@ -363,7 +362,7 @@
         <ul>
             <li><p><b>Deviance:</b> Standardization with sample standard deviation equals to 1.</p></li>
         </ul>
-        <div style=""><img src="/static/img/manual/standardize.png" width="400/"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/standardize.png') }}" width="400/"></div>
         <br>
         <h4>There are options under the Advanced checkbox, such as cuttoff method, direction, and confidence
             levels.</h4>
@@ -371,40 +370,40 @@
             href="https://cran.r-project.org/web/packages/OptimalCutpoints/index.html"
             target="_blank">OptimalCutpoints</a>
         package of R.
-        <div style=""><img src="/static/img/manual/advanced.png" width="400/"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/advanced.png') }}" width="400/"></div>
         <br>
         <br>
         <h3 id="outputs">Outputs</h3>
         <p> When the analysis is complete, the <b>Download Model</b> button appears. With the help of this button, then
             the
             user can download the model he has trained to make predictions.</p>
-        <div style=""><img src="/static/img/manual/downloadbutton.png" width="900"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/downloadbutton.png') }}" width="900"></div>
         <h4>ROC Curve</h4>
         <p>An <b>ROC Curve</b> appears you when the analysis is complete. Here you can see ROC Curve of both the
             generated
             Combination Score, Marker 1 and Marker 2.</p>
-        <div style=""><img src="/static/img/manual/ROCplot.png" width="900"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/ROCplot.png') }}" width="900"></div>
         <br>
         <br>
         <h4>AUC Table</h4>
         <p>Under <b>AUC Table</b> subtab, you can get area under the curve (AUC) value and its standard error,
             confidence
             interval and statistical significance, instantly. </p>
-        <div style=""><img src="/static/img/manual/AUCtable.png" width="900"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/AUCtable.png') }}" width="900"></div>
         <br>
         <br>
         <h4>ROC Coordinates</h4>
         <p>Each false positive and true positive points can be found under <b>ROC Coordinates</b> subtab for each
             marker.
         </p>
-        <div style=""><img src="/static/img/manual/roccordinate.png" width="900"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/roccordinate.png') }}" width="900"></div>
         <br>
         <br>
         <h4>Multiple Comparisons Table</h4>
         <p><b>Multiple Comparisons Table</b> alt tab can be used to make pairwise statistical comparisons for ROC curves
             of
             two markers and combination scores.</p>
-        <div style=""><img src="/static/img/manual/multiTable.png" width="900"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/multiTable.png') }}" width="900"></div>
         <br>
         <br>
         <h4>Cut points</h4>
@@ -413,7 +412,7 @@
                 cut-off
                 point determined by this method. </p></li>
         </ul>
-        <div style=""><img src="/static/img/manual/cuttoff.png" width="900"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/cuttoff.png') }}" width="900"></div>
         <br>
         <br>
         <h4>Performance Measures</h4>
@@ -424,7 +423,7 @@
         </ul>
         <br>
         <br>
-        <div style=""><img src="/static/img/manual/perform.png" width="900"></div>
+        <div style=""><img src="{{ url_for('static', filename='img/manual/perform.png') }}" width="900"></div>
         <h4 id="plots">Plots</h4>
         <ul>
             <li>
@@ -434,9 +433,9 @@
                 </p>
             </li>
         </ul>
-        <div style=""><img src="/static/img/manual/distPlot.png" width="350"><img src="/static/img/manual/sct.png"
+        <div style=""><img src="{{ url_for('static', filename='img/manual/distPlot.png') }}" width="350"><img src="{{ url_for('static', filename='img/manual/sct.png') }}"
                                                                                   width="350/"><img
-                src="/static/img/manual/sensspe.png" width="350"></div>
+                src="{{ url_for('static', filename='img/manual/sensspe.png') }}" width="350"></div>
         <br>
         <br>
         <h4 id="predict">Predict</h4>
@@ -447,7 +446,7 @@
                 the
                 same model by reloading the previously downloaded model. </p></li>
         </ul>
-        <div style=""><img src="/static/img/manual/predict1.png" width="500"><img src="/static/img/manual/predict2.png"
+        <div style=""><img src="{{ url_for('static', filename='img/manual/predict1.png') }}" width="500"><img src="{{ url_for('static', filename='img/manual/predict2.png') }}"
                                                                                   width="500"></div>
         <br>
         <br>

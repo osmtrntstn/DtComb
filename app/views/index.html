@@ -9,7 +9,7 @@
         <div class="row mt-3">
 
             <div class="col-sm-2">
-                <img src="static/img/index/func.png" style="width:100%;height:auto">
+                <img src="{{ url_for('static', filename='img/index/func.png') }}" style="width:100%;height:auto">
             </div>
 
             <div class="col-sm-9" role="main">
@@ -41,7 +41,7 @@
                         dtComb package includes diverse combination methods,
                         data standardization, and resampling methods available for combining two diagnostic tests. </p>
                     </div>
-                    <div class="col-xl-6"><img class="ml-xl-2" src="static/img/index/roc-plot.png"
+                    <div class="col-xl-6"><img class="ml-xl-2" src="{{ url_for('static', filename='img/index/roc-plot.png') }}"
                                                style="width:auto;height:400px;"></div>
                 </div>
 
@@ -56,13 +56,13 @@
                     source codes are in GitHub.</p>
                 <div class="row col-12 justify-content-center">
                     <div class="col-md-4">
-                        <img src="static/img/index/density_plot.png" style="width:65%;height:auto">
+                        <img src="{{ url_for('static', filename='img/index/density_plot.png') }}" style="width:65%;height:auto">
                     </div>
                     <div class="col-md-4">
-                        <img src="static/img/index/individual-value.png" style="width:74%;height:auto">
+                        <img src="{{ url_for('static', filename='img/index/individual-value.png') }}" style="width:74%;height:auto">
                     </div>
                     <div class="col-md-4">
-                        <img src="static/img/index/sens-spec-curve.png" style="width:74%;height:auto">
+                        <img src="{{ url_for('static', filename='img/index/sens-spec-curve.png') }}" style="width:74%;height:auto">
                     </div>
                 </div>
 
