@@ -1,0 +1,31 @@
+proxy:
+  title: DtComb - ROC Analysis & Biomarker Combination Tool
+  logo-url: https://www.openanalytics.eu/shinyproxy/logo.png
+  landing-page: /
+
+  # Uygulama listesi
+  specs:
+    - id: dtcomb
+      display-name: DtComb
+      description: ROC Analysis & Biomarker Combination Tool
+      # docker-compose build ile oluşturduğunuz image adını kullanın
+      docker-image: dtcomb_dtcomb-api
+      port: 8000
+      target-path: "#{proxy.getRuntimeValue('SHINYPROXY_PUBLIC_PATH')}"
+      container-cmd: ["/usr/bin/supervisord"]
+
+  # Docker ayarları
+  docker:
+    url: http://localhost:2375
+
+logging:
+  file:
+    name: shinyproxy.log
+
+# IMPORTANT: For ShinyProxy 3.2.0 compatibility, the Docker image MUST be built
+# without BuildKit so that the metadata fields (parent, dockerVersion, author)
+# are properly populated. ShinyProxy 3.2.0 requires these fields.
+#
+# Build command:
+#   DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 docker-compose build
+#   or simply: make docker-build

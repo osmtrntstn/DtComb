@@ -1,6 +1,10 @@
 # 1. Temel İşletim Sistemi
 FROM ubuntu:24.04
 
+LABEL maintainer="osmtrntstn"
+LABEL version="1.0.0"
+LABEL description="DtComb - ROC Analysis & Biomarker Combination Tool"
+
 # 2. Sistem Bağımlılıkları
 ENV DEBIAN_FRONTEND=noninteractive
 

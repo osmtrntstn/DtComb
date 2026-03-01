@@ -1,8 +1,14 @@
 version: '3.8'
 
+# ShinyProxy 3.2.0 uyumluluğu için Docker BuildKit'i devre dışı bırakın:
+# DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 docker-compose build
+# veya: make docker-build
+
 services:
   dtcomb-api:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: dtcomb_app
     ports:
       - "${PORT:-8000}:8000"

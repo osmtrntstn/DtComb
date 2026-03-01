@@ -157,6 +157,31 @@ docker-compose build --no-cache
 
 ## 🐛 Sorun Giderme
 
+### ShinyProxy 3.2.0 - ImageInfo Hatası
+
+ShinyProxy 3.2.0 ile aşağıdaki hata alınıyorsa:
+```
+java.lang.IllegalStateException: Cannot build ImageInfo,
+some of required attributes are not set [parent, dockerVersion, author]
+```
+
+**Neden?** Docker'ın modern BuildKit motoru, image metadata'sına (`DockerVersion`, `Parent`) bazı alanları yazmaz. ShinyProxy 3.2.0 bu alanları zorunlu tutar.
+
+**Çözüm:** Image'ı BuildKit olmadan derleyin:
+```bash
+# Yöntem 1: Makefile ile (önerilen)
+make docker-build
+
+# Yöntem 2: Manuel
+DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 docker-compose build
+
+# Yöntem 3: .env dosyasından (kopyalayıp düzenleyin)
+cp .env.example .env
+# .env içinde DOCKER_BUILDKIT=0 ve COMPOSE_DOCKER_CLI_BUILD=0 zaten set edilmiş
+```
+
+ShinyProxy için örnek `application.yml` dosyası: [`shinyproxy-application.yml`](shinyproxy-application.yml)
+
 ### Port zaten kullanımda
 
 ```bash

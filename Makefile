@@ -25,10 +25,10 @@ test:
 	pytest tests/ -v
 
 docker-build:
-	docker-compose build
+	DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 docker-compose build
 
 docker-up:
-	docker-compose up -d
+	DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 docker-compose up -d
 
 docker-down:
 	docker-compose down
