@@ -7,23 +7,24 @@
 
 <div class="row" style="">
     <div class="col-md-3 fixed-sidebar" style="">
-        <div class="card card-primary card-outline">
+        <div class="card card-primary card-outline" data-step="1" data-intro="Burası menü çubuğunuz!">
             <div class="card-body box-profile">
 
 
                 <div class="card-body" style="padding: 0.25rem !important;">
 
-                    <div class="form-group">
+                    <div class="form-group" data-step="2" data-intro="Burası ver giriş seçenekleriniz!">
                         <label>Input data</label>
 
-                        <div class="custom-control custom-radio">
+                        <div class="custom-control custom-radio" data-step="2" data-intro="Veri yükleyebilirsiniz">
                             <input class="custom-control-input" type="radio" id="dataInputRadio1" name="dataInputRadio"
                                    value="upload">
                             <label for="dataInputRadio1" class="custom-control-label"
                                    style="font-weight: 400 !important;">Upload
                                 a file</label>
                         </div>
-                        <div class="custom-control custom-radio">
+                        <div class="custom-control custom-radio" data-step="3"
+                             data-intro="Örnek veriyi kullanabilir siniz">
                             <input class="custom-control-input" type="radio" id="dataInputRadio2" name="dataInputRadio"
                                    value="example"
                                    checked>
@@ -331,4 +332,29 @@
 <script src="{{ url_for('static', path='js/indexed-db-manager.js') }}"></script>
 <script src="{{ url_for('static', path='js/data-upload.js') }}?2"></script>
 
+<link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+
+<script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+
+<script>
+    function startTutorial() {
+        introJs().setOptions({
+            nextLabel: 'Sıradaki',
+            prevLabel: 'Geri',
+            doneLabel: 'Bitir',
+            skipLabel: 'Atla',
+            showProgress: true,
+            exitOnOverlayClick: false
+        }).start();
+    }
+
+    $(document).ready(function() {
+        // Check if the user has already seen the tutorial
+        if (!localStorage.getItem('dataUploadTutorialSeen')) {
+            startTutorial();
+            localStorage.setItem('dataUploadTutorialSeen', 'true');
+        }
+    });
+
+</script>
 {% endblock %}
