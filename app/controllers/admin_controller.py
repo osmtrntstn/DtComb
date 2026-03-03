@@ -17,7 +17,7 @@ templates = Jinja2Templates(directory="app/views")
 
 @router.get("/admin")
 def index(request: Request):
-    return templates.TemplateResponse("admin.html", {"request": request, "title": "Hoş Geldiniz"})
+    return templates.TemplateResponse("admin.html", {"request": request, "title": "Hoş Geldiniz", "url_for": request.url_for})
 
 
 @router.get("/get-params/{parent_id}/{name}")
@@ -25,7 +25,7 @@ def index(request: Request, parent_id: str, name: str):
     parameters = crud_operation.get_parameters_by_parent(parent_id)
     return templates.TemplateResponse("get-params.html",
                                       {"request": request, "title": "Hoş Geldiniz", "parameters": parameters,
-                                       "parent_id": parent_id, "name": name})
+                                       "parent_id": parent_id, "name": name, "url_for": request.url_for})
 
 
 @router.get("/update-param")
@@ -34,7 +34,7 @@ def index(request: Request, id: Optional[str] = "", parent_id: Optional[str] = "
 
     return templates.TemplateResponse("add-param.html",
                                       {"request": request, "title": "Hoş Geldiniz", "parameter": parameter, "id": id,
-                                       "parent_id": parent_id})
+                                       "parent_id": parent_id, "url_for": request.url_for})
 
 
 @router.get("/functions")

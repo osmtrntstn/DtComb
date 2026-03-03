@@ -14,7 +14,7 @@ templates = Jinja2Templates(directory="app/views")
 
 @router.get("/roc-analysis")
 async def index(request: Request):
-    return templates.TemplateResponse("roc-analysis.html", {"request": request, "title": "Hoş Geldiniz"})
+    return templates.TemplateResponse("roc-analysis.html", {"request": request, "title": "Hoş Geldiniz", "url_for": request.url_for})
 
 
 @router.post("/run-roc-analysis")
