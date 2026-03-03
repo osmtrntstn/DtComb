@@ -102,12 +102,12 @@ Bu checklist, DtComb projesinde yapılan tüm iyileştirmeleri ve yapılması ge
 - [ ] Uygulamayı test et
   ```bash
   python main.py
-  # Tarayıcıda: http://localhost:8000
+  # Tarayıcıda: http://localhost:3838
   ```
 
 - [ ] Health check'i test et
   ```bash
-  curl http://localhost:8000/health
+  curl http://localhost:3838/health
   ```
 
 ### Docker Deployment
@@ -129,7 +129,7 @@ Bu checklist, DtComb projesinde yapılan tüm iyileştirmeleri ve yapılması ge
 
 - [ ] Health check test et
   ```bash
-  curl http://localhost:8000/health
+  curl http://localhost:3838/health
   ```
 
 ### Testing

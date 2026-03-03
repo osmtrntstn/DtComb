@@ -163,7 +163,7 @@ Write-Host "3. Uygulamayı başlatın:" -ForegroundColor White
 Write-Host "   python main.py" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "4. Tarayıcıda açın:" -ForegroundColor White
-Write-Host "   http://localhost:8000" -ForegroundColor Cyan
+Write-Host "   http://localhost:3838" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Test etmek için:" -ForegroundColor Yellow
 Write-Host "   pytest tests/ -v" -ForegroundColor Cyan

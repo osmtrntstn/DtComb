@@ -4,8 +4,8 @@
 {% block pageTitle %}Analysis{{ pageTitle }}{% endblock %}
 {% block head %}
 <!-- CodeMirror -->
-<link rel="stylesheet" href="{{ url_for('static', filename='plugins/codemirror/codemirror.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='plugins/codemirror/theme/monokai.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='plugins/codemirror/codemirror.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='plugins/codemirror/theme/monokai.css') }}">
 {% endblock %}
 {% block content %}
 <div class="row">
@@ -348,9 +348,9 @@
 
 {% block scripts %}
 <!-- CodeMirror -->
-<script src="{{ url_for('static', filename='plugins/codemirror/codemirror.js') }}"></script>
-<script src="{{ url_for('static', filename='plugins/codemirror/mode/css/css.js') }}"></script>
-<script src="{{ url_for('static', filename='plugins/codemirror/mode/sql/sql.js') }}"></script>
+<script src="{{ url_for('static', path='plugins/codemirror/codemirror.js') }}"></script>
+<script src="{{ url_for('static', path='plugins/codemirror/mode/css/css.js') }}"></script>
+<script src="{{ url_for('static', path='plugins/codemirror/mode/sql/sql.js') }}"></script>
 <script>
 
     // CodeMirror

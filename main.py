@@ -61,5 +61,14 @@ async def shutdown_event():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=3838)
+    settings = get_settings()
+
+    print(f"🚀 Starting server on http://{settings.HOST}:{settings.PORT}")
+
+    uvicorn.run(
+        "main:app",
+        host=settings.HOST,
+        port=settings.PORT,  # 3838
+        reload=settings.DEBUG
+    )
 
