@@ -368,7 +368,7 @@
 
     function getAllData() {
         $.ajax({
-            url: '/get-all-data',
+            url: 'get-all-data',
             type: 'GET',
             contentType: 'application/json',
             success: function (response) {
@@ -382,7 +382,7 @@
 
     function runSql() {
         $.ajax({
-            url: '/run-sql',
+             url: 'run-sql',
             type: 'POST',
             data: {data: sqlQueryArea.getValue()}, // jQuery bunu otomatik form-urlencoded yapar
             success: function (response) {
@@ -403,7 +403,7 @@
     $(document).ready(function () {
         functionTable = $('#functionTable').DataTable({
             ajax: {
-                url: '/functions',
+                 url: 'functions',
                 dataSrc: '',
                 // Sayfa her yüklendiğinde veya yenilendiğinde taze veri çekmesini zorunlu kılın
                 cache: false
@@ -444,7 +444,7 @@
 
         // 2. Metot tablosunu ilklendir
         methodTable = $('#methodTable').DataTable({
-            ajax: {url: '/methods', dataSrc: ''},
+            ajax: { url: 'methods', dataSrc: ''},
             columns: [
                 {data: 'Id'},   // JSON'da "MethodName" mi yoksa "methodname" mi?
                 {data: 'MethodName'},   // JSON'da "MethodName" mi yoksa "methodname" mi?
@@ -530,7 +530,7 @@
         };
 
         $.ajax({
-            url: '/functions/save',
+             url: 'functions/save',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(formData),
@@ -629,7 +629,7 @@
         };
 
         $.ajax({
-            url: '/methods/save',
+             url: 'methods/save',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(formData),
@@ -869,7 +869,7 @@
             }
         });
         $.ajax({
-            url: '/parameters/save',
+             url: 'parameters/save',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(paramData),

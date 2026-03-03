@@ -7,7 +7,7 @@ $('#collect-data').on('click', async function () {
     }
     // 4. Backend'e Gönder
     $.ajax({
-        url: '/run-analysis',
+        url: 'run-analysis',
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(payload),
@@ -216,7 +216,7 @@ $(document).on('change', '#functions', function () {
     const functionId = selectedOption.data('id');
 
     $.ajax({
-        url: '/get-function-methods',
+        url: 'get-function-methods',
         method: 'POST',
         data: {id: functionId},
         success: function (response) {
@@ -254,7 +254,7 @@ function fetchParams(parentId, targetContainerId) {
     const $container = $(`#${targetContainerId}`);
     $container.empty()
     $.ajax({
-        url: '/get-params',
+        url: 'get-params',
         method: 'POST',
         data: {parentId: parentId},
         success: function (response) {
