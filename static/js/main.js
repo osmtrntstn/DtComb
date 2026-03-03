@@ -165,7 +165,13 @@ $(document).ready(function () {
     });
 });
 
+$(document).ready(function() {
 
+    // Eğer hala loading ekranı gitmiyorsa, JS hatasına takılmadan zorla kapat:
+    setTimeout(function() {
+     $('#global-loader').fadeOut('slow');
+    }, 1000); // yarım saniye sonra zorla kapat
+  });
 // 1. Sayfa İlk Açılış Kontrolü
 $(window).on('load', function () {
     // Tüm resimler, scriptler ve CSS'ler hazır olduğunda kapat
