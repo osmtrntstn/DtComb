@@ -22,7 +22,7 @@ $('#collect-data').on('click', async function () {
                 const taskId = response.task_id;
                 const pollInterval = setInterval(async () => {
                     try {
-                        const statusResponse = await $.get(`/analysis-status/${taskId}`);
+                        const statusResponse = await $.get(`analysis-status/${taskId}`);
                         if (statusResponse.state === 'SUCCESS') {
                             clearInterval(pollInterval);
                             const result = statusResponse.result;
