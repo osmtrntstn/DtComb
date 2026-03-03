@@ -16,7 +16,6 @@ from app.utils.logger import log_info
 settings = get_settings()
 
 app = FastAPI(
-    root_path="/app_direct/dtCombPython",
     title="DtComb API",
     description="ROC Analysis & Biomarker Combination Tool",
     version="1.0.0",
