@@ -10,7 +10,7 @@ settings = get_settings()
 
 @router.get("/login")
 async def login_page(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse("login.html", {"request": request, "url_for": request.url_for})
 
 @router.post("/login")
 async def login(request: Request, username: str = Form(...), password: str = Form(...)):

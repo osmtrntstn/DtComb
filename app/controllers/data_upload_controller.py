@@ -10,7 +10,7 @@ templates = Jinja2Templates(directory="app/views")
 @router.get("/data-upload")
 def index(request: Request):
     return templates.TemplateResponse("data_upload.html",
-                                      {"request": request, "title": "Hoş Geldiniz"})
+                                      {"request": request, "title": "Hoş Geldiniz", "url_for": request.url_for})
 
 
 @router.post("/fetch-example-data")

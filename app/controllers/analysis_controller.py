@@ -19,7 +19,8 @@ def index(request: Request):
     return templates.TemplateResponse("analysis.html",
                                       {"request": request, "title": "Hoş Geldiniz",
                                        "functions": functions,
-                                       "methods": methods})
+                                       "methods": methods,
+                                       "url_for": request.url_for})
 
 
 @router.post("/run-analysis")

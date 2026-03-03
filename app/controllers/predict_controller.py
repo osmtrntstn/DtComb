@@ -11,7 +11,7 @@ templates = Jinja2Templates(directory="app/views")
 
 @router.get("/predict", response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse("predict.html", {"request": request, "title": "Hoş Geldiniz"})
+    return templates.TemplateResponse("predict.html", {"request": request, "title": "Hoş Geldiniz", "url_for": request.url_for})
 @router.post("/predict-data")
 async def run_analysis(data: Dict[str, Any]):
     if not data:
