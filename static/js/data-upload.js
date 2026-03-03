@@ -51,7 +51,7 @@ function fetchExampleData() {
     const selectedData = $('input[name="exampleDataRadio"]:checked').val();
     $('#analysisTable').empty();
     $.ajax({
-        url: '/fetch-example-data',
+        url: 'fetch-example-data',
         method: 'POST',
         dataType: 'json',
         data: {data_name: selectedData},
@@ -377,7 +377,7 @@ $(document).on('change', '#status, #statusRoc', async function () {
     }
     let currentStatusId = $(this)[0].id;
     $.ajax({
-        url: '/get-unique-categories',
+        url: 'get-unique-categories',
         method: 'POST',
         data: {status_col: selectedStatus, data: data, delimiter: delimiter},
         success: async function (response) {
