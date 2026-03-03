@@ -1,12 +1,14 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from app.controllers import home_controller, data_upload_controller, analysis_controller,admin_controller,predict_controller,roc_analysis_controller,login_controller, health_controller
+from app.controllers import home_controller, data_upload_controller, analysis_controller, admin_controller, \
+    predict_controller, roc_analysis_controller, login_controller, health_controller
 from app.handlers.exception_handler import custom_exception_handler
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.templating import Jinja2Templates
 from app.config import get_settings
 from app.utils.logger import log_info
+
 # Optional: Uncomment to enable rate limiting
 # from app.middleware.rate_limit import RateLimitMiddleware
 # from app.middleware.cors import add_cors_middleware
@@ -14,6 +16,7 @@ from app.utils.logger import log_info
 settings = get_settings()
 
 app = FastAPI(
+    root_path="/app_direct/dtCombPython",
     title="DtComb API",
     description="ROC Analysis & Biomarker Combination Tool",
     version="1.0.0",
@@ -48,15 +51,18 @@ app.include_router(login_controller.router)
 
 app.add_exception_handler(StarletteHTTPException, custom_exception_handler)
 
+
 @app.on_event("startup")
 async def startup_event():
     log_info("🚀 DtComb Application Started")
     log_info(f"📊 Debug Mode: {settings.DEBUG}")
     log_info(f"🔒 Secret Key Configured: {'Yes' if settings.SECRET_KEY else 'No'}")
 
+
 @app.on_event("shutdown")
 async def shutdown_event():
     log_info("🛑 DtComb Application Shutting Down")
+
 
 if __name__ == "__main__":
     import uvicorn
@@ -71,4 +77,3 @@ if __name__ == "__main__":
         port=settings.PORT,  # 3838
         reload=settings.DEBUG
     )
-

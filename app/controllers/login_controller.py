@@ -20,14 +20,14 @@ async def login(request: Request, username: str = Form(...), password: str = For
         request.session["is_logged_in"] = True
         request.session["user"] = username
         log_info(f"User {username} logged in successfully")
-        return RedirectResponse(url="/admin", status_code=303)
+        return RedirectResponse(url="admin", status_code=303)
 
     log_warning(f"Failed login attempt for username: {username}")
-    return RedirectResponse(url="/login?error=true", status_code=303)
+    return RedirectResponse(url="login?error=true", status_code=303)
 
 @router.get("/logout")
 async def logout(request: Request):
     username = request.session.get("user", "unknown")
     request.session.clear()
     log_info(f"User {username} logged out")
-    return RedirectResponse(url="/login")
+    return RedirectResponse(url="login")
