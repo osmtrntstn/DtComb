@@ -51,7 +51,7 @@
 <script>
     let paramTable = $('#parameterTable').DataTable({
         ajax: {
-            url: `/parameters/{{parent_id}}`,
+            url: `parameters/{{parent_id}}`,
             dataSrc: ''
         },
         columns: [
@@ -89,7 +89,7 @@
     function addParameter(id) {
         $('#parameter-procces').html("");
         $.ajax({
-            url: '/update-param',
+            url: 'update-param',
             method: 'GET',
             data: {parent_id: id},
             success: function (response) {
@@ -106,7 +106,7 @@
     function editParameter(id) {
         $('#parameter-procces').html("");
         $.ajax({
-            url: '/update-param',
+            url: 'update-param',
             data: {id: id},
             method: 'GET',
             success: function (response) {

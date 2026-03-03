@@ -711,9 +711,9 @@ $('#btn-save').on('click', async function () {
                 });
                 return;
             }
-            window.location.href = "/roc-analysis";
+            window.location.href = "roc-analysis";
         } else {
-            window.location.href = "/analysis";
+            window.location.href = "analysis";
         }
 
     } catch (error) {

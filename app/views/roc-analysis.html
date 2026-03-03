@@ -347,7 +347,7 @@
         }
         // 4. Backend'e Gönder
         $.ajax({
-            url: '/run-roc-analysis',
+            url: 'run-roc-analysis',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(payload),
@@ -360,7 +360,7 @@
                     const taskId = response.task_id;
                     const pollInterval = setInterval(async () => {
                         try {
-                            const statusResponse = await $.get(`/roc-analysis-status/${taskId}`);
+                            const statusResponse = await $.get(`roc-analysis-status/${taskId}`);
                             if (statusResponse.state === 'SUCCESS') {
                                 clearInterval(pollInterval);
                                 const result = statusResponse.result;

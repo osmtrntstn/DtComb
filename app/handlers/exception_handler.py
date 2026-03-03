@@ -27,7 +27,7 @@ async def custom_exception_handler(request: Request, exc: Exception):
 
     if status_code == 401:
         log_info(f"Unauthorized access attempt to {request.url.path}")
-        return RedirectResponse(url="/login", status_code=303)
+        return RedirectResponse(url="login", status_code=303)
 
     status_code = getattr(exc, "status_code", 500)
 
