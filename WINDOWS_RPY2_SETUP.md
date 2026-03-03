@@ -139,7 +139,7 @@ docker-compose up -d
 docker-compose logs -f
 
 # Test edin
-curl http://localhost:8000/health
+curl http://localhost:3838/health
 ```
 
 Docker, tüm bağımlılıkları (R, Python, rpy2) içerir ve sorunsuz çalışır!

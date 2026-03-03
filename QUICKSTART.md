@@ -36,7 +36,7 @@ docker-compose up -d
 docker-compose logs -f
 ```
 
-Uygulama şu adreste çalışacak: http://localhost:8000
+Uygulama şu adreste çalışacak: http://localhost:3838
 
 ### 3. Lokal Geliştirme Ortamı
 
@@ -61,7 +61,7 @@ python main.py
 
 ### Giriş Yapma
 
-1. http://localhost:8000/login adresine gidin
+1. http://localhost:3838/login adresine gidin
 2. Kullanıcı adı: `admin` (veya .env'deki ADMIN_USERNAME)
 3. Şifre: `.env` dosyasındaki ADMIN_PASSWORD
 
@@ -78,7 +78,7 @@ python main.py
 
 ```bash
 # Uygulama çalışıyor mu kontrol et
-curl http://localhost:8000/health
+curl http://localhost:3838/health
 
 # Beklenen yanıt:
 # {"status":"healthy","service":"dtcomb-api","version":"1.0.0"}
@@ -116,8 +116,8 @@ make format     # Kod formatla
 ## 📝 API Dokümantasyonu
 
 Debug mode aktifken:
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+- Swagger UI: http://localhost:3838/docs
+- ReDoc: http://localhost:3838/redoc
 
 ## ⚠️ Önemli Notlar
 
@@ -160,8 +160,8 @@ docker-compose build --no-cache
 ### Port zaten kullanımda
 
 ```bash
-# Windows'ta 8000 portunu kullanan process'i bul
-netstat -ano | findstr :8000
+# Windows'ta 3838 portunu kullanan process'i bul
+netstat -ano | findstr :3838
 
 # Process'i kapat (PID ile)
 taskkill /PID <process_id> /F

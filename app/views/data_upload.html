@@ -2,28 +2,55 @@
 
 {% block title %}Data upload Sayfası - {{ title }}{% endblock %}
 {% block pageTitle %}Dataupload{{ pageTitle }}{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+<style>
+    .introjs-skipbutton {
+        background-color: #6c757d !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 5px 10px !important;
+        border-radius: 4px !important;
+        font-size: 14px !important;
+        cursor: pointer !important;
+        width: 50px !important;
+        height: 40px !important;
+        line-height: 35px !important;
+        top: 7px !important;
+        right: 7px !important;
+    }
 
+    /* Bu sınıf, display: none olsa bile elementi görünür yapar */
+    .tutorial-visible {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+</style>
+{% endblock %}
 {% block content %}
 
 <div class="row" style="">
     <div class="col-md-3 fixed-sidebar" style="">
-        <div class="card card-primary card-outline">
+        <div class="card card-primary card-outline" data-step="1" data-intro="Select data end markers for analysis!">
             <div class="card-body box-profile">
 
 
                 <div class="card-body" style="padding: 0.25rem !important;">
 
-                    <div class="form-group">
+                    <div class="form-group" data-step="2" data-intro="Data input type">
                         <label>Input data</label>
 
-                        <div class="custom-control custom-radio">
+                        <div class="custom-control custom-radio" data-step="2"
+                             data-intro="Select this option to upload data set.">
                             <input class="custom-control-input" type="radio" id="dataInputRadio1" name="dataInputRadio"
                                    value="upload">
                             <label for="dataInputRadio1" class="custom-control-label"
                                    style="font-weight: 400 !important;">Upload
                                 a file</label>
                         </div>
-                        <div class="custom-control custom-radio">
+                        <div class="custom-control custom-radio" data-step="3"
+                             data-intro="Select this option to load example data set. You can use the example data to explore the app and understand how it works.">
                             <input class="custom-control-input" type="radio" id="dataInputRadio2" name="dataInputRadio"
                                    value="example"
                                    checked>
@@ -35,41 +62,49 @@
 
 
                     <div class="form-group" id="delimiterOptions" style="display: none;">
-                        <div class="input-group mb-2">
+                        <div id="fileInputDiv" class="input-group mb-2" data-step="4"
+                             data-intro="Click here to upload a file in .txt format. Labesl ar in local computer's language.">
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="exampleInputFile">
                                 <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                             </div>
                         </div>
                         <label>Delimiter</label>
-                        <div class="custom-control custom-radio">
-                            <input class="custom-control-input" type="radio" id="delimiterRadio1" name="delimiterRadio"
-                                   value="comma" checked>
-                            <label for="delimiterRadio1" class="custom-control-label"
-                                   style="font-weight: 400 !important;">Comma</label>
-                        </div>
+                        <div class="radio-group" id="delimiterRadioGroup" data-step="5"
+                             data-intro="Select a delimiter which is appropriate for you data.">
 
-                        <div class="custom-control custom-radio">
-                            <input class="custom-control-input" type="radio" id="delimiterRadio2" name="delimiterRadio"
-                                   value="tab">
-                            <label for="delimiterRadio2" class="custom-control-label"
-                                   style="font-weight: 400 !important;">Tab</label>
-                        </div>
+                            <div class="custom-control custom-radio">
+                                <input class="custom-control-input" type="radio" id="delimiterRadio1"
+                                       name="delimiterRadio"
+                                       value="comma" checked>
+                                <label for="delimiterRadio1" class="custom-control-label"
+                                       style="font-weight: 400 !important;">Comma</label>
+                            </div>
 
-                        <div class="custom-control custom-radio">
-                            <input class="custom-control-input" type="radio" id="delimiterRadio3" name="delimiterRadio"
-                                   value="semicolon">
-                            <label for="delimiterRadio3" class="custom-control-label"
-                                   style="font-weight: 400 !important;">Semicolon</label>
-                        </div>
+                            <div class="custom-control custom-radio">
+                                <input class="custom-control-input" type="radio" id="delimiterRadio2"
+                                       name="delimiterRadio"
+                                       value="tab">
+                                <label for="delimiterRadio2" class="custom-control-label"
+                                       style="font-weight: 400 !important;">Tab</label>
+                            </div>
 
-                        <div class="custom-control custom-radio">
-                            <input class="custom-control-input" type="radio" id="delimiterRadio4" name="delimiterRadio"
-                                   value="space">
-                            <label for="delimiterRadio4" class="custom-control-label"
-                                   style="font-weight: 400 !important;">Space</label>
-                        </div>
+                            <div class="custom-control custom-radio">
+                                <input class="custom-control-input" type="radio" id="delimiterRadio3"
+                                       name="delimiterRadio"
+                                       value="semicolon">
+                                <label for="delimiterRadio3" class="custom-control-label"
+                                       style="font-weight: 400 !important;">Semicolon</label>
+                            </div>
 
+                            <div class="custom-control custom-radio">
+                                <input class="custom-control-input" type="radio" id="delimiterRadio4"
+                                       name="delimiterRadio"
+                                       value="space">
+                                <label for="delimiterRadio4" class="custom-control-label"
+                                       style="font-weight: 400 !important;">Space</label>
+                            </div>
+                        </div>
                         <div class="mt-2">
                             <small class="text-muted" style="display: block; line-height: 1.4;">
                                 <i class="fas fa-info-circle mr-1"></i>
@@ -105,7 +140,8 @@
                             <!-- /.card-header -->
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="form-group">
+                                    <div class="form-group" data-step="6"
+                                         data-intro="Select marker 1 variable">
                                         <label for="marker1">Marker 1</label>
                                         <select id="marker1" class="form-control select2bs4" style="width: 100%;">
                                             <option value="" selected disabled>Please select...</option>
@@ -114,7 +150,8 @@
                                     </div>
 
                                     <!-- /.form-group -->
-                                    <div class="form-group">
+                                    <div class="form-group" data-step="7"
+                                         data-intro="Select marker 2 variable">
                                         <label for="marker2">Marker 2</label>
                                         <select id="marker2" class="form-control select2bs4" style="width: 100%;">
                                             <option value="" selected disabled>Please select...</option>
@@ -123,16 +160,16 @@
                                         </select>
                                     </div>
                                     <!-- /.form-group -->
-                                    <div class="form-group">
+                                    <div class="form-group" data-step="8"
+                                         data-intro="Select the status variable">
                                         <label for="status">Status</label>
                                         <select id="status" class="form-control select2bs4" style="width: 100%;">
                                             <option value="" selected disabled>Please select...</option>
-
-
                                         </select>
                                     </div>
                                     <!-- /.form-group -->
-                                    <div class="form-group">
+                                    <div class="form-group" data-step="9"
+                                         data-intro="Select a category for cases (i.e, subjects with higher risks)">
                                         <label for="category">Select category for cases</label>
                                         <select id="category" class="form-control select2bs4" style="width: 100%;">
                                             <option value="" selected disabled>Please select...</option>
@@ -150,7 +187,8 @@
                         </div>
                         <div class="tab-pane fade" id="custom-content-below-roc-analysis" role="tabpanel"
                              aria-labelledby="custom-content-below-roc-analysis-tab">
-                            <div class="col-md-12">
+                            <div class="col-md-12" data-step="10"
+                                 data-intro="Roc analysis for single marker(s) tab should be selected to evaluate the performance of a single diagnostic test or compare the performance of more than one diagnostic test.">
                                 <div class="form-group">
                                     <label>Select markers (*)</label>
                                     <select name="markersRoc" id="markersRoc" class="select2bs4" multiple="multiple"
@@ -235,65 +273,69 @@
                         </div>
                     </div>
                     <!-- /.form-group -->
-                    <div class="form-group advancedCheckBox" style="display: none;">
-                        <label for="optimalCutOff">Select a method for optimal cut-off</label>
-                        <select id="optimalCutOff" class="form-control select2bs4" style="width: 100%;">
-                            <option value="Youden" selected>Youden</option>
-                            <option value="CB">CB</option>
-                            <option value="MCT">MCT</option>
-                            <option value="MinValueSp">MinValueSp</option>
-                            <option value="MinValueSe">MinValueSe</option>
-                            <option value="ValueSp">ValueSp</option>
-                            <option value="ValueSe">ValueSe</option>
-                            <option value="MinValueSpSe">MinValueSpSe</option>
-                            <option value="MaxSp">MaxSp</option>
-                            <option value="MaxSe">MaxSe</option>
-                            <option value="MaxSpSe">MaxSpSe</option>
-                            <option value="MaxProdSpSe">MaxProdSpSe</option>
-                            <option value="ROC01">ROC01</option>
-                            <option value="SpEqualSe">SpEqualSe</option>
-                            <option value="MaxEfficiency">MaxEfficiency</option>
-                            <option value="Minimax">Minimax</option>
-                            <option value="MaxDOR">MaxDOR</option>
-                            <option value="MaxKappa">MaxKappa</option>
-                            <option value="MinValueNPV">MinValueNPV</option>
-                            <option value="MinValuePPV">MinValuePPV</option>
-                            <option value="ValueNPV">ValueNPV</option>
-                            <option value="ValuePPV">ValuePPV</option>
-                            <option value="MinValueNPVPPV">MinValueNPVPPV</option>
-                            <option value="PROC01">PROC01</option>
-                            <option value="NPVEqualPPV">NPVEqualPPV</option>
-                            <option value="MaxNPVPPV">MaxNPVPPV</option>
-                            <option value="MaxSumNPVPPV">MaxSumNPVPPV</option>
-                            <option value="MaxProdNPVPPV">MaxProdNPVPPV</option>
-                            <option value="ValueDLR.Negative">ValueDLR.Negative</option>
-                            <option value="ValueDLR.Positive">ValueDLR.Positive</option>
-                            <option value="MinPvalue">MinPvalue</option>
-                            <option value="ObservedPrev">ObservedPrev</option>
-                            <option value="MeanPrev">MeanPrev</option>
-                            <option value="PrevalenceMatching">PrevalenceMatching</option>
-                        </select>
+                    <div id="advancedCheckBoxDiv" class="col-12"  data-step="11"
+                         data-intro="Select advanced options for ROC analysis!">
+                        <div class="form-group advancedCheckBox" style="display: none">
+                            <label for="optimalCutOff">Select a method for optimal cut-off</label>
+                            <select id="optimalCutOff" class="form-control select2bs4" style="width: 100%;">
+                                <option value="Youden" selected>Youden</option>
+                                <option value="CB">CB</option>
+                                <option value="MCT">MCT</option>
+                                <option value="MinValueSp">MinValueSp</option>
+                                <option value="MinValueSe">MinValueSe</option>
+                                <option value="ValueSp">ValueSp</option>
+                                <option value="ValueSe">ValueSe</option>
+                                <option value="MinValueSpSe">MinValueSpSe</option>
+                                <option value="MaxSp">MaxSp</option>
+                                <option value="MaxSe">MaxSe</option>
+                                <option value="MaxSpSe">MaxSpSe</option>
+                                <option value="MaxProdSpSe">MaxProdSpSe</option>
+                                <option value="ROC01">ROC01</option>
+                                <option value="SpEqualSe">SpEqualSe</option>
+                                <option value="MaxEfficiency">MaxEfficiency</option>
+                                <option value="Minimax">Minimax</option>
+                                <option value="MaxDOR">MaxDOR</option>
+                                <option value="MaxKappa">MaxKappa</option>
+                                <option value="MinValueNPV">MinValueNPV</option>
+                                <option value="MinValuePPV">MinValuePPV</option>
+                                <option value="ValueNPV">ValueNPV</option>
+                                <option value="ValuePPV">ValuePPV</option>
+                                <option value="MinValueNPVPPV">MinValueNPVPPV</option>
+                                <option value="PROC01">PROC01</option>
+                                <option value="NPVEqualPPV">NPVEqualPPV</option>
+                                <option value="MaxNPVPPV">MaxNPVPPV</option>
+                                <option value="MaxSumNPVPPV">MaxSumNPVPPV</option>
+                                <option value="MaxProdNPVPPV">MaxProdNPVPPV</option>
+                                <option value="ValueDLR.Negative">ValueDLR.Negative</option>
+                                <option value="ValueDLR.Positive">ValueDLR.Positive</option>
+                                <option value="MinPvalue">MinPvalue</option>
+                                <option value="ObservedPrev">ObservedPrev</option>
+                                <option value="MeanPrev">MeanPrev</option>
+                                <option value="PrevalenceMatching">PrevalenceMatching</option>
+                            </select>
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group advancedCheckBox" style="display: none">
+                            <label for="direction">Direction</label>
+                            <select id="direction" class="form-control select2bs4" style="width: 100%;">
+                                <option selected="selected">auto</option>
+                                <option><</option>
+                                <option>></option>
+                            </select>
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group advancedCheckBox" style="display: none">
+                            <label for="confidenceLevel">Confidence Level</label>
+                            <input type="number" id="confidenceLevel" class="form-control" step="0.01" value="0.95"
+                                   style="width: 100%;">
+                        </div>
+                        <!-- /.form-group -->
                     </div>
-                    <!-- /.form-group -->
-                    <div class="form-group advancedCheckBox" style="display: none;">
-                        <label for="direction">Direction</label>
-                        <select id="direction" class="form-control select2bs4" style="width: 100%;">
-                            <option selected="selected">auto</option>
-                            <option><</option>
-                            <option>></option>
-                        </select>
-                    </div>
-                    <!-- /.form-group -->
-                    <div class="form-group advancedCheckBox" style="display: none;">
-                        <label for="confidenceLevel">Confidence Level</label>
-                        <input type="number" id="confidenceLevel" class="form-control" step="0.01" value="0.95"
-                               style="width: 100%;">
-                    </div>
-                    <!-- /.form-group -->
                 </div>
                 <!-- /.card-body -->
 
-                <div class="form-group row">
+                <div class="form-group row" data-step="12"
+                     data-intro="Go to the next step to perform the analysis!">
                     <button id="btn-save" type="button" class="btn btn-primary"><i class="fa-solid fa-angles-right"></i>
                         Next
                     </button>
@@ -328,7 +370,119 @@
 
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/indexed-db-manager.js') }}"></script>
-<script src="{{ url_for('static', filename='js/data-upload.js') }}?2"></script>
+<script src="{{ url_for('static', path='js/indexed-db-manager.js') }}"></script>
+<script src="{{ url_for('static', path='js/data-upload.js') }}?2"></script>
 
+
+<script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+
+<script>
+    function startTutorial() {
+        const intro = introJs();
+        intro.setOptions({
+            nextLabel: 'Next',
+            prevLabel: 'Previous',
+            doneLabel: 'End',
+            skipLabel: 'Skip',
+            showProgress: true,
+            exitOnOverlayClick: false
+        });
+
+        // ADIM DEĞİŞİRKEN ÇALIŞIR
+        intro.onbeforechange(function (targetElement) {
+            // Eğer hedef element gizli panelimiz ise sınıfı ekle
+            // console.log(targetElement.dataset.step)
+            if (targetElement.id === 'fileInputDiv') {
+                const hiddenElement = document.getElementById('delimiterOptions');
+                hiddenElement.style.display = 'block';
+            } else if (targetElement.id === 'advancedCheckBoxDiv') {
+               // $('.advancedCheckBox').css('display', 'block');
+            } else if (targetElement.dataset.step === '10') {
+                let el1 = document.getElementById('custom-content-below-roc-analysis');
+                el1.classList.add('show', 'active');
+                let el2 = document.getElementById('custom-content-below-analysis');
+                el2.classList.remove('show', 'active');
+                $("#custom-content-below-roc-analysis-tab").click()
+                $('.advancedCheckBox').css('display', 'block');
+            }
+        });
+
+        // ADIM DEĞİŞİRKEN ÇALIŞIR
+        intro.onchange(function (targetElement) {
+            // console.log("onchange")
+            // console.log(targetElement)
+            // // Eğer hedef element gizli panelimiz ise sınıfı ekle
+            // if (targetElement.id === 'fileInputDiv') {
+            //     const hiddenElement = document.getElementById('delimiterOptions');
+            //     hiddenElement.style.display = 'block';
+            // } else if (targetElement.id === 'custom-content-below-roc-analysis') {
+            //     $("#custom-content-below-roc-analysis-tab").click()
+            // }
+        });
+        // ADIM DEĞİŞİRKEN ÇALIŞIR
+        intro.onafterchange(function (targetElement) {
+            // console.log(targetElement)
+            // // Eğer hedef element gizli panelimiz ise sınıfı ekle
+            // if (targetElement.id === 'fileInputDiv') {
+            //     const hiddenElement = document.getElementById('delimiterOptions');
+            //     hiddenElement.style.display = 'block';
+            // } else if (targetElement.id === 'custom-content-below-roc-analysis') {
+            //     $("#custom-content-below-roc-analysis-tab").click()
+            // }
+        });
+        // TUR BİTTİĞİNDE VEYA KAPATILDIĞINDA ÇALIŞIR
+        intro.onexit(function (el) {
+            console.log(el)
+            const hiddenElement = document.getElementById('delimiterOptions');
+            hiddenElement.style.display = 'none'
+            $('.advancedCheckBox').css('display', 'none');
+            $("#custom-content-below-analysis-tab").click()
+        });
+
+        // KULLANICI 'ATLA' (SKIP) YAPARSA DA ÇALIŞMASI İÇİN
+        intro.oncomplete(function () {
+            const hiddenElement = document.getElementById('delimiterOptions');
+            hiddenElement.style.display = 'none';
+            $('.advancedCheckBox').css('display', 'none');
+            $("#custom-content-below-analysis-tab").click()
+        });
+
+        intro.start();
+
+    }
+
+    $(document).ready(function () {
+        // Check if the user has already seen the tutorial
+        if (!localStorage.getItem('dataUploadTutorialSeen')) {
+            startTutorial();
+            localStorage.setItem('dataUploadTutorialSeen', 'true');
+        }
+
+        // Add a button to manually start the tutorial
+        const helpButton = $('<button>')
+            .attr({
+                'type': 'button',
+                'class': 'btn btn-info btn-sm',
+                'style': 'position: fixed; bottom: 65px; right: 15px; z-index: 9997; border-radius: 50%; width: 50px; height: 50px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);',
+                'title': 'Start Tutorial'
+            })
+            .html('<i class="fas fa-question" style="font-size: 1.2rem;"></i>')
+            .on('click', function () {
+                startTutorial();
+            });
+
+        $('body').append(helpButton);
+
+        // Add hover effect
+        helpButton.hover(
+            function () {
+                $(this).css('transform', 'scale(1.1)');
+            },
+            function () {
+                $(this).css('transform', 'scale(1)');
+            }
+        );
+    });
+
+</script>
 {% endblock %}

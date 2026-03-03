@@ -71,8 +71,8 @@ python main.py
 ```
 
 #### Access the Application
-- Web Interface: http://localhost:8000
-- Admin Panel: http://localhost:8000/admin
+- Web Interface: http://localhost:3838
+- Admin Panel: http://localhost:3838/admin
 - Default credentials: `admin` / `change-this-password` (⚠️ Change these!)
 
 ## 📋 Configuration
@@ -86,7 +86,7 @@ SECRET_KEY=your-super-secret-key-here
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=your-secure-password
 DEBUG=False
-PORT=8000
+PORT=3838
 ```
 
 ### Local Development Setup
@@ -107,7 +107,20 @@ install.packages("OptimalCutpoints")
 ```bash
 python main.py
 # or
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uvicorn main:app --reload --host 0.0.0.0 --port 3838
+```
+
+### PyCharm IDE Users 🧑‍💻
+
+If you're using PyCharm, the FastAPI run configuration has been set to use port 3838:
+
+1. **Option 1:** Use the configured "DtComb" run configuration (port 3838 is already set)
+2. **Option 2:** Run `run_dev.py` directly for explicit configuration
+3. **Note:** If you see port 8000 instead of 3838, restart PyCharm to reload the configuration
+
+The configuration is stored in `.idea/workspace.xml` with these parameters:
+```
+--host 0.0.0.0 --port 3838 --reload
 ```
 
 ## 🏗️ Project Structure
@@ -177,8 +190,8 @@ DtComb/
 ## 📝 API Documentation
 
 Once running, visit:
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+- Swagger UI: http://localhost:3838/docs
+- ReDoc: http://localhost:3838/redoc
 
 ## 🐛 Troubleshooting
 

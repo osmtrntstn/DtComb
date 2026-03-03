@@ -209,7 +209,7 @@ pytest tests/ -v --cov=app --cov-report=html
 
 ```yaml
 healthcheck:
-  test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+  test: ["CMD", "curl", "-f", "http://localhost:3838/health"]
   interval: 30s
   timeout: 10s
   retries: 3
@@ -368,7 +368,7 @@ Proje **kritik güvenlik açıklarına** sahipti ve **production-ready değildi*
 
 1. `.env` dosyası oluştur ve şifreleri değiştir
 2. Production deployment öncesi SECURITY.md'yi oku
-3. Health check endpoint'ini test et: `http://localhost:8000/health`
+3. Health check endpoint'ini test et: `http://localhost:3838/health`
 4. Testleri çalıştır: `pytest tests/`
 
 ---
