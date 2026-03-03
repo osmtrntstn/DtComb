@@ -8,24 +8,24 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>dtComb: Combining Two Diagnostic Tests</title>
-    <link rel="icon" href="/static/img/favicon.png" type="image/x-icon"/>
+    <link rel="icon" href="static/img/favicon.png" type="image/x-icon"/>
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="/static/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="static/plugins/fontawesome-free/css/all.min.css">
     <!-- iCheck for checkboxes and radio inputs -->
-    <link rel="stylesheet" href="/static/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <link rel="stylesheet" href="static/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <!-- Datatables -->
-    <link rel="stylesheet" href="/static/plugins/datatables/datatables.min.css">
+    <link rel="stylesheet" href="static/plugins/datatables/datatables.min.css">
     <!-- Select2 -->
-    <link rel="stylesheet" href="/static/plugins/select2/css/select2.min.css">
-    <link rel="stylesheet" href="/static/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <link rel="stylesheet" href="static/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="static/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
     <!-- Toastr -->
-    <link rel="stylesheet" href="/static/plugins/toastr/toastr.min.css">
+    <link rel="stylesheet" href="static/plugins/toastr/toastr.min.css">
     <!-- Theme style -->
-    <link rel="stylesheet" href="/static/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="/static/css/style.css?2">
+    <link rel="stylesheet" href="static/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="static/css/style.css?2">
     {% block head %}{% endblock %}
 </head>
 <body class="hold-transition layout-top-nav layout-navbar-fixed layout-footer-fixed">
@@ -49,7 +49,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <nav class="main-header navbar navbar-expand-lg navbar-light navbar-dark">
         <div class="container-fluid">
             <a href="/" class="navbar-brand">
-                <img src="/static/img/nav-bar.png" alt="DtComb Logo"
+                <img src="static/img/nav-bar.png" alt="DtComb Logo"
                      class="brand-image img-circle elevation-3" style="opacity: .8">
                 <span class="brand-text font-weight-light">dtComb: Combining Two Diagnostic Tests</span>
             </a>
@@ -63,31 +63,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <!-- Left navbar links -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a href="/" class="nav-link {% if request.url.path == '/' %}active{% endif %}">About</a>
+                        <a href="" class="nav-link {% if request.url.path == '/' %}active{% endif %}">About</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/data-upload"
-                           class="nav-link {% if request.url.path == '/data-upload' %}active{% endif %}">Data Upload</a>
+                        <a href="data-upload"
+                           class="nav-link {% if request.url.path == 'data-upload' %}active{% endif %}">Data Upload</a>
                     </li>
                     <li id="li-analysis" class="nav-item" {% if request.url.path==
                     '/roc-analysis' %}style="display: none;"{% endif %}>
-                    <a href="/analysis"
+                    <a href="analysis"
                        class="nav-link {% if request.url.path == '/analysis' %}active{% endif %}"
                        {% if request.url.path== '/roc-analysis' %}style="display:none;"{% endif %}>Analysis</a>
                     </li>
                     <li id="li-roc-analysis" class="nav-item" style="display: none !important;">
-                        <a href="/roc-analysis"
+                        <a href="roc-analysis"
                            class="nav-link {% if request.url.path == '/roc-analysis' %}active{% endif %}">ROC
                             Analysis</a>
                     </li>
                     <li id="li-predict" class="nav-item" {% if request.url.path==
                     '/roc-analysis' %}style="display: none;"{% endif %}>
-                    <a href="/predict"
+                    <a href="predict"
                        class="nav-link {% if request.url.path == '/predict' %}active{% endif %}"
                        {% if request.url.path== '/roc-analysis' %}style="display:none;"{% endif %}>Predict</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/manuel"
+                        <a href="manuel"
                            class="nav-link {% if request.url.path == '/manuel' %}active{% endif %}">Manuel</a>
                     </li>
 
@@ -145,23 +145,23 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- REQUIRED SCRIPTS -->
 
 <!-- jQuery -->
-<script src="/static/plugins/jquery/jquery.min.js"></script>
+<script src="static/plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
-<script src="/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- Bootstrap Switch -->
-<script src="/static/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+<script src="static/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
 <!-- Datatables -->
-<script src="/static/plugins/datatables/datatables.min.js"></script>
+<script src="static/plugins/datatables/datatables.min.js"></script>
 <!-- Select2 -->
-<script src="/static/plugins/select2/js/select2.full.min.js"></script>
+<script src="static/plugins/select2/js/select2.full.min.js"></script>
 <!-- SweetAlert2 -->
-<script src="/static/plugins/sweetalert2/sweetalert.min.js"></script>
+<script src="static/plugins/sweetalert2/sweetalert.min.js"></script>
 <!-- Toastr -->
-<script src="/static/plugins/toastr/toastr.min.js"></script>
+<script src="static/plugins/toastr/toastr.min.js"></script>
 <!-- AdminLTE App -->
-<script src="/static/dist/js/adminlte.min.js"></script>
+<script src="static/dist/js/adminlte.min.js"></script>
 
-<script src="/static/js/main.js?4"></script>
+<script src="static/js/main.js?4"></script>
 
 {% block scripts %}
 
