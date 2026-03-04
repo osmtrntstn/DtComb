@@ -325,13 +325,12 @@
 <script src="static/js/indexed-db-manager.js"></script>
 <script>
     $(document).ready(async function () {
+
         $("#li-roc-analysis").show();
-        // let btn_save_click = await dbManager.get_setting("btn-save-click") || false; // Hangi tabda olduğumuzu bilmek için
-        // if (btn_save_click) {
-        //     await dbManager.set_setting("btn-save-click", false);
-        // } else {
-        //     window.location.href = "/data-upload";
-        // }
+        $('a[href="roc-analysis"]').addClass('active');
+        $("#li-analysis").hide();
+        $("#li-predict").hide();
+
 
         let payload = await collectAllData()
         if (payload.markerList && payload.markerList.length == 0) {
