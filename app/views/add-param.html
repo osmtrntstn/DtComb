@@ -233,7 +233,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `/delete-param-value/${valueId}`,
+                        url: `delete-param-value/${valueId}`,
                         type: 'DELETE',
                         success: function (response) {
                             $(`#${rowId}`).remove();
