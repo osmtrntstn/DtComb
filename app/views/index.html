@@ -74,3 +74,14 @@
 </div>
 
 {% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(async function () {
+        $("#li-roc-analysis").hide();
+        $('a[href=""]').addClass('active');
+        $("#li-analysis").show();
+        $("#li-predict").show();
+    });
+</script>
+{% endblock %}

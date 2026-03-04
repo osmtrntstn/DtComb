@@ -273,7 +273,7 @@
                         </div>
                     </div>
                     <!-- /.form-group -->
-                    <div id="advancedCheckBoxDiv" class="col-12"  data-step="11"
+                    <div id="advancedCheckBoxDiv" class="col-12" data-step="11"
                          data-intro="Select advanced options for ROC analysis!">
                         <div class="form-group advancedCheckBox" style="display: none">
                             <label for="optimalCutOff">Select a method for optimal cut-off</label>
@@ -377,6 +377,7 @@
 <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
 
 <script>
+
     function startTutorial() {
         const intro = introJs();
         intro.setOptions({
@@ -396,7 +397,7 @@
                 const hiddenElement = document.getElementById('delimiterOptions');
                 hiddenElement.style.display = 'block';
             } else if (targetElement.id === 'advancedCheckBoxDiv') {
-               // $('.advancedCheckBox').css('display', 'block');
+                // $('.advancedCheckBox').css('display', 'block');
             } else if (targetElement.dataset.step === '10') {
                 let el1 = document.getElementById('custom-content-below-roc-analysis');
                 el1.classList.add('show', 'active');
@@ -452,6 +453,11 @@
     }
 
     $(document).ready(function () {
+        $("#li-roc-analysis").hide();
+        $('a[href="data-upload"]').addClass('active');
+        $("#li-analysis").show();
+        $("#li-predict").show();
+
         // Check if the user has already seen the tutorial
         if (!localStorage.getItem('dataUploadTutorialSeen')) {
             startTutorial();

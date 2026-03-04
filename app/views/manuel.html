@@ -458,3 +458,14 @@
 </div>
 
 {% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(async function () {
+        $("#li-roc-analysis").hide();
+        $('a[href="manual"]').addClass('active');
+        $("#li-analysis").show();
+        $("#li-predict").show();
+    });
+</script>
+{% endblock %}

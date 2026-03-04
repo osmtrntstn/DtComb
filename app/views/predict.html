@@ -152,6 +152,14 @@
 {% block scripts %}
 <script src="static/js/indexed-db-manager.js"></script>
 <script>
+
+    $(document).ready(async function () {
+        $("#li-roc-analysis").hide();
+        $('a[href="predict"]').addClass('active');
+        $("#li-analysis").show();
+        $("#li-predict").show();
+    });
+
     $('#btn-calculate').on('click', async function () {
         console.log($('#exampleInputFile')[0]);
         let file = $('#exampleInputFile')[0].files[0];
