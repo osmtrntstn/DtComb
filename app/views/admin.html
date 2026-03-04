@@ -507,7 +507,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `/functions/${id}`,
+                    url: `functions/${id}`,
                     type: 'DELETE',
                     success: function () {
                         $('#functionTable').DataTable().ajax.reload();
@@ -581,7 +581,7 @@
 
     // Dropdown'ı doldurma
     function loadFunctionsToSelect() {
-        $.get('/functions', function (data) {
+        $.get('functions', function (data) {
             let options = '<option value="" disabled selected>Fonksiyon Seçiniz...</option>';
             data.forEach(item => {
                 options += `<option value="${item.Id}">${item.FunctionName}</option>`;
