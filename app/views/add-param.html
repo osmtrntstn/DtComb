@@ -193,7 +193,7 @@
         const rowId = 'val_' + Math.random().toString(36).substr(2, 9);
         let addParamHtml = ""
         if (data) {
-            addParamHtml = `<button type="button" class="btn btn-xs btn-primary" title="Add Param" onclick="window.location.href='/get-params/${data.Id}/${$('#paramName').val() + '->' + data.ValueName}'">
+            addParamHtml = `<button type="button" class="btn btn-xs btn-primary" title="Add Param" onclick="window.location.href='get-params/${data.Id}/${$('#paramName').val() + '->' + data.ValueName}'">
                     <i class="fas fa-plus"></i>                 </button>`;
         }
         const html = `
