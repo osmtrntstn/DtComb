@@ -147,166 +147,19 @@
         </form>
     </div>
 </div>
-<div class="modal fade" id="paramListModal">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="paramTitle">Parametre Listesi</h3>
-                <div class="modal-tools">
-                    <button class="btn btn-sm btn-secondary" onclick="goBackParam()" id="btnBackParam"
-                            style="display:none;">
-                        <i class="fas fa-arrow-left"></i> Geri
-                    </button>
-                    <button class="btn btn-sm btn-primary" onclick="openParamModal()">
-                        <i class="fas fa-plus"></i> Yeni Parametre
-                    </button>
-                </div>
-            </div>
-            <div class="modal-body">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb" id="paramBreadcrumb">
-                        <li class="breadcrumb-item"><a href="javascript:void(0)" onclick="loadRootParams()">Root</a>
-                        </li>
-                    </ol>
-                </nav>
-
-                <table id="parameterTable" class="table table-bordered table-striped">
-                    <thead>
-                    <tr>
-                        <th>Parametre Adı</th>
-                        <th>Key</th>
-                        <th>Giriş Tipi</th>
-                        <th>Alt Öge</th>
-                        <th>İşlemler</th>
-                    </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="paramModal">
-    <div class="modal-dialog modal-xl">
-        <form id="paramForm">
-            <div class="modal-content">
-                <div class="modal-header"><h4 class="modal-title">Parametre Tanımı</h4></div>
-                <div class="modal-body">
-                    <input type="hidden" name="Id">
-                    <input type="hidden" name="ParentId" id="currentParentId">
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Parametre Adı</label>
-                                <input type="text" name="ParameterName" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Key</label>
-                                <input type="text" name="ParameterKey" class="form-control" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Input Tipi</label>
-                                <select name="InputType" class="form-control select2bs4">
-                                    <option value="number">Number</option>
-                                    <option value="select">Select</option>
-                                    <option value="radio">Radio</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Default Değer</label>
-                                <input type="text" name="DefaultValue" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Min Değer</label>
-                                <input type="number" name="MinValue" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Max Değer</label>
-                                <input type="number" name="MaxValue" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Value Step</label>
-                                <input type="number" name="ValueStep" step="any" lang="en" placeholder="0.00"
-                                       class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Sıra</label>
-                                <input type="number" name="OrderNumber" class="form-control" value="0">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Alt eleman</label>
-                                <select name="ExistSubItem" class="form-control select2bs4">
-                                    <option value="0" selected>Yok</option>
-                                    <option value="1">Var</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="valueSection" style="display: none;">
-                    <hr>
-                    <h5>Parametre Değerleri (Opsiyonel)</h5>
-                    <div class="row mb-2">
-                        <div class="col-md-12">
-                            <table class="table table-sm table-bordered" id="valueTable">
-                                <thead>
-                                <tr>
-                                    <th>Görünür İsim (ValueName)</th>
-                                    <th>Anahtar (ValueKey)</th>
-                                    <th>Sıra</th>
-                                    <th>Alt eleman</th>
-                                    <th style="width: 40px">#</th>
-                                </tr>
-                                </thead>
-                                <tbody id="valueTableBody">
-                                </tbody>
-                            </table>
-                            <button type="button" class="btn btn-xs btn-primary"
-                                    onclick="addNewValueRow(null, '#valueTableBody')">
-                                <i class="fas fa-plus"></i> Yeni Değer Ekle
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Kaydet</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-<div class="modal fade" id="valuesModal" tabindex="-1" role="dialog" aria-labelledby="valuesModalLabel"
+<div class="modal fade" id="parameterModal" tabindex="-1" role="dialog" aria-labelledby="valuesModalLabel"
      aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
                 <h5 class="modal-title" id="valuesModalLabel">
                     <i class="fas fa-list-ul mr-2"></i> <span id="targetParamName">Parametre</span> Değerleri
                 </h5>
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close text-white" onclick="deleteParamsModal()" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div id="paramModelBody" class="modal-body">
                 <input type="hidden" id="modalTargetParamId">
 
                 <div class="alert alert-info py-2">
@@ -335,14 +188,12 @@
                 </button>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Vazgeç</button>
-                <button type="button" class="btn btn-success" onclick="saveAllValues()">
-                    <i class="fas fa-save mr-1"></i> Tüm Değerleri Kaydet
-                </button>
+                <button type="button" class="btn btn-secondary" onclick="deleteParamsModal()">Vazgeç</button>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 
@@ -351,6 +202,82 @@
 <script src="static/plugins/codemirror/codemirror.js"></script>
 <script src="static/plugins/codemirror/mode/css/css.js"></script>
 <script src="static/plugins/codemirror/mode/sql/sql.js"></script>
+
+<script>
+    let modalHistory = [];
+
+    function goBack() {
+        console.log(modalHistory);
+        if (modalHistory.length > 0) {
+            let previousUrl = modalHistory.pop(); // Son URL'yi al ve listeden çıkar
+            getParamsWithUrl(previousUrl, true); // true parametresi ile tekrar geçmişe yazılmasını engelle
+        }
+    }// Geçmiş URL'leri burada tutacağız
+    function deleteParamsModal() {
+        $('#parameterModal').modal('hide');
+        $('#paramModelBody').html("");
+        // Geçmiş dizisini sıfırla
+        modalHistory = [];
+
+        // Varsa container içindeki current-url verisini de temizle
+        $("#paramModelBody").attr('data-current-url', '');
+
+        // Geri butonunu gizle (çünkü geçmiş artık boş)
+        $('#goBackButton').hide();
+    }
+
+    function getParams(id, name, isBack = false) {
+        let url = 'get-params/' + id + "/" + name;
+
+        getParamsWithUrl(url, isBack);
+    }
+
+    function getParamsWithUrl(url, isBack = false) {
+        if (!isBack) {
+            let currentUrl = $("#paramModelBody").data('current-url');
+            if (currentUrl) {
+                modalHistory.push(currentUrl);
+            }
+        }
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'html',
+            success: function (response) {
+                $('#paramModelBody').html(response);
+                $('#parameterModal').modal('show');
+                $("#paramModelBody").attr('data-current-url', url);
+                toggleGoBackButton();
+            },
+            error: function (xhr) {
+                Swal.fire('Hata', 'Kayıt sırasında bir sorun oluştu: ' + xhr.responseText, 'error');
+            }
+        });
+    }
+
+    // Modal kapandığında (animasyon bittiğinde) tetiklenir
+    $('#parameterModal').on('hidden.bs.modal', function () {
+        // Geçmiş dizisini sıfırla
+        modalHistory = [];
+        $('#paramModelBody').html("");
+        // Varsa container içindeki current-url verisini de temizle
+        $("#paramModelBody").attr('data-current-url', '');
+
+        // Geri butonunu gizle (çünkü geçmiş artık boş)
+        $('#goBackButton').hide();
+
+        console.log("Modal kapandı, geçmiş temizlendi.");
+    });
+
+    function toggleGoBackButton() {
+        if (modalHistory.length === 0) {
+            $('#goBackButton').hide();
+        } else {
+            $('#goBackButton').show();
+        }
+    }
+</script>
+
 <script>
 
     // CodeMirror
@@ -382,7 +309,7 @@
 
     function runSql() {
         $.ajax({
-             url: 'run-sql',
+            url: 'run-sql',
             type: 'POST',
             data: {data: sqlQueryArea.getValue()}, // jQuery bunu otomatik form-urlencoded yapar
             success: function (response) {
@@ -403,7 +330,7 @@
     $(document).ready(function () {
         functionTable = $('#functionTable').DataTable({
             ajax: {
-                 url: 'functions',
+                url: 'functions',
                 dataSrc: '',
                 // Sayfa her yüklendiğinde veya yenilendiğinde taze veri çekmesini zorunlu kılın
                 cache: false
@@ -426,7 +353,7 @@
                         <button class="btn btn-sm btn-danger" onclick="deleteFunction('${data.Id}')">
                             <i class="fas fa-trash"></i> Sil
                         </button>
-                        <button class="btn btn-sm btn-dark" onclick="window.location.href='get-params/${data.Id}/${data.FunctionName}'">
+                        <button class="btn btn-sm btn-dark" onclick="getParams('${data.Id}','${data.FunctionName}',false)">
                             <i class="fas fa-list"></i> Parametreler
                         </button>
                     `;
@@ -444,7 +371,7 @@
 
         // 2. Metot tablosunu ilklendir
         methodTable = $('#methodTable').DataTable({
-            ajax: { url: 'methods', dataSrc: ''},
+            ajax: {url: 'methods', dataSrc: ''},
             columns: [
                 {data: 'Id'},   // JSON'da "MethodName" mi yoksa "methodname" mi?
                 {data: 'MethodName'},   // JSON'da "MethodName" mi yoksa "methodname" mi?
@@ -464,7 +391,7 @@
                         <button class="btn btn-sm btn-danger" onclick="deleteMethod('${data.Id}')">
                             <i class="fas fa-trash"></i> Sil
                         </button>
-                        <button class="btn btn-sm btn-dark" onclick="window.location.href='get-params/${data.Id}/${data.MethodName}'">
+                        <button class="btn btn-sm btn-dark" onclick="getParams('${data.Id}','${data.MethodName}',false)">
                             <i class="fas fa-list"></i> Parametreler
                         </button>
                     `;
@@ -530,7 +457,7 @@
         };
 
         $.ajax({
-             url: 'functions/save',
+            url: 'functions/save',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(formData),
@@ -629,7 +556,7 @@
         };
 
         $.ajax({
-             url: 'methods/save',
+            url: 'methods/save',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(formData),
@@ -869,7 +796,7 @@
             }
         });
         $.ajax({
-             url: 'parameters/save',
+            url: 'parameters/save',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(paramData),
@@ -967,4 +894,5 @@
 
 
 </script>
+
 {% endblock %}

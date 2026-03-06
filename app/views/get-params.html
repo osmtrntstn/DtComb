@@ -1,12 +1,8 @@
-{% extends "layout.html" %}
-
-{% block title %}Analiz Sayfası - {{ title }}{% endblock %}
-{% block pageTitle %}Analysis{{ pageTitle }}{% endblock %}
-
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title" id="paramTitle"> {{ name }} -> Parametre Listesi</h3>
+        <button class="btn btn-outline-warning float-left" id="goBackButton" onclick="goBack()">Geri</button>
+        <h3 class="card-title ml-5 mt-2" id="paramTitle"> {{ name }} -> Parametre Listesi</h3>
         <input type="hidden" id="paramName" value="{{ name }}">
         <button class="btn btn-primary float-right" onclick="addParameter('{{parent_id}}')">Yeni Ekle</button>
     </div>
@@ -43,13 +39,11 @@
     </div>
 </div>
 <div id="parameter-procces"></div>
-
 {% endblock %}
 
 
-{% block scripts %}
 <script>
-    let paramTable = $('#parameterTable').DataTable({
+    paramTable = $('#parameterTable').DataTable({
         ajax: {
             url: `parameters/{{parent_id}}`,
             dataSrc: ''
@@ -68,23 +62,16 @@
                 data: null,
                 render: function (data) {
                     let actionButtons = `
-                        <button class="btn btn-xs btn-info" onclick="editParameter('${data.Id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-xs btn-info" onclick="editParameter('${data.Id}','${data.ParentId}')"><i class="fas fa-edit"></i></button>
                         <button class="btn btn-xs btn-danger" onclick="deleteParam('${data.Id}')"><i class="fas fa-trash"></i></button>
                     `;
-
-                    // // Eğer alt öge ekleyebilecek bir yapıysa (Recursive)
-                    // actionButtons += `<button class="btn btn-xs btn-warning" onclick="drillDown('${data.Id}', '${data.ParameterName}')"><i class="fas fa-sitemap"></i> Alt Parametreler</button>`;
-                    //
-                    // // Eğer Select tipi ise Değer ekleme butonu
-                    // if (data.InputType === 'select' || data.InputType === 'radio') {
-                    //     actionButtons += `<button class="btn btn-xs btn-success" onclick="window.location.href='/get-params/${data.Id}/${$("#paramName").val() + " -> " + data.ParameterName}'"><i class="fas fa-list"></i> Değerler</button>`;
-                    // }
 
                     return actionButtons;
                 }
             }
         ]
     });
+
 
     function addParameter(id) {
         $('#parameter-procces').html("");
@@ -103,7 +90,7 @@
         })
     }
 
-    function editParameter(id) {
+    function editParameter(id, parentId) {
         $('#parameter-procces').html("");
         $.ajax({
             url: 'update-param',
@@ -121,4 +108,3 @@
     }
 
 </script>
-{% endblock %}

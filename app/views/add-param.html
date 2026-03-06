@@ -1,6 +1,3 @@
-{% block title %}Analiz Sayfası - {{ title }}{% endblock %}
-{% block pageTitle %}Analysis{{ pageTitle }}{% endblock %}
-
 {% block content %}
 <div class="card">
     <form id="paramForm">
@@ -121,8 +118,8 @@
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
-            <button type="submit" class="btn btn-success">Kaydet</button>
+        <div class="card-footer">
+            <button id="addParamButton" type="button" class="btn btn-success">Kaydet</button>
         </div>
     </form>
 </div>
@@ -130,7 +127,6 @@
 {% endblock %}
 
 
-{% block scripts %}
 <script>
     function closeParamProcess() {
         // 1. Hedef div'in içeriğini tamamen siler
@@ -143,20 +139,20 @@
         // currentParamId = null;
     }
 
-    $('#paramForm').on('submit', function (e) {
-        e.preventDefault();
+    $('#addParamButton').on('click', function (e) {
+        let formData = $("#paramForm");
         const paramData = {
-            Id: $(this).find('input[name="Id"]').val() || null,
+            Id: formData.find('input[name="Id"]').val() || null,
             ParentId: $('#ParentId').val(),
-            ParameterName: $(this).find('input[name="ParameterName"]').val(),
-            ParameterKey: $(this).find('input[name="ParameterKey"]').val(),
-            InputType: $(this).find('select[name="InputType"]').val(),
-            DefaultValue: $(this).find('input[name="DefaultValue"]').val(),
-            MinValue: parseFloat($(this).find('input[name="MinValue"]').val()) || null,
-            MaxValue: parseFloat($(this).find('input[name="MaxValue"]').val()) || null,
-            OrderNumber: parseInt($(this).find('input[name="OrderNumber"]').val()) || 0,
-            ExistSubItem: parseInt($(this).find('select[name="ExistSubItem"]').val()) || 0,
-            ValueStep: parseFloat($(this).find('input[name="ValueStep"]').val().replace(',', '.')) || 1,
+            ParameterName: formData.find('input[name="ParameterName"]').val(),
+            ParameterKey: formData.find('input[name="ParameterKey"]').val(),
+            InputType: formData.find('select[name="InputType"]').val(),
+            DefaultValue: formData.find('input[name="DefaultValue"]').val(),
+            MinValue: parseFloat(formData.find('input[name="MinValue"]').val()) || null,
+            MaxValue: parseFloat(formData.find('input[name="MaxValue"]').val()) || null,
+            OrderNumber: parseInt(formData.find('input[name="OrderNumber"]').val()) || 0,
+            ExistSubItem: parseInt(formData.find('select[name="ExistSubItem"]').val()) || 0,
+            ValueStep: parseFloat(formData.find('input[name="ValueStep"]').val().replace(',', '.')) || 1,
             // 2. Alt Değerleri (Values) Dizi Olarak Başlat
             Values: []
         };
@@ -164,11 +160,11 @@
         // 3. Dinamik Tablodaki Her Satırı Oku
         $('.value-row').each(function () {
             const valueRow = {
-                Id: $(this).find('input[name="ValueId"]').val() || null,
-                ValueName: $(this).find('.val-name').val(),
-                ValueKey: $(this).find('.val-key').val(),
-                ExistSubItem: $(this).find('.val-exist-subitem').val(),
-                OrderNumber: parseInt($(this).find('.val-order').val()) || 0
+                Id: formData.find('input[name="ValueId"]').val() || null,
+                ValueName: formData.find('.val-name').val(),
+                ValueKey: formData.find('.val-key').val(),
+                ExistSubItem: formData.find('.val-exist-subitem').val(),
+                OrderNumber: parseInt(formData.find('.val-order').val()) || 0
             };
             // Sadece isim ve key doluysa ekle
             if (valueRow.ValueName && valueRow.ValueKey) {
@@ -180,10 +176,9 @@
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(paramData),
-            success: function () {
-                $('#paramModal').modal('hide');
+            success: function (response) {
                 paramTable.ajax.reload();
-                $(this).find('input[name="Id"]').val("")
+                formData.find('input[name="Id"]').val(response.Id)
                 Swal.fire('Başarılı', 'Parametre hiyerarşiye eklendi.', 'success');
             }
         });
@@ -193,7 +188,7 @@
         const rowId = 'val_' + Math.random().toString(36).substr(2, 9);
         let addParamHtml = ""
         if (data) {
-            addParamHtml = `<button type="button" class="btn btn-xs btn-primary" title="Add Param" onclick="window.location.href='get-params/${data.Id}/${$('#paramName').val() + '->' + data.ValueName}'">
+            addParamHtml = `<button type="button" class="btn btn-xs btn-primary" title="Add Param" onclick="getParams('${data.Id}','${$('#paramName').val() + '->' + data.ValueName}',false)">
                     <i class="fas fa-plus"></i>                 </button>`;
         }
         const html = `
@@ -298,4 +293,3 @@
     });
 
 </script>
-{% endblock %}
