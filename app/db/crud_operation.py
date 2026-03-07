@@ -58,6 +58,7 @@ def generate_insert_scripts():
     conn.close()
     return all_inserts
 
+
 def get_functions():
     conn = get_db_connection()
     # Row_factory kullanarak sütun isimlerine (func['Name'] gibi) erişebiliriz
@@ -140,6 +141,27 @@ def get_methods():
     return rows
 
 
+def get_methods_by_function_id(function_id):
+    conn = get_db_connection()
+    # SQLite'da Row_factory nesne sözlüğü gibi erişim sağlar
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    query = """
+            SELECT m.Id,
+                   m.MethodName,
+                   m.MethodKey,
+                   m.OrderNumber,
+                   m.FunctionId
+            FROM Tbl_Method2 m
+            WHERE m.FunctionId = ?
+            ORDER BY m.OrderNumber ASC \
+            """
+    cursor.execute(query, (function_id,))
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
+
+
 def save_method(data):
     conn = get_db_connection()
     if not data.Id:
@@ -192,6 +214,7 @@ def get_parameters_by_parent(parent_id):
     conn.close()
     return rows
 
+
 def get_parameters_by_id(id):
     conn = get_db_connection()
     # SQLite'da Row_factory nesne sözlüğü gibi erişim sağlar
@@ -207,6 +230,7 @@ def get_parameters_by_id(id):
     rows = cursor.fetchone()
     conn.close()
     return rows
+
 
 def save_parameter_bulk(data: ParameterSchema):
     conn = get_db_connection()
@@ -243,6 +267,7 @@ def save_parameter_bulk(data: ParameterSchema):
     finally:
         conn.close()
 
+
 def delete_parameter(id):
     conn = get_db_connection()
 
@@ -258,6 +283,7 @@ def delete_parameter(id):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+
 
 def delete_parameter_value(id):
     conn = get_db_connection()
@@ -287,6 +313,7 @@ def get_parameter_values(parameter_id: str):
         return rows
     finally:
         conn.close()
+
 
 def run_sql(data: str):
     # Boşlukları temizle ve küçük harfe çevirerek kontrol et
@@ -318,5 +345,3 @@ def run_sql(data: str):
         return {"status": "success"}
     finally:
         conn.close()
-
-

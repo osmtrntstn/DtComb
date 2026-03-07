@@ -1,0 +1,207 @@
+<div class="card col-12">
+    <div class="card-header">
+        <button class="btn btn-outline-warning float-left mr-5" onclick="goBack()">Geri</button>
+        <h3 id="cardTitle" class="card-title mt-2">Method Listesi</h3>
+        <button class="btn btn-primary float-right" onclick="openMethodModal()">Yeni Method Ekle</button>
+    </div>
+    <div class="card-body">
+        <table id="methodTable" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Metot Adı</th>
+                <th>Key</th>
+                <th>Sıra</th>
+                <th>İşlemler</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for methodItem in methodList %}
+            <tr>
+                <td>{{ methodItem.Id }}</td>
+                <td>{{ methodItem.MethodName }}</td>
+                <td>{{ methodItem.MethodKey }}</td>
+                <td>{{ methodItem.OrderNumber }}</td>
+                <td>
+                    <button class="btn btn-sm btn-info" onclick='openMethodModal({{ methodItem | tojson }})'>
+                        <i class="fas fa-edit"></i> Düzenle
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteMethod('{{ methodItem.Id }}')">
+                        <i class="fas fa-trash"></i> Sil
+                    </button>
+                    <button class="btn btn-sm btn-dark"
+                            onclick="getParameterPage('{{ methodItem.Id }}','{{ methodItem.MethodName }}',false)">
+                        <i class="fas fa-list"></i> Parametreler
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- /.col-->
+<div class="modal fade" id="methodModal">
+    <div class="modal-dialog">
+        <input type="hidden" name="FunctionId" id="FunctionId" value="{{ functionId }}">
+        <form id="methodForm">
+            <div class="modal-content">
+                <div class="modal-header"><h4 class="modal-title">Metot Yönetimi</h4></div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id">
+
+                    <div class="form-group">
+                        <label>Metot Key</label>
+                        <input type="text" name="MethodKey" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Metot İsmi</label>
+                        <input type="text" name="MethodName" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Sıra</label>
+                        <input type="number" name="OrderNumber" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="saveMethod()">Kaydet</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    //method operations
+
+    $(document).ready(function () {
+        methodTable = $('#methodTable').DataTable({order: [[3, 'asc']]});
+    });
+
+    function loadMethodData() {
+        if (methodTable) {
+            methodTable.destroy();
+        }
+        let functionId = $('#FunctionId').val();
+        // 2. Metot tablosunu ilklendir
+        methodTable = $('#methodTable').DataTable({
+            ajax: {url: 'admin-method-list/' + functionId, dataSrc: ''},
+            order: [[3, 'asc']],
+            columns: [
+                {data: 'Id'},   // JSON'da "MethodName" mi yoksa "methodname" mi?
+                {data: 'MethodName'},   // JSON'da "MethodName" mi yoksa "methodname" mi?
+                {data: 'MethodKey'},
+                {data: 'OrderNumber'},
+                {
+                    data: null,
+                    orderable: false, // İşlem sütununda sıralamayı kapatın
+                    render: function (data) {
+                        // Veriyi güvenli bir şekilde string'e çevirip openModal'a gönderiyoruz
+                        const strData = JSON.stringify(data).replace(/'/g, "\\'");
+                        return `
+                        <button class="btn btn-sm btn-info" onclick='openMethodModal(${strData})'>
+                            <i class="fas fa-edit"></i> Düzenle
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteMethod('${data.Id}')">
+                            <i class="fas fa-trash"></i> Sil
+                        </button>
+                        <button class="btn btn-sm btn-dark" onclick="getParams('${data.Id}','${data.MethodName}',false)">
+                            <i class="fas fa-list"></i> Parametreler
+                        </button>
+                    `;
+                    }
+                }
+            ]
+        });
+    }
+
+    /**
+     * Metot Modalını açar.
+     * @param {Object|null} data - Düzenleme modunda metot nesnesi, ekleme modunda null.
+     */
+    function openMethodModal(data = null) {
+        const $form = $('#methodForm');
+        const $modal = $('#methodModal');
+
+        $form[0].reset(); // Formu temizle
+
+        if (data) {
+            $modal.find('.modal-title').text('Metodu Düzenle');
+            $form.find('input[name="Id"]').val(data.Id);
+            $form.find('input[name="MethodKey"]').val(data.MethodKey);
+            $form.find('input[name="MethodName"]').val(data.MethodName);
+            $form.find('input[name="OrderNumber"]').val(data.OrderNumber);
+        } else {
+            $modal.find('.modal-title').text('Yeni Metot Ekle');
+            $form.find('input[name="Id"]').val(''); // Yeni kayıt için ID boş
+        }
+
+        $modal.modal('show');
+    }
+
+    function saveMethod() {
+        const $form = $("#methodForm");
+        const idVal = $form.find('input[name="Id"]').val();
+
+        const formData = {
+            Id: (idVal && idVal.trim() !== "") ? idVal : null,
+            FunctionId: $('input[name="FunctionId"]').val(), // Seçili fonksiyonun ID'si
+            MethodKey: $form.find('input[name="MethodKey"]').val() || "",
+            MethodName: $form.find('input[name="MethodName"]').val() || "",
+            OrderNumber: parseInt($form.find('input[name="OrderNumber"]').val()) || 0
+        };
+
+        $.ajax({
+            url: 'methods/save',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function (response) {
+
+                $('#methodModal').one('hidden.bs.modal', function () {
+                    loadMethodData();
+                }).modal('hide');
+                $form.reset()()
+                Swal.fire('Başarılı', 'Metot kaydedildi.', 'success');
+            },
+            error: function (xhr) {
+                Swal.fire('Hata', 'İşlem başarısız: ' + xhr.responseText, 'error');
+            }
+        });
+    }
+
+    // Metot Silme Fonksiyonu
+    function deleteMethod(id) {
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: "Bu method kalıcı olarak silinecektir!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/methods/${id}`,
+                    type: 'DELETE',
+                    success: function (response) {
+                        loadMethodData() // Tabloyu tazele
+                        Swal.fire('Silindi!', 'method başarıyla kaldırıldı.', 'success');
+                    },
+                    error: function (xhr) {
+                        Swal.fire('Hata', 'Silme işlemi başarısız: ' + xhr.responseText, 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    function getParameterPage(parentId, parentName) {
+        let url = `${parameterBaseUrl}/${parentId}/${parentName}`;
+
+        loadPage(url, parentName);
+    }
+</script>

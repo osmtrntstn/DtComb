@@ -18,7 +18,7 @@
 <div class="card col-12">
     <div class="card-header">
         <h3 class="card-title">Analiz Metotları</h3>
-        <button class="btn btn-primary float-right" onclick="openModal()">Yeni Ekle</button>
+        <button class="btn btn-primary float-right" onclick="openFunctionModal()">Yeni Ekle</button>
     </div>
     <div class="card-body">
         <table id="functionTable" class="table table-bordered">
@@ -257,16 +257,7 @@
 
     // Modal kapandığında (animasyon bittiğinde) tetiklenir
     $('#parameterModal').on('hidden.bs.modal', function () {
-        // Geçmiş dizisini sıfırla
-        modalHistory = [];
-        $('#paramModelBody').html("");
-        // Varsa container içindeki current-url verisini de temizle
-        $("#paramModelBody").attr('data-current-url', '');
-
-        // Geri butonunu gizle (çünkü geçmiş artık boş)
-        $('#goBackButton').hide();
-
-        console.log("Modal kapandı, geçmiş temizlendi.");
+        deleteParamsModal()
     });
 
     function toggleGoBackButton() {
@@ -326,7 +317,7 @@
     let functionTable;
     let methodTable;
     let paramTable;
-    let parentStack = []; // Geri dönüş yolları için
+
     $(document).ready(function () {
         functionTable = $('#functionTable').DataTable({
             ajax: {
@@ -347,7 +338,7 @@
                         // Veriyi güvenli bir şekilde string'e çevirip openModal'a gönderiyoruz
                         const strData = JSON.stringify(data).replace(/'/g, "\\'");
                         return `
-                        <button class="btn btn-sm btn-info" onclick='openModal(${strData})'>
+                        <button class="btn btn-sm btn-info" onclick='openFunctionModal(${strData})'>
                             <i class="fas fa-edit"></i> Düzenle
                         </button>
                         <button class="btn btn-sm btn-danger" onclick="deleteFunction('${data.Id}')">
@@ -400,28 +391,6 @@
             ]
         });
 
-        // Sayfadaki '.modal' sınıfına sahip tüm elemanları dinle
-        $('.modal').on('hidden.bs.modal', function () {
-            $('.modal').modal('hide');
-
-            // 1. Modal içindeki tüm formları bul ve resetle
-            $(this).find('form').each(function () {
-                this.reset();
-            });
-
-            // 2. Gizli inputları (hidden) manuel temizle (reset() gizli alanları dokunmaz)
-            $(this).find('input[type="hidden"]').val('');
-
-            // 3. Dinamik oluşturulan tablo gövdelerini veya divleri boşalt
-            // (ID'si 'Body' veya 'Container' ile bitenleri hedefleyebiliriz)
-            $(this).find('tbody').empty();
-
-            // 4. Select2 kullanıyorsanız seçimleri de görsel olarak sıfırlayın
-            $(this).find('.select2bs4').val(null).trigger('change');
-
-            // 5. Özel global değişkenleriniz varsa sıfırlayın
-            $('#currentParentId').val('');
-        });
     });
 
     function deleteFunction(id) {
@@ -477,7 +446,7 @@
      * Modal penceresini açar.
      * @param {Object|null} data - Düzenleme modunda fonksiyon objesi, ekleme modunda null.
      */
-    function openModal(data = null) {
+    function openFunctionModal(data = null) {
         const $form = $('#functionForm');
         const $modal = $('#functionModal');
 
@@ -603,213 +572,7 @@
             }
         });
     }
-
-    /**
-     * Parameter Modalını açar.
-     * @param {Object|null} data - Düzenleme modunda metot nesnesi, ekleme modunda null.
-     */
-    function openParameterListModal(parentId = null) {
-        const $modal = $('#paramListModal');
-
-        initParamTable(parentId)
-
-        $modal.modal('show');
-    }
-
-    function openParamModal(data = null) {
-        const $form = $('#paramForm');
-        const $modal = $('#paramModal');
-        const $valueTableBody = $('#valueTableBody');
-        const $valueSection = $('#valueSection');
-
-        $form[0].reset();
-        $valueTableBody.empty(); // Eski satırları temizle
-
-        if (data) {
-            $modal.find('.modal-title').text('Parametreyi Düzenle');
-            // Form alanlarını doldur...
-            $form.find('input[name="Id"]').val(data.Id);
-            $form.find('input[name="ParameterName"]').val(data.ParameterName);
-            $form.find('input[name="ParameterKey"]').val(data.ParameterKey);
-            $form.find('input[name="OrderNumber"]').val(data.OrderNumber);
-            $form.find('input[name="DefaultValue"]').val(data.DefaultValue);
-            $form.find('input[name="MinValue"]').val(data.MinValue);
-            $form.find('input[name="MaxValue"]').val(data.MaxValue);
-            $form.find('input[name="ValueStep"]').val(data.ValueStep);
-            $form.find('select[name="InputType"]').val(data.InputType).trigger('change');
-            $form.find('select[name="ExistSubItem"]').val(data.ExistSubItem).trigger('change');
-
-            // Eğer veritabanında bu parametreye ait değerler varsa onları tabloya ekle
-            if (data.Values && data.Values.length > 0) {
-                data.Values.forEach(val => addNewValueRow(val));
-            }
-        } else {
-            $modal.find('.modal-title').text('Yeni Parametre');
-            $valueSection.hide(); // Yeni kayıtta varsayılan olarak gizle
-        }
-
-        $modal.modal('show');
-    }
-
-    function openParamValueModal() {
-        const $modal = $('#paramValueModal');
-
-        $modal.modal('show');
-    }
-
-    function initParamTable(parentId) {
-        $('#currentParentId').val(parentId);
-
-        if ($.fn.DataTable.isDataTable('#parameterTable')) {
-            paramTable.destroy();
-        }
-
-        paramTable = $('#parameterTable').DataTable({
-            ajax: {
-                url: `/parameters/${parentId}`,
-                dataSrc: ''
-            },
-            columns: [
-                {data: 'ParameterName'},
-                {data: 'ParameterKey'},
-                {data: 'InputType'},
-                {
-                    data: 'ExistSubItem',
-                    render: function (data) {
-                        return data === 1 ? '<span class="badge badge-info">Evet</span>' : '<span class="badge badge-secondary">Hayır</span>';
-                    }
-                },
-                {
-                    data: null,
-                    render: function (data) {
-                        let actionButtons = `
-                        <button class="btn btn-xs btn-info" onclick='openParamModal(${JSON.stringify(data)})'><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-xs btn-danger" onclick="deleteParam('${data.Id}')"><i class="fas fa-trash"></i></button>
-                    `;
-
-                        // Eğer alt öge ekleyebilecek bir yapıysa (Recursive)
-                        actionButtons += `<button class="btn btn-xs btn-warning" onclick="drillDown('${data.Id}', '${data.ParameterName}')"><i class="fas fa-sitemap"></i> Alt Parametreler</button>`;
-
-                        // Eğer Select tipi ise Değer ekleme butonu
-                        if (data.InputType === 'select' || data.InputType === 'radio') {
-                            actionButtons += `<button class="btn btn-xs btn-success" onclick="openValuesModal('${data.Id}')"><i class="fas fa-list"></i> Değerler</button>`;
-                        }
-
-                        return actionButtons;
-                    }
-                }
-            ]
-        });
-    }
-
-    /**
-     * Parametreye ait değerleri (Value) yönetmek için modalı açar.
-     * @param {string} parameterId - Bağlı olduğu Tbl_Parameter Id'si.
-     */
-    function openValuesModal(parameterId) {
-        const $modal = $('#valuesModal'); // Mevcut parametre modalını kullanabilir veya ayrı bir modal açabilirsiniz
-        const $valueTableBody = $('#modalValueTableBody');
-
-        // 1. Mevcut satırları temizle
-        $valueTableBody.empty();
-
-        // 2. ParentId (ParameterId) bilgisini formda sakla
-        $('#currentParameterId').val(parameterId);
-
-        // 3. Sunucudan bu parametreye ait mevcut değerleri getir
-        $.ajax({
-            url: `/parameter-values/${parameterId}`,
-            type: 'GET',
-            success: function (response) {
-                // Değerler bölümünü görünür yap
-                $modal.modal('show');
-                if (response && response.length > 0) {
-                    // Her bir değer için tabloya yeni satır ekle
-                    response.forEach(val => {
-                        addNewValueRow(val, "#modalValueTableBody");
-                    });
-                } else {
-                    // Eğer hiç değer yoksa kullanıcıya boş bir satır sun
-                    addNewValueRow(null, "#modalValueTableBody");
-                }
-
-                // Eğer bu modal parametre modalından bağımsızsa modalı göster
-                // $('#valuesModal').modal('show');
-            },
-            error: function () {
-                Swal.fire('Hata', 'Değerler yüklenirken bir sorun oluştu.', 'error');
-            }
-        });
-    }
-
-    // Alt seviyeye inme
-    function drillDown(newParentId, name) {
-        const currentId = $('#currentParentId').val();
-        parentStack.push(currentId);
-
-        $('#btnBackParam').show();
-        $('#paramBreadcrumb').append(`<li class="breadcrumb-item active" id="bc-${newParentId}">${name}</li>`);
-        initParamTable(newParentId);
-    }
-
-    // Geri çıkma
-    function goBackParam() {
-        if (parentStack.length > 0) {
-            const prevId = parentStack.pop();
-            if (parentStack.length === 0) $('#btnBackParam').hide();
-
-            $('#paramBreadcrumb li:last-child').remove();
-            initParamTable(prevId);
-        }
-    }
-
-    $('#paramForm').on('submit', function (e) {
-        e.preventDefault();
-        const paramData = {
-            Id: $(this).find('input[name="Id"]').val() || null,
-            ParentId: $('#currentParentId').val(),
-            ParameterName: $(this).find('input[name="ParameterName"]').val(),
-            ParameterKey: $(this).find('input[name="ParameterKey"]').val(),
-            InputType: $(this).find('select[name="InputType"]').val(),
-            DefaultValue: $(this).find('input[name="DefaultValue"]').val(),
-            MinValue: parseFloat($(this).find('input[name="MinValue"]').val()) || null,
-            MaxValue: parseFloat($(this).find('input[name="MaxValue"]').val()) || null,
-            OrderNumber: parseInt($(this).find('input[name="OrderNumber"]').val()) || 0,
-            ExistSubItem: parseInt($(this).find('select[name="ExistSubItem"]').val()) || 0,
-            ValueStep: parseFloat($(this).find('input[name="ValueStep"]').val().replace(',', '.')) || 1,
-            // 2. Alt Değerleri (Values) Dizi Olarak Başlat
-            Values: []
-        };
-
-        // 3. Dinamik Tablodaki Her Satırı Oku
-        $('.value-row').each(function () {
-            const valueRow = {
-                Id: $(this).find('input[name="ValueId"]').val() || null,
-                ValueName: $(this).find('.val-name').val(),
-                ValueKey: $(this).find('.val-key').val(),
-                ExistSubItem: $(this).find('.val-exist-subitem').val(),
-                OrderNumber: parseInt($(this).find('.val-order').val()) || 0
-            };
-            // Sadece isim ve key doluysa ekle
-            if (valueRow.ValueName && valueRow.ValueKey) {
-                paramData.Values.push(valueRow);
-            }
-        });
-        $.ajax({
-            url: 'parameters/save',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(paramData),
-            success: function () {
-                $('#paramModal').modal('hide');
-                paramTable.ajax.reload();
-                $(this).find('input[name="Id"]').val("")
-                Swal.fire('Başarılı', 'Parametre hiyerarşiye eklendi.', 'success');
-            }
-        });
-    });
-
-    // Metot Silme Fonksiyonu
+     // Metot Silme Fonksiyonu
     function deleteParam(id) {
         Swal.fire({
             title: 'Emin misiniz?',
@@ -836,63 +599,6 @@
             }
         });
     }
-
-    function addSubParams(id) {
-        $('#currentParentId').val(id);
-
-        openParamModal(null);
-    }
-
-    function addNewValueRow(data = null, table = '#valueTableBody') {
-        const rowId = 'val_' + Math.random().toString(36).substr(2, 9);
-        let addParamHtml = ""
-        if (data) {
-            addParamHtml = `<button type="button" class="btn btn-xs btn-primary" onclick="addSubParams('${data.Id}')">
-                    <i class="fas fa-plus"></i> Alt Parametre Ekle
-                </button>`;
-        }
-        const html = `
-        <tr id="${rowId}" class="value-row">
-            <td>
-                <input type="hidden" name="ValueId" value="${data ? data.Id : ''}">
-                <input type="text" class="form-control form-control-sm val-name" value="${data ? data.ValueName : ''}" required>
-            </td>
-            <td><input type="text" class="form-control form-control-sm val-key" value="${data ? data.ValueKey : ''}" required></td>
-            <td><input type="number" class="form-control form-control-sm val-order" value="${data ? data.OrderNumber : 0}"></td>
-            <td><select class="form-control form-control-sm val-exist-subitem">
-                <option value="0" ${data && data.ExistSubItem === 0 ? 'selected' : ''}>Yok</option>
-                <option value="1" ${data && data.ExistSubItem === 1 ? 'selected' : ''}>Var</option></select></td>
-            <td>
-                <button type="button" class="btn btn-xs btn-danger" onclick="removeValueRow('${rowId}')">
-                    <i class="fas fa-trash"></i>
-                </button>
-
-                ${addParamHtml}
-            </td>
-        </tr>
-    `;
-        $(table).append(html);
-    }
-
-    $(document).on('change', 'select[name="InputType"]', function () {
-        const selectedType = $(this).val();
-        const $valueSection = $('#valueSection');
-
-        // Sadece select veya radio seçildiğinde göster
-        if (selectedType === 'select' || selectedType === 'radio') {
-            $valueSection.fadeIn(); // Şık bir geçişle göster
-        } else {
-            $valueSection.fadeOut(); // Gizle
-            // Opsiyonel: Gizlendiğinde daha önce eklenmiş satırları temizlemek isterseniz:
-            // $('#valueTableBody').empty();
-        }
-    });
-
-    function removeValueRow(rowId) {
-        $(`#${rowId}`).remove();
-    }
-
-
 </script>
 
 {% endblock %}

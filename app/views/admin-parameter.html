@@ -1,0 +1,160 @@
+<div class="card">
+    <div class="card-header">
+        <button class="btn btn-outline-warning float-left" id="goBackButton" onclick="goBack()">Geri</button>
+        <h3 class="card-title ml-5 mt-2" id="paramTitle"> {{ name }} -> Parametre Listesi</h3>
+        <input type="hidden" id="paramName" value="{{ name }}">
+        <input type="hidden" name="ParentId" id="ParentId" value="{{parent_id}}">
+        <button class="btn btn-primary float-right" onclick="addParameter('{{parent_id}}')">Yeni Ekle</button>
+    </div>
+    <div class="card-body">
+
+        <table id="parameterTable" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>Parametre Adı</th>
+                <th>Key</th>
+                <th>Giriş Tipi</th>
+                <th>Sira</th>
+                <th>İşlemler</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for param in parameters %}
+            <tr>
+                <td>{{ param.ParameterName }}</td>
+                <td>{{ param.ParameterKey }}</td>
+                <td>{{ param.InputType }}</td>
+                <td>{{ param.OrderNumber }}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="editParameter('{{ param.Id }}')">
+                        <i class="fas fa-edit"></i> Düzenle
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteParameter('{{ param.Id }}')">
+                        <i class="fas fa-trash"></i> Sil
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="parameterModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Parameter</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="parameterModalBody" class="modal-body">
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    //method operations
+
+    $(document).ready(function () {
+        paramTable = $('#parameterTable').DataTable({order: [[3, 'asc']]});
+    });
+
+    function loadParametersTable() {
+        if (paramTable) {
+            paramTable.destroy();
+        }
+        console.log($('#ParentId').val())
+        paramTable = $('#parameterTable').DataTable({
+            ajax: {
+                url: `admin-parameters-list/` + $('#ParentId').val(),
+                dataSrc: ''
+            },
+            order: [[3, 'asc']],
+            columns: [
+                {data: 'ParameterName'},
+                {data: 'ParameterKey'},
+                {data: 'InputType'},
+                {data: 'OrderNumber'},
+                {
+                    data: null,
+                    render: function (data) {
+                        let actionButtons = `
+                        <button class="btn btn-sm btn-primary" onclick="editParameter('${data.Id}')"><i class="fas fa-edit"></i> Düzenle</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteParameter('${data.Id}')"><i class="fas fa-trash"></i> Sil</button>
+                    `;
+
+                        return actionButtons;
+                    }
+                }
+            ]
+        });
+    }
+
+    function addParameter(id) {
+        $('#parameterModalBody').html("");
+        $.ajax({
+            url: 'update-param',
+            method: 'GET',
+            data: {parent_id: id},
+            success: function (response) {
+                $('#parameterModalBody').html(response);
+                $('#parameterModal').modal('show');
+                $('#global-loader').fadeOut('fast');
+            },
+            error: function () {
+                $('#global-loader').fadeOut('fast');
+                alert('Parametre formu yüklenirken bir hata oluştu.');
+            }
+        })
+    }
+
+    function editParameter(id) {
+        $('#parameterModalBody').html("");
+        $.ajax({
+            url: 'update-param',
+            data: {id: id},
+            method: 'GET',
+            success: function (response) {
+                $('#parameterModalBody').html(response);
+                $('#parameterModal').modal('show');
+
+                $('#global-loader').fadeOut('fast');
+            },
+            error: function () {
+                $('#global-loader').fadeOut('fast');
+                alert('Parametre formu yüklenirken bir hata oluştu.');
+            }
+        })
+    }
+
+    function deleteParameter(id) {
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: "Bu parametre kalıcı olarak silinecektir!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/parameters/${id}`,
+                    type: 'DELETE',
+                    success: function (response) {
+                        loadParametersTable();
+
+                        Swal.fire('Silindi!', 'Parametre başarıyla kaldırıldı.', 'success');
+                    },
+                    error: function (xhr) {
+                        Swal.fire('Hata', 'Silme işlemi başarısız: ' + xhr.responseText, 'error');
+                    }
+                });
+            }
+        });
+    }
+
+</script>

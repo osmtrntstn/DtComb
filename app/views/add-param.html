@@ -1,36 +1,26 @@
 {% block content %}
 <div class="card">
     <form id="paramForm">
-        <div class="card-header">
-            <h4 class="modal-title">Parametre Tanımı</h4>
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" onclick="closeParamProcess()">
-                    <i class="fas fa-times" style="font-size: 1.5rem; color: #666;"></i>
-                </button>
-            </div>
-        </div>
+
         <div class="card-body">
             <input type="hidden" name="Id" id="Id" value="{{ parameter.Id or id }}">
             <input type="hidden" name="ParentId" id="ParentId" value="{{ parameter.ParentId or parent_id }}">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-lg-4">
                     <div class="form-group">
                         <label>Parametre Adı</label>
                         <input type="text" name="ParameterName" class="form-control"
                                value="{{ parameter.ParameterName or '' }}" required>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-lg-4">
                     <div class="form-group">
                         <label>Key</label>
                         <input type="text" name="ParameterKey" class="form-control"
                                value="{{ parameter.ParameterKey or '' }}" required>
                     </div>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
+                <div class="col-lg-4">
                     <div class="form-group">
                         <label>Input Tipi</label>
                         <select name="InputType" id="InputType" class="form-control select2bs4">
@@ -43,31 +33,36 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-4">
+            </div>
+
+            <div class="row">
+
+                <div class="col-lg-4">
                     <div class="form-group">
                         <label>Default Değer</label>
                         <input type="text" name="DefaultValue" class="form-control"
                                value="{{ parameter.DefaultValue or '' }}">
                     </div>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
+                <div class="col-lg-4">
                     <div class="form-group">
                         <label>Min Değer</label>
                         <input type="number" name="MinValue" class="form-control"
                                value="{{ parameter.MinValue or '' }}">
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-lg-4">
                     <div class="form-group">
                         <label>Max Değer</label>
                         <input type="number" name="MaxValue" class="form-control"
                                value="{{ parameter.MaxValue or '' }}">
                     </div>
                 </div>
-                <div class="col-md-4">
+            </div>
+
+            <div class="row">
+
+                <div class="col-lg-4">
                     <div class="form-group">
                         <label>Value Step</label>
                         <input type="number" name="ValueStep" step="any" lang="en" placeholder="0.00"
@@ -75,14 +70,14 @@
                                class="form-control">
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-lg-4">
                     <div class="form-group">
                         <label>Sıra</label>
                         <input type="number" name="OrderNumber" class="form-control"
                                value="{{ parameter.OrderNumber or '' }}">
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-lg-4">
                     <div class="form-group">
                         <label>Alt eleman</label>
                         <select name="ExistSubItem" class="form-control select2bs4">
@@ -128,16 +123,52 @@
 
 
 <script>
-    function closeParamProcess() {
-        // 1. Hedef div'in içeriğini tamamen siler
-        $('#parameter-procces').empty();
+    $(document).ready(function () {
+        if ($('#InputType').val() === 'select' || $('#InputType').val() === 'radio') {
+            $('#valueSection').show();
+            $.ajax({
+                url: 'parameter-values/' + $('#Id').val(),
+                method: 'GET',
+                success: function (response) {
+                    response.forEach(function (value) {
+                        addNewValueRow(value, '#valueTableBody');
+                    });
 
-        // 2. Eğer bu alan gizlenmesi gerekiyorsa (opsiyonel)
-        // $('#parameter-procces').hide();
+                    $('#global-loader').fadeOut('fast');
 
-        // 3. Varsa sayfadaki global seçimleri veya ID'leri sıfırlayabilirsiniz
-        // currentParamId = null;
-    }
+                },
+                error: function () {
+                    $('#global-loader').fadeOut('fast');
+                    alert('Parametre değerleri yüklenirken bir hata oluştu.');
+                }
+            });
+        }
+        $('#InputType').change(function () {
+            if ($(this).val() === 'select' || $(this).val() === 'radio') {
+                $('#valueSection').show();
+            } else {
+                $('#valueSection').hide();
+                $('#valueTableBody').html('');
+            }
+        });
+
+
+        $('#paramForm').submit(function (e) {
+            e.preventDefault();
+            let formData = $(this).serializeArray();
+            $.ajax({
+                url: 'parameters/save',
+                method: 'POST',
+                data: formData,
+                success: function (response) {
+                    alert('Parametre başarıyla kaydedildi.');
+                },
+                error: function () {
+                    alert('Parametre kaydedilirken bir hata oluştu.');
+                }
+            });
+        });
+    });
 
     $('#addParamButton').on('click', function (e) {
         let formData = $("#paramForm");
@@ -160,11 +191,11 @@
         // 3. Dinamik Tablodaki Her Satırı Oku
         $('.value-row').each(function () {
             const valueRow = {
-                Id: formData.find('input[name="ValueId"]').val() || null,
-                ValueName: formData.find('.val-name').val(),
-                ValueKey: formData.find('.val-key').val(),
-                ExistSubItem: formData.find('.val-exist-subitem').val(),
-                OrderNumber: parseInt(formData.find('.val-order').val()) || 0
+                Id: $(this).find('input[name="ValueId"]').val() || null,
+                ValueName: $(this).find('.val-name').val(),
+                ValueKey: $(this).find('.val-key').val(),
+                ExistSubItem: $(this).find('.val-exist-subitem').val(),
+                OrderNumber: parseInt($(this).find('.val-order').val()) || 0
             };
             // Sadece isim ve key doluysa ekle
             if (valueRow.ValueName && valueRow.ValueKey) {
@@ -177,8 +208,10 @@
             contentType: 'application/json',
             data: JSON.stringify(paramData),
             success: function (response) {
-                paramTable.ajax.reload();
-                formData.find('input[name="Id"]').val(response.Id)
+                $('#parameterModal').one('hidden.bs.modal', function () {
+                    loadParametersTable();
+                    formData.find('input[name="Id"]').val(response.Id)
+                }).modal('hide');
                 Swal.fire('Başarılı', 'Parametre hiyerarşiye eklendi.', 'success');
             }
         });
@@ -188,7 +221,7 @@
         const rowId = 'val_' + Math.random().toString(36).substr(2, 9);
         let addParamHtml = ""
         if (data) {
-            addParamHtml = `<button type="button" class="btn btn-xs btn-primary" title="Add Param" onclick="getParams('${data.Id}','${$('#paramName').val() + '->' + data.ValueName}',false)">
+            addParamHtml = `<button type="button" class="btn btn-xs btn-primary" title="Add Param" onclick="getParameterPage('${data.Id}','${$('#paramName').val() + '->' + data.ValueName}',false)">
                     <i class="fas fa-plus"></i>                 </button>`;
         }
         const html = `
@@ -245,51 +278,12 @@
         }
     }
 
-    $(document).ready(function () {
-        if ($('#InputType').val() === 'select' || $('#InputType').val() === 'radio') {
-            $('#valueSection').show();
-            $.ajax({
-                url: 'parameter-values/' + $('#Id').val(),
-                method: 'GET',
-                success: function (response) {
-                    response.forEach(function (value) {
-                        addNewValueRow(value, '#valueTableBody');
-                    });
 
-                    $('#global-loader').fadeOut('fast');
+    function getParameterPage(parentId, parentName) {
+        $('#parameterModal').one('hidden.bs.modal', function () {
+            let url = `${parameterBaseUrl}/${parentId}/${parentName}`;
 
-                },
-                error: function () {
-                    $('#global-loader').fadeOut('fast');
-                    alert('Parametre değerleri yüklenirken bir hata oluştu.');
-                }
-            });
-        }
-        $('#InputType').change(function () {
-            if ($(this).val() === 'select' || $(this).val() === 'radio') {
-                $('#valueSection').show();
-            } else {
-                $('#valueSection').hide();
-                $('#valueTableBody').html('');
-            }
-        });
-
-
-        $('#paramForm').submit(function (e) {
-            e.preventDefault();
-            let formData = $(this).serializeArray();
-            $.ajax({
-                url: 'parameters/save',
-                method: 'POST',
-                data: formData,
-                success: function (response) {
-                    alert('Parametre başarıyla kaydedildi.');
-                },
-                error: function () {
-                    alert('Parametre kaydedilirken bir hata oluştu.');
-                }
-            });
-        });
-    });
-
+            loadPage(url, parentName);
+        }).modal('hide');
+    }
 </script>

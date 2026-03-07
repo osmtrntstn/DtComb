@@ -17,11 +17,60 @@ templates = Jinja2Templates(directory="app/views")
 
 @router.get("/admin")
 def index(request: Request):
-    return templates.TemplateResponse("admin.html", {"request": request, "title": "Hoş Geldiniz", "url_for": request.url_for})
+    return templates.TemplateResponse("adminv2.html",
+                                      {"request": request, "title": "Hoş Geldiniz", "url_for": request.url_for})
+
+
+@router.get("/admin-functions")
+def admin_functions_page(request: Request):
+    functions = crud_operation.get_functions()
+    # Row objelerini dictionary'ye dönüştür
+    functions_dict = [dict(f) for f in functions]
+    return templates.TemplateResponse("admin-function.html",
+                                      {"request": request, "title": "Hoş Geldiniz", "url_for": request.url_for,
+                                       "functionList": functions_dict})
+
+
+@router.get("/admin-functions-list")
+def admin_functions_list(request: Request):
+    functions = crud_operation.get_functions()
+    # Row objelerini dictionary'ye dönüştür
+    return functions
+
+
+@router.get("/admin-methods/{functionId}")
+def admin_method_page(request: Request, functionId: str, ):
+    methods = crud_operation.get_methods_by_function_id(functionId)
+    # Row objelerini dictionary'ye dönüştür
+    methods_dict = [dict(f) for f in methods]
+    return templates.TemplateResponse("admin-method.html",
+                                      {"request": request, "title": "Hoş Geldiniz", "url_for": request.url_for,
+                                       "methodList": methods_dict,
+                                       "functionId": functionId})
+
+
+@router.get("/admin-method-list/{functionId}")
+def admin_method_list(request: Request, functionId: str, ):
+    methods = crud_operation.get_methods_by_function_id(functionId)
+    return methods
+
+
+@router.get("/admin-parameters/{parent_id}/{name}")
+def admin_parameter_page(request: Request, parent_id: str, name: str):
+    parameters = crud_operation.get_parameters_by_parent(parent_id)
+    return templates.TemplateResponse("admin-parameter.html",
+                                      {"request": request, "title": "Hoş Geldiniz", "parameters": parameters,
+                                       "parent_id": parent_id, "name": name, "url_for": request.url_for})
+
+
+@router.get("/admin-parameters-list/{parent_id}")
+def admin_parameter_list(request: Request, parent_id: str, ):
+    parameters = crud_operation.get_parameters_by_parent(parent_id)
+    return parameters
 
 
 @router.get("/get-params/{parent_id}/{name}")
-def index(request: Request, parent_id: str, name: str):
+def get_params(request: Request, parent_id: str, name: str):
     parameters = crud_operation.get_parameters_by_parent(parent_id)
     return templates.TemplateResponse("get-params.html",
                                       {"request": request, "title": "Hoş Geldiniz", "parameters": parameters,

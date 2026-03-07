@@ -1,0 +1,222 @@
+<div class="card col-12">
+    <div class="card-header">
+        <h3 class="card-title mt-2">Analiz Metotları</h3>
+        <button class="btn btn-primary float-right" onclick="openFunctionModal()">Yeni Ekle</button>
+    </div>
+    <div class="card-body">
+        <table id="functionTable" class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Anahtar</th>
+                <th>İsim</th>
+                <th>Sıra</th>
+                <th>İşlemler</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for functionData in functionList %}
+            <tr>
+                <td>{{ functionData.Id }}</td>
+                <td>{{ functionData.FunctionKey }}</td>
+                <td>{{ functionData.FunctionName }}</td>
+                <td>{{ functionData.OrderNumber }}</td>
+                <td>
+                    <button class="btn btn-sm btn-info" onclick='openFunctionModal({{ functionData | tojson }})'>
+                        <i class="fas fa-edit"></i> Düzenle
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteFunction('{{ functionData.Id }}')">
+                        <i class="fas fa-trash"></i> Sil
+                    </button>
+                    <button class="btn btn-sm btn-dark"
+                            onclick="getParameterPage('{{ functionData.Id }}','{{ functionData.FunctionName }}',false)">
+                        <i class="fas fa-list"></i> Parametreler
+                    </button>
+                    <button class="btn btn-sm btn-warning"
+                            onclick="getMethodPage('{{ functionData.Id }}','{{functionData.FunctionName}}')">
+                        <i class="fas fa-list"></i> Methodlar
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="functionModal">
+    <div class="modal-dialog">
+        <form id="functionForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Fonksiyon</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id" class="form-control" required>
+
+                    <div class="form-group">
+                        <label>Key</label>
+                        <input type="text" name="FunctionKey" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>İsim</label>
+                        <input type="text" name="FunctionName" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Sıra</label>
+                        <input type="number" name="OrderNumber" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="functionSaveButton" type="button" onclick="saveFunction()" class="btn btn-success">
+                        Kaydet
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        functionTable = $('#functionTable').DataTable({order: [[3, 'asc']]});
+    });
+
+    function loadFunctionData() {
+        if (functionTable) {
+            functionTable.destroy();
+        }
+        functionTable = $('#functionTable').DataTable({
+            ajax: {
+                url: 'admin-functions-list',
+                dataSrc: '',
+                // Sayfa her yüklendiğinde veya yenilendiğinde taze veri çekmesini zorunlu kılın
+                cache: false
+            },
+            order: [[3, 'asc']],
+            columns: [
+                {data: 'Id'},
+                {data: 'FunctionKey'},
+                {data: 'FunctionName'},
+                {data: 'OrderNumber'},
+                {
+                    data: null,
+                    orderable: false, // İşlem sütununda sıralamayı kapatın
+                    render: function (data) {
+                        // Veriyi güvenli bir şekilde string'e çevirip openModal'a gönderiyoruz
+                        const strData = JSON.stringify(data).replace(/'/g, "\\'");
+                        return `
+                        <button class="btn btn-sm btn-info" onclick='openFunctionModal(${strData})'>
+                            <i class="fas fa-edit"></i> Düzenle
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteFunction('${data.Id}')">
+                            <i class="fas fa-trash"></i> Sil
+                        </button>
+                        <button class="btn btn-sm btn-dark" onclick="getParams('${data.Id}','${data.FunctionName}',false)">
+                            <i class="fas fa-list"></i> Parametreler
+                        </button>
+                          <button class="btn btn-sm btn-warning"
+                            onclick="loadPage('${methodBaseUrl}/${data.Id}','${data.FunctionName}')">
+                            <i class="fas fa-list"></i> Methodlar
+                        </button>
+                    `;
+                    }
+                }
+            ],
+            // Tablo boş olduğunda gösterilecek metni özelleştirin
+            language: {
+                emptyTable: "Henüz bir analiz metodu eklenmemiş."
+            }
+        });
+
+    }
+
+    function deleteFunction(id) {
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: "Bu fonksiyon silinecektir!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Evet, sil!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `functions/${id}`,
+                    type: 'DELETE',
+                    success: function () {
+                        loadFunctionData();
+                        Swal.fire('Silindi!', '', 'success');
+                    }
+                });
+            }
+        });
+    }
+
+    function saveFunction(e) {
+        let functionForm = $("#functionForm");
+        // Form verilerini objeye dönüştür
+        const formData = {
+            Id: functionForm.find('input[name="Id"]').val() || null, // Boşsa null gönder (Backend uuid üretir)
+            FunctionKey: functionForm.find('input[name="FunctionKey"]').val(),
+            FunctionName: functionForm.find('input[name="FunctionName"]').val(),
+            OrderNumber: parseInt(functionForm.find('input[name="OrderNumber"]').val()) || 0
+        };
+
+        $.ajax({
+            url: 'functions/save',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function (response) {
+                $('#functionModal').one('hidden.bs.modal', function () {
+                    loadFunctionData();
+                }).modal('hide');
+            },
+            error: function (xhr) {
+                Swal.fire('Hata', 'Kayıt sırasında bir sorun oluştu: ' + xhr.responseText, 'error');
+            }
+        });
+    }
+
+    /**
+     * Modal penceresini açar.
+     * @param {Object|null} data - Düzenleme modunda fonksiyon objesi, ekleme modunda null.
+     */
+    function openFunctionModal(data = null) {
+        const $form = $('#functionForm');
+        const $modal = $('#functionModal');
+
+        // Formu sıfırla
+        $form[0].reset();
+
+        if (data) {
+            // DÜZENLEME MODU
+            $modal.find('.modal-title').text('Fonksiyonu Düzenle');
+            $form.find('input[name="Id"]').val(data.Id);
+            $form.find('input[name="FunctionKey"]').val(data.FunctionKey);
+            $form.find('input[name="FunctionName"]').val(data.FunctionName);
+            $form.find('input[name="OrderNumber"]').val(data.OrderNumber);
+        } else {
+            // YENİ EKLEME MODU
+            $modal.find('.modal-title').text('Yeni Fonksiyon Ekle');
+            $form.find('input[name="Id"]').val('');
+        }
+
+        $modal.modal('show');
+    }
+
+    function getMethodPage(functionId, functionName) {
+        loadPage(`${methodBaseUrl}/${functionId}`, functionName);
+    }
+
+    function getParameterPage(functionId, functionName) {
+        let url = `${parameterBaseUrl}/${functionId}/${functionName}`;
+
+        loadPage(url, functionName);
+    }
+</script>
+
